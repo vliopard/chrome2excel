@@ -2,3 +2,4 @@ tqdm
 shlex
 public
 openpyxl
+mecanize

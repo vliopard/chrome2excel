@@ -11,6 +11,8 @@ import subprocess
 from urllib import parse
 from urllib.parse import urlencode, urlparse, parse_qsl, urlunparse
 
+from mechanize import Browser
+
 from openpyxl import Workbook
 from openpyxl.styles import Font
 
@@ -52,7 +54,13 @@ def _get_terminal_size_windows():
             return sizex, sizey
     except:
         pass
- 
+
+
+def _get_title(url):
+    br = Browser()
+    br.open(url)
+    return (br.title())
+
 
 def _get_terminal_size_tput():
     try:
