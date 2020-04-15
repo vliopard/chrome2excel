@@ -15,11 +15,27 @@ Just run command
 
 ## How to run:
 
-1.) for running in default profile:
+For running in default profile:
 `python chrome2excel.py`
 
-2.) for choosing an alternative profile:
+
+
+**To identify local profiles:**
+
+`python chromeprofile.py -p <ProfileNumber>`
+
+For choosing an alternative profile:
 `python chrome2excel.py -p <ProfileNumber>`
+
+## Features:
+
+**To turn on remove duplicate entries:**
+
+`python chrome2excel.py -p <ProfileNumber> -u on`
+
+**To turn on refresh URL Title:**
+
+`python chrome2excel.py -p <ProfileNumber> -r on`
 
 ## About
 *This is an* ***Open Source Project*** *that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
