@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class Folder:
 
     def __init__(
@@ -35,6 +37,14 @@ class Urls:
         return str(self.__dict__)
 
 
+def dateToWebkit(date_string):
+    epoch_start = datetime(1601, 1, 1)
+    date_ = datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
+    diff = date_ - epoch_start
+    seconds_in_day = 60 * 60 * 24
+    return str('{:<017d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds))
+
+
 header = """<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <!-- This is an automatically generated file.
      It will be read and overwritten.
@@ -49,7 +59,7 @@ level = 1
 
 def open_folder(add_date, modified_date, folder_name):
     global level
-    ret = new_line()+new_tab()+'<DT><H3 ADD_DATE="'+add_date+'" LAST_MODIFIED="'+modified_date+'">'+folder_name+'</H3>'+new_line()+new_tab()+'<DL><p>'
+    ret = new_line()+new_tab()+'<DT><H3 ADD_DATE="'+dateToWebkit(add_date)+'" LAST_MODIFIED="'+dateToWebkit(modified_date)+'">'+folder_name+'</H3>'+new_line()+new_tab()+'<DL><p>'
     level = level + 1
     return ret
 
@@ -62,7 +72,7 @@ def close_folder():
 
 
 def add_url(url, add_date, url_title):
-    return new_line()+new_tab()+'<DT><A HREF="'+url+'" ADD_DATE="'+add_date+'">'+url_title+'</A>'
+    return new_line()+new_tab()+'<DT><A HREF="'+url+'" ADD_DATE="'+dateToWebkit(add_date)+'">'+url_title+'</A>'
 
 
 def new_line():

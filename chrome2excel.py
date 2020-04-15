@@ -19,6 +19,7 @@ from datetime import datetime, timezone, timedelta
 from htmlSupport import gettitle
 from htmlExport import Folder, Urls, write_html
 
+
 def get_terminal_width():
     return ((get_terminal_size()[0])-1)
 
@@ -351,7 +352,7 @@ def checkNone(val):
 
 
 def getUser(userpath):
-    username = json.loads(open(userpath,encoding='utf-8').read())["account_info"][0]     
+    username = json.loads(open(userpath,encoding='utf-8').read())["account_info"][0]
     return username['email'], username['full_name'], username['given_name']
 
 
@@ -414,7 +415,7 @@ def read_content(content):
             elif x == 'meta_info':
                 for y in chrome_url[x]:
                     if y == 'last_visited':
-                        last_visited = chrome_url[x][y]                
+                        last_visited = chrome_url[x][y]
             elif x == 'date_added':
                 date_added = chrome_url[x]
             elif x == 'date_modified':
@@ -522,37 +523,60 @@ def get_title_conditional(pbar, disabled, url_name, url):
     return url_title
 
 
-def generate_html():
+def generate_html(refresh, undupe, clean):
     print("Generating html...")
     created = set()
+    visited = set()
     folders = []
-    url_list = []
-    with tqdm.tqdm(total=len(data_header)) as pbar:
-        for a in data_header:
+    data_header_undupe = []
+    if undupe == 'on':
+        print("_"*(get_terminal_width()))
+        print("Removing duplicates...")
+        print("\u203e"*(get_terminal_width()))
+        with tqdm.tqdm(total=len(data_header)) as pbar:
+            for a in data_header:
+                pbar.update(1)
+                if clean == 'on':
+                    website = a[17]
+                else:
+                    website = a[18]
+                if not website in visited:
+                    visited.add(website)
+                    data_header_undupe.append(a)
+    else:
+        data_header_undupe = data_header
+
+    print("_"*(get_terminal_width()))
+    print("Writting html...")
+    print("\u203e"*(get_terminal_width()))
+    with tqdm.tqdm(total=len(data_header_undupe[1:])) as pbar:
+        for a in data_header_undupe[1:]:
+            pbar.update(1)
             fold = a[21]
+            hostname = a[21]
+            if clean == 'on':
+                website = a[17]
+            else:
+                website = a[18]
+
+            if refresh == 'on':
+                website=gettitle(website)
+
             if not fold in created:
-                url = Urls(a[18],a[13],a[16])
-                url_list.append(url)
-                fold = Folder(a[4],a[5],a[21], url_list)
-                created.add(a[21])
+                url = Urls(website,a[13],a[16])
+                fold = Folder(a[4],a[5],hostname, [url])
+                created.add(hostname)
                 folders.append(fold)
             else:
-                url = Urls(a[18],a[13],a[16])
-                folders[folders.index(a[21])].add_url(url)
-    write_html(folders)    
+                url = Urls(website,a[13],a[16])
+                for x in folders:
+                    if x.folder_name == hostname:
+                        x.add_url(url)
 
-'''   
- #'Folder Added',    #04
- #'Folder Modified', #05
- #'Folder Name',     #07
+    write_html(folders)
 
- #'URL Added',       #13
- #'URL Name',        #16
- #'URL',             #18
- #'Hostname',        #21
- '''
 
-def generate_workbook(refresh, undupe):
+def generate_workbook(refresh, undupe, clean):
     print("Generating workbook...")
     book = Workbook()
     sheet = book.active
@@ -572,12 +596,15 @@ def generate_workbook(refresh, undupe):
         
     with tqdm.tqdm(total=len(data_header),disable=disabled) as pbar:
         for a in data_header:
-            # TODO: Select #17 for clean url or #18 for original url
-            if not a[18] in visited:
-                visited.add(a[18])
-                data_header_undupe.append(( "MAIN", get_title_conditional(pbar, disabled, a[16], a[18]) ) + a)
+            if clean == 'on':
+                website = a[17]
+            else:
+                website = a[18]
+            if not website in visited:
+                visited.add(website)
+                data_header_undupe.append(( "MAIN", get_title_conditional(pbar, disabled, a[16], website) ) + a)
             elif undupe == "off":
-                data_header_undupe.append(( "DUPE", get_title_conditional(pbar, disabled, a[16], a[18]) ) + a)
+                data_header_undupe.append(( "DUPE", get_title_conditional(pbar, disabled, a[16], website) ) + a)
 
     print("Writting spreadsheet...")
     print("\u203e"*(get_terminal_width()))
@@ -668,7 +695,7 @@ def generate_bookmarks(profile_):
             return email, full, name, Bookmarks(f)
 
 
-def run_chrome(profile, refresh, undupe, output):
+def run_chrome(profile, refresh, undupe, output, clean):
     print("\n\n")
     print("_"*(get_terminal_width()))
     print("Starting Chrome Bookmars export.")
@@ -680,7 +707,7 @@ def run_chrome(profile, refresh, undupe, output):
     if output == "xlsx":
         generate_workbook(refresh, undupe)
     else:
-        generate_html()
+        generate_html(refresh, undupe, clean)
 
 
 if __name__ == "__main__":
@@ -709,6 +736,12 @@ if __name__ == "__main__":
         "--undupe",
         "-u",
         help="Remove duplicated URL [on, off]: off Default.",
+        default = "off"
+    )
+    parser.add_argument(
+        "--clean",
+        "-c",
+        help="Remove trackers from URL [on, off]: off Default.",
         default = "off"
     )
 

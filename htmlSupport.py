@@ -48,7 +48,7 @@ def gettitle(url):
         ret = str(e)
     except HTTPError as e:
         ret = "[" + str(e.code) + " - " + HTTPStatus(e.code).phrase + "]"
-    except URLError as e:        
+    except URLError as e:
         ret = str(e.reason)
     except RemoteDisconnected as e:
         ret = str(e)
