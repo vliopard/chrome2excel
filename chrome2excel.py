@@ -17,6 +17,7 @@ from argparse import ArgumentParser
 from datetime import datetime, timezone, timedelta
 
 from htmlSupport import gettitle
+from htmlExport import Folder, Urls, write_html
 
 def get_terminal_width():
     return ((get_terminal_size()[0])-1)
@@ -107,6 +108,12 @@ class Item(dict):
     def url(self):
         if "url" in self:
             return self["url"]
+        return ""
+
+    @property
+    def icon(self):
+        if "icon" in self:
+            return self["icon"]
         return ""
 
     @property
@@ -400,6 +407,7 @@ def read_content(content):
         sync_transaction_version = '[Empty]'
         type = '[Empty]'
         url = '[Empty]'
+        icon = '[Empty]'
         for x in chrome_url:
             if x == 'children':
                 read_content(chrome_url[x])
@@ -413,6 +421,9 @@ def read_content(content):
                 date_modified = chrome_url[x]
             elif x == 'guid':
                 guid = chrome_url[x]
+            elif x == 'icon':
+                # TODO: Add icon to the spreadsheet
+                icon = chrome_url[x]
             elif x == 'id':
                 id = chrome_url[x]
             elif x == 'name':
@@ -510,6 +521,36 @@ def get_title_conditional(pbar, disabled, url_name, url):
             url_title = "[NO REFRESH - " + url_name + " ]"
     return url_title
 
+
+def generate_html():
+    print("Generating html...")
+    created = set()
+    folders = []
+    url_list = []
+    with tqdm.tqdm(total=len(data_header)) as pbar:
+        for a in data_header:
+            fold = a[21]
+            if not fold in created:
+                url = Urls(a[18],a[13],a[16])
+                url_list.append(url)
+                fold = Folder(a[4],a[5],a[21], url_list)
+                created.add(a[21])
+                folders.append(fold)
+            else:
+                url = Urls(a[18],a[13],a[16])
+                folders[folders.index(a[21])].add_url(url)
+    write_html(folders)    
+
+'''   
+ #'Folder Added',    #04
+ #'Folder Modified', #05
+ #'Folder Name',     #07
+
+ #'URL Added',       #13
+ #'URL Name',        #16
+ #'URL',             #18
+ #'Hostname',        #21
+ '''
 
 def generate_workbook(refresh, undupe):
     print("Generating workbook...")
@@ -627,7 +668,7 @@ def generate_bookmarks(profile_):
             return email, full, name, Bookmarks(f)
 
 
-def run_chrome(profile, refresh, undupe):
+def run_chrome(profile, refresh, undupe, output):
     print("\n\n")
     print("_"*(get_terminal_width()))
     print("Starting Chrome Bookmars export.")
@@ -636,7 +677,10 @@ def run_chrome(profile, refresh, undupe):
     print("Processing user: {",full,"} ["+email+"]")
     print("\u203e"*(get_terminal_width()))
     generate_data(bookmarks)
-    generate_workbook(refresh, undupe)
+    if output == "xlsx":
+        generate_workbook(refresh, undupe)
+    else:
+        generate_html()
 
 
 if __name__ == "__main__":
@@ -650,15 +694,21 @@ if __name__ == "__main__":
         default = "0"
     )
     parser.add_argument(
+        "--output",
+        "-o",
+        help="Output file type [html, xlsx]: xlsx Default.",
+        default = "xlsx"
+    )
+    parser.add_argument(
         "--refresh",
         "-r",
-        help="Refresh URL Title: off Default.",
+        help="Refresh URL Title [on, off]: off Default.",
         default = "off"
     )
     parser.add_argument(
         "--undupe",
         "-u",
-        help="Remove duplicated URL.",
+        help="Remove duplicated URL [on, off]: off Default.",
         default = "off"
     )
 
