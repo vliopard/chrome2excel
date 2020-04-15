@@ -501,7 +501,17 @@ def generate_data(instance):
             data_header.append(new_data)
 
 
-def generate_workbook(refresh):
+def get_title_conditional(pbar, disabled, url_name, url):
+    url_title = ""
+    if not disabled:
+        pbar.update(1)
+        url_title = gettitle(url)
+		if url_title == "[NO REFRESH]":
+		    url_title = "[NO REFRESH - " + url_name + " ]"
+    return url_title
+
+
+def generate_workbook(refresh, undupe):
     print("Generating workbook...")
     book = Workbook()
     sheet = book.active
@@ -510,25 +520,23 @@ def generate_workbook(refresh):
     visited = set()
     data_header_undupe = []
     print("Find duplicate lines...")
-    for a in data_header:
-        tuple_dupe = ( "DUPE", "")
-        tuple_nodupe = ( "", "")
-        if not a[18] in visited:        
-            visited.add(a[18])
-            data_header_undupe.append(tuple_nodupe + a)
-        else: #TODO: May be changed to remove line instead of marking as dupe.
-            data_header_undupe.append(tuple_dupe + a)
-
-    if refresh is not "off":
+    if refresh != "off":
         print("_"*(get_terminal_width()))
         print("Getting URL Status...")
         print("\u203e"*(get_terminal_width()))
-        with tqdm.tqdm(total=len(data_header_undupe)) as pbar:
-            for a in data_header_undupe:
-                pbar.update(1)
-                lst = list(a)
-                lst[1] = gettitle(a[19])
-                a = tuple(lst)
+
+    disabled = True
+    if refresh != "off":
+        disabled = False
+        
+    with tqdm.tqdm(total=len(data_header),disable=disabled) as pbar:
+        for a in data_header:
+		    # TODO: Select #17 for clean url or #18 for original url
+            if not a[18] in visited:
+                visited.add(a[18])
+                data_header_undupe.append(( "MAIN", get_title_conditional(pbar, disabled, a[16], a[18]) ) + a)
+            elif undupe == "off":
+                data_header_undupe.append(( "DUPE", get_title_conditional(pbar, disabled, a[16], a[18]) ) + a)
 
     print("Writting spreadsheet...")
     print("\u203e"*(get_terminal_width()))
@@ -584,7 +592,7 @@ def generate_workbook(refresh):
 
 def generate_bookmarks(profile_):
     print("Generating bookmarks...")
-    if profile_ is "0":
+    if profile_ == "0":
         profile_ = "Default"
     else:
         profile_ = "Profile "+profile_
@@ -619,7 +627,7 @@ def generate_bookmarks(profile_):
             return email, full, name, Bookmarks(f)
 
 
-def run_chrome(profile, refresh):
+def run_chrome(profile, refresh, undupe):
     print("\n\n")
     print("_"*(get_terminal_width()))
     print("Starting Chrome Bookmars export.")
@@ -628,7 +636,7 @@ def run_chrome(profile, refresh):
     print("Processing user: {",full,"} ["+email+"]")
     print("\u203e"*(get_terminal_width()))
     generate_data(bookmarks)
-    generate_workbook(refresh)
+    generate_workbook(refresh, undupe)
 
 
 if __name__ == "__main__":
@@ -645,6 +653,12 @@ if __name__ == "__main__":
         "--refresh",
         "-r",
         help="Refresh URL Title: off Default.",
+        default = "off"
+    )
+    parser.add_argument(
+        "--undupe",
+        "-u",
+        help="Remove duplicated URL.",
         default = "off"
     )
 

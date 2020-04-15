@@ -1,3 +1,5 @@
+import lxml.html
+
 from html.parser import HTMLParser
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
@@ -5,7 +7,6 @@ from mechanize import Browser
 from http import HTTPStatus
 from http.client import RemoteDisconnected
 
-import lxml.html
 
 class Parser(HTMLParser):
     def __init__(self):
@@ -46,7 +47,7 @@ def gettitle(url):
     except ValueError as e:
         ret = str(e)
     except HTTPError as e:
-        ret = str(e.code) + " " + HTTPStatus(e.code).phrase
+        ret = "[" + str(e.code) + "] " + HTTPStatus(e.code).phrase
     except URLError as e:        
         ret = str(e.reason)
     except RemoteDisconnected as e:
@@ -60,7 +61,7 @@ def gettitle(url):
             t = lxml.html.parse(url)
             return t.find(".//title").text
         except:
-            return url
+            return "[NO REFRESH]"
 
 
 def _get_title(url):

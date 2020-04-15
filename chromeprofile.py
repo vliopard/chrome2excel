@@ -52,7 +52,7 @@ def _get_terminal_size_windows():
             return sizex, sizey
     except:
         pass
- 
+
 
 def _get_terminal_size_tput():
     try:
@@ -61,8 +61,8 @@ def _get_terminal_size_tput():
         return (cols, rows)
     except:
         pass
- 
- 
+
+
 def _get_terminal_size_linux():
     def ioctl_GWINSZ(fd):
         try:
@@ -148,7 +148,7 @@ class Bookmarks:
 
     def processRoots(self):
         attrList = {"urls" : [], "folders" : []}
-        for key, value in json.loads(open(self.path,encoding='utf-8').read())["roots"].items():        
+        for key, value in json.loads(open(self.path,encoding='utf-8').read())["roots"].items():
             if "children" in value:
                 self.processTree(attrList, value["children"])
         return attrList
@@ -248,11 +248,11 @@ data_header = [
      'Folder ID',       #01
      'Folder Sync',     #02
      'Type',            #03
-     
+
      'Folder Added',    #04
      'Folder Modified', #05
      'Folder visited',  #06
-     
+
      'Folder Name',     #07
      'Folder URL',      #08
 
@@ -260,11 +260,11 @@ data_header = [
      'URL ID',          #10
      'URL Sync',        #11
      'Type',            #12
-     
+
      'URL Added',       #13
      'URL Modified',    #14
      'URL Visited',     #15
-     
+
      'URL Name',        #16
      'URL Clean',       #17
      'URL',             #18
@@ -291,7 +291,9 @@ data_header = [
      'ParamK',          #38
      'ParamL',          #39
      'ParamM',          #40
-     'ParamN'           #41
+     'ParamN',          #41
+     'ParamO',          #42
+     'ParamP'           #43
     )
     ]
 
@@ -364,7 +366,7 @@ def parseURL(value):
 
     additional1 = ()
     for d in dt:
-        additional1= additional1 + (d+"<=>"+dt[d],)
+        additional1 = additional1 + (d+"<=>"+dt[d],)
 
     return additional0 + additional1
 
@@ -428,11 +430,11 @@ def read_content(content):
                  toNumber(id),
                  toNumber(sync_transaction_version),
                  type,
-                 
+
                  toDate(date_added),
                  toDate(date_modified),
                  toDate(last_visited),
-                 
+
                  name,
                  clean_url(url),
                  url
@@ -485,7 +487,7 @@ def generate_data(instance):
                     toNumber(f_id),
                     toNumber(f_sync_transaction_version),
                     f_type,
-                    
+
                     toDate(f_date_added),
                     toDate(f_date_modified),
                     toDate(f_last_visited),
@@ -493,16 +495,14 @@ def generate_data(instance):
                     f_name,
                     f_url
                 )
-        
+
         for d in data:
             new_data = f_data + d
             data_header.append(new_data)
 
 
-
-
 def generate_bookmarks(profile_):
-    if profile_ is "0":
+    if profile_ == "0":
         profile_ = "Default"
     else:
         profile_ = "Profile "+profile_
@@ -523,8 +523,7 @@ def generate_bookmarks(profile_):
                 found = False
                 pass
     if not found:
-        print("Invalid profile.")
-        exit(1)
+        raise Exception("Invalid profile.")
 
     paths = [
         os.path.expanduser("~/.config/google-chrome/"+profile_+"/Bookmarks"),
@@ -532,17 +531,29 @@ def generate_bookmarks(profile_):
         os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
     ]
 
-    chrome_bookmarks_urls = []
-    chrome_bookmarks_folders = []
-
     for f in paths:
         if os.path.exists(f):
             return email, full, name, Bookmarks(f)
 
 
 def run_chrome(profile):
-    email, full, name, bookmarks = generate_bookmarks(profile)
-    print("User: {",full,"} ["+email+"]")
+    if profile == "all":
+        for x in range(0, 100):
+            try:
+                email, full, name, bookmarks = generate_bookmarks(str(x))
+                if len(full) < 20:
+                    tab = "\t"
+                else:
+                    tab = ""
+                print("User[" + str(x) + "]: {", full, "}\t" + tab + " [", email, "]")
+            except:
+                exit(1)
+    else:
+        try:
+            email, full, name, bookmarks = generate_bookmarks(profile)
+            print("User: {", full, "} [" + email + "]")
+        except Exception as e:
+            print (e)
 
 
 if __name__ == "__main__":
@@ -552,8 +563,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--profile",
         "-p",
-        help="Profile number to extract: 0 Default.",
-        default = "0"
+        help="Profile number to extract: 'all' is Default.",
+        default = "all"
     )
 
     args = vars(parser.parse_args())
