@@ -16,6 +16,7 @@ Just run command
 ## How to run:
 
 For running in default profile:
+
 `python chrome2excel.py`
 
 
@@ -25,6 +26,7 @@ For running in default profile:
 `python chromeprofile.py -p <ProfileNumber>`
 
 For choosing an alternative profile:
+
 `python chrome2excel.py -p <ProfileNumber>`
 
 ## Features:
