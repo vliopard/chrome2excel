@@ -506,8 +506,8 @@ def get_title_conditional(pbar, disabled, url_name, url):
     if not disabled:
         pbar.update(1)
         url_title = gettitle(url)
-		if url_title == "[NO REFRESH]":
-		    url_title = "[NO REFRESH - " + url_name + " ]"
+        if url_title == -1:
+            url_title = "[NO REFRESH - " + url_name + " ]"
     return url_title
 
 
@@ -531,7 +531,7 @@ def generate_workbook(refresh, undupe):
         
     with tqdm.tqdm(total=len(data_header),disable=disabled) as pbar:
         for a in data_header:
-		    # TODO: Select #17 for clean url or #18 for original url
+            # TODO: Select #17 for clean url or #18 for original url
             if not a[18] in visited:
                 visited.add(a[18])
                 data_header_undupe.append(( "MAIN", get_title_conditional(pbar, disabled, a[16], a[18]) ) + a)
