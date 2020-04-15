@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import tqdm
 import shlex
@@ -16,7 +17,6 @@ from openpyxl.styles import Font
 from argparse import ArgumentParser
 from datetime import datetime, timezone, timedelta
 
-from htmlSupport import gettitle
 
 def get_terminal_width():
     return ((get_terminal_size()[0])-1)
@@ -52,7 +52,7 @@ def _get_terminal_size_windows():
             return sizex, sizey
     except:
         pass
-
+ 
 
 def _get_terminal_size_tput():
     try:
@@ -61,8 +61,8 @@ def _get_terminal_size_tput():
         return (cols, rows)
     except:
         pass
-
-
+ 
+ 
 def _get_terminal_size_linux():
     def ioctl_GWINSZ(fd):
         try:
@@ -148,7 +148,7 @@ class Bookmarks:
 
     def processRoots(self):
         attrList = {"urls" : [], "folders" : []}
-        for key, value in json.loads(open(self.path,encoding='utf-8').read())["roots"].items():
+        for key, value in json.loads(open(self.path,encoding='utf-8').read())["roots"].items():        
             if "children" in value:
                 self.processTree(attrList, value["children"])
         return attrList
@@ -248,11 +248,11 @@ data_header = [
      'Folder ID',       #01
      'Folder Sync',     #02
      'Type',            #03
-
+     
      'Folder Added',    #04
      'Folder Modified', #05
      'Folder visited',  #06
-
+     
      'Folder Name',     #07
      'Folder URL',      #08
 
@@ -260,11 +260,11 @@ data_header = [
      'URL ID',          #10
      'URL Sync',        #11
      'Type',            #12
-
+     
      'URL Added',       #13
      'URL Modified',    #14
      'URL Visited',     #15
-
+     
      'URL Name',        #16
      'URL Clean',       #17
      'URL',             #18
@@ -291,9 +291,7 @@ data_header = [
      'ParamK',          #38
      'ParamL',          #39
      'ParamM',          #40
-     'ParamN',          #41
-     'ParamO',          #42
-     'ParamP'           #43
+     'ParamN'           #41
     )
     ]
 
@@ -366,7 +364,7 @@ def parseURL(value):
 
     additional1 = ()
     for d in dt:
-        additional1 = additional1 + (d+"<=>"+dt[d],)
+        additional1= additional1 + (d+"<=>"+dt[d],)
 
     return additional0 + additional1
 
@@ -430,11 +428,11 @@ def read_content(content):
                  toNumber(id),
                  toNumber(sync_transaction_version),
                  type,
-
+                 
                  toDate(date_added),
                  toDate(date_modified),
                  toDate(last_visited),
-
+                 
                  name,
                  clean_url(url),
                  url
@@ -487,7 +485,7 @@ def generate_data(instance):
                     toNumber(f_id),
                     toNumber(f_sync_transaction_version),
                     f_type,
-
+                    
                     toDate(f_date_added),
                     toDate(f_date_modified),
                     toDate(f_last_visited),
@@ -495,95 +493,15 @@ def generate_data(instance):
                     f_name,
                     f_url
                 )
-
+        
         for d in data:
             new_data = f_data + d
             data_header.append(new_data)
 
 
-def generate_workbook(refresh):
-    print("Generating workbook...")
-    book = Workbook()
-    sheet = book.active
-    sheet.title = "Chrome URLs"
-
-    visited = set()
-    data_header_undupe = []
-    print("Find duplicate lines...")
-    for a in data_header:
-        tuple_dupe = ( "DUPE", "")
-        tuple_nodupe = ( "", "")
-        if not a[18] in visited:        
-            visited.add(a[18])
-            data_header_undupe.append(tuple_nodupe + a)
-        else: #TODO: May be changed to remove line instead of marking as dupe.
-            data_header_undupe.append(tuple_dupe + a)
-
-    if refresh is not "off":
-        print("_"*(get_terminal_width()))
-        print("Getting URL Status...")
-        print("\u203e"*(get_terminal_width()))
-        with tqdm.tqdm(total=len(data_header_undupe)) as pbar:
-            for a in data_header_undupe:
-                pbar.update(1)
-                lst = list(a)
-                lst[1] = gettitle(a[19])
-                a = tuple(lst)
-
-    print("Writting spreadsheet...")
-    print("\u203e"*(get_terminal_width()))
-    with tqdm.tqdm(total=len(data_header_undupe)) as pbar:
-        for row in data_header_undupe:
-            pbar.update(1)
-            sheet.append(row)
-
-    sheet.freeze_panes = "A2"
-    sheet.auto_filter.ref = "A1:AT30000"
-
-    print("_"*(get_terminal_width()))
-    print("Formating columns...")
-    print("\u203e"*(get_terminal_width()))
-    courier = ['T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS']
-    with tqdm.tqdm(total=(len(courier)*len(sheet['T']))) as pbar:
-        for l in courier:
-            for col_cell in sheet[l]:
-                pbar.update(1)
-                col_cell.font = Font(size = 10, name = 'Courier New')
-
-    print("_"*(get_terminal_width()))
-    print("Formating dates...")
-    print("\u203e"*(get_terminal_width()))
-    dates = ['G','H','I','P','Q','R']
-    with tqdm.tqdm(total=(len(dates)*len(sheet['G']))) as pbar:
-        for d in dates:
-            sheet.column_dimensions[d].width = 18
-            for col_cell in sheet[d]:
-                pbar.update(1)
-                col_cell.number_format = "YYYY/MM/DD hh:mm:ss"
-
-    print("_"*(get_terminal_width()))
-    print("Hiding columns...")
-    hidden = ['C','D','E','F','G','H','I','J','K','L','Z','AA','AB','AC']
-    for h in hidden:
-        sheet.column_dimensions[h].width = 9
-        sheet.column_dimensions[h].hidden = True
-
-    print("Formating header...")
-    for cell in sheet["1:1"]:
-        cell.font = Font(bold=True)
-
-    print("Sizing columns...")
-    sheet.column_dimensions['S'].width = 30
-    sheet.column_dimensions['T'].width = 85
-
-    print("Saving workbook...")
-    book.save("chrome.xlsx")
-    print("Done.")
-    print("\u203e"*(get_terminal_width()))
 
 
 def generate_bookmarks(profile_):
-    print("Generating bookmarks...")
     if profile_ is "0":
         profile_ = "Default"
     else:
@@ -614,21 +532,17 @@ def generate_bookmarks(profile_):
         os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
     ]
 
+    chrome_bookmarks_urls = []
+    chrome_bookmarks_folders = []
+
     for f in paths:
         if os.path.exists(f):
             return email, full, name, Bookmarks(f)
 
 
-def run_chrome(profile, refresh):
-    print("\n\n")
-    print("_"*(get_terminal_width()))
-    print("Starting Chrome Bookmars export.")
+def run_chrome(profile):
     email, full, name, bookmarks = generate_bookmarks(profile)
-    print("_"*(get_terminal_width()))
-    print("Processing user: {",full,"} ["+email+"]")
-    print("\u203e"*(get_terminal_width()))
-    generate_data(bookmarks)
-    generate_workbook(refresh)
+    print("User: {",full,"} ["+email+"]")
 
 
 if __name__ == "__main__":
@@ -640,12 +554,6 @@ if __name__ == "__main__":
         "-p",
         help="Profile number to extract: 0 Default.",
         default = "0"
-    )
-    parser.add_argument(
-        "--refresh",
-        "-r",
-        help="Refresh URL Title: off Default.",
-        default = "off"
     )
 
     args = vars(parser.parse_args())

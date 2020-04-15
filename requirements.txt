@@ -1,3 +1,4 @@
+lxml
 tqdm
 shlex
 public
