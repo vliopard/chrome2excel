@@ -311,9 +311,7 @@ def debug(msg):
 
 
 def dateFromWebkit(timestamp):
-    epochStart = datetime(1601,1,1)
-    delta = timedelta(microseconds=int(timestamp))
-    return (epochStart + delta).replace(tzinfo=timezone.utc).astimezone()
+    return (datetime(1601,1,1) + timedelta(microseconds=int(timestamp))).replace(tzinfo=timezone.utc).astimezone()
 
 
 def clean_url(url):
@@ -560,15 +558,15 @@ def generate_html(refresh, undupe, clean):
                 website = a[18]
 
             if refresh == 'on':
-                website=gettitle(website)
+                title=gettitle(website)
 
             if not fold in created:
-                url = Urls(website,a[13],a[16])
-                fold = Folder(a[4],a[5],hostname, [url])
+                url = Urls(website, a[13], title)
+                fold = Folder(a[4], a[5], hostname, [url])
                 created.add(hostname)
                 folders.append(fold)
             else:
-                url = Urls(website,a[13],a[16])
+                url = Urls(website, a[13], title)
                 for x in folders:
                     if x.folder_name == hostname:
                         x.add_url(url)
