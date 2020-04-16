@@ -33,11 +33,19 @@ For choosing an alternative profile:
 
 **To turn on remove duplicate entries:**
 
-`python chrome2excel.py -p <ProfileNumber> -u on`
+`python chrome2excel.py -p <ProfileNumber> -u [on, off]`
 
 **To turn on refresh URL Title:**
 
-`python chrome2excel.py -p <ProfileNumber> -r on`
+`python chrome2excel.py -p <ProfileNumber> -r [on, off]`
+
+**To turn on clean URL from tracking**
+
+`python chrome2excel.py -p <ProfileNumber> -c [on, off]`
+
+**To set output file type as HTML or XLSX:**
+
+`python chrome2excel.py -p <ProfileNumber> -o [html, xlsx]`
 
 ## About
 *This is an* ***Open Source Project*** *that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
