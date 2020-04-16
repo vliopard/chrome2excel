@@ -521,6 +521,7 @@ def get_title_conditional(pbar, disabled, url_name, url):
 
 
 def import_txt():
+    print("Importing text file...")
     url_list = []
     with open("chrome.txt",encoding='utf-8') as bm:
         for line in bm:
@@ -529,9 +530,10 @@ def import_txt():
 
 
 def append_dataheader(url_list):
+    print("Appending dataheader...")
     for line in url_list:
         url_parts= parseURL(line)
-        stub_date =  toDate(13163688297)
+        stub_date =  toDate(131636882970000)
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
                    stub_date, stub_date, stub_date, 'Folder Name', 
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
