@@ -557,6 +557,7 @@ def generate_html(refresh, undupe, clean):
             else:
                 website = a[18]
 
+            title = a[16]
             if refresh == 'on':
                 title=gettitle(website)
                 if title == -1:
