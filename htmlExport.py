@@ -71,7 +71,7 @@ def close_folder():
 
 
 def add_url(url, add_date, url_title):
-    return new_line()+new_tab()+'<DT><A HREF="'+url+'" ADD_DATE="'+dateToWebkit(add_date)+'">'+url_title+'</A>'
+    return new_line()+new_tab()+'<DT><A HREF="'+str(url)+'" ADD_DATE="'+dateToWebkit(add_date)+'">'+str(url_title)+'</A>'
 
 
 def new_line():
