@@ -559,6 +559,8 @@ def generate_html(refresh, undupe, clean):
 
             if refresh == 'on':
                 title=gettitle(website)
+                if title == -1:
+                    title = "[NO REFRESH - " + a[16] + " ]"
 
             if not fold in created:
                 url = Urls(website, a[13], title)
