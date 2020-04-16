@@ -1,7 +1,5 @@
 import os
-import sys
 import json
-import tqdm
 import shlex
 import struct
 import public
@@ -10,9 +8,6 @@ import subprocess
 
 from urllib import parse
 from urllib.parse import urlencode, urlparse, parse_qsl, urlunparse
-
-from openpyxl import Workbook
-from openpyxl.styles import Font
 
 from argparse import ArgumentParser
 from datetime import datetime, timezone, timedelta

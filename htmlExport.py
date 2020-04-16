@@ -38,10 +38,12 @@ class Urls:
 
 
 def dateToWebkit(date_string):
-    diff = date_string - datetime(1601, 1, 1)
-    seconds_in_day = 60 * 60 * 24
-    value = '{:<010d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds)
-    return str(value)
+    if date_string:
+        diff = date_string - datetime(1601, 1, 1)
+        seconds_in_day = 60 * 60 * 24
+        value = '{:<010d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds)
+        return str(value)
+    return("")
 
 
 header = """<!DOCTYPE NETSCAPE-Bookmark-file-1>
