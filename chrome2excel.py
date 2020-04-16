@@ -573,7 +573,11 @@ def generate_html(refresh, undupe, clean):
                     if x.folder_name == hostname:
                         x.add_url(url)
 
+    print("Saving HTML file...")
     write_html(folders)
+    print("Done.")
+    print("\u203e"*(get_terminal_width()))
+    
 
 
 def generate_workbook(refresh, undupe, clean):

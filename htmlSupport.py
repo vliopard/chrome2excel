@@ -37,7 +37,7 @@ def gettitle(url):
 
     parser = Parser()
     parser.feed(data.decode('utf-8', errors='ignore'))
-    return parser.title
+    return parser.title.replace('\n','[n').replace('\t','[t')
 
 
 def get_title(url):
