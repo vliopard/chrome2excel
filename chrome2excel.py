@@ -602,7 +602,9 @@ def generate_html(refresh, undupe, clean, input):
                     if x.folder_name == hostname:
                         x.add_url(url)
 
+    print("_"*(get_terminal_width()))
     print("Saving HTML file...")
+    print("\u203e"*(get_terminal_width()))
     write_html(folders)
     print("Done.")
     print("\u203e"*(get_terminal_width()))
