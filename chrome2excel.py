@@ -445,7 +445,7 @@ def read_content(content):
                  toDate(date_modified),
                  toDate(last_visited),
 
-                 name.replace('\n','[n').replace('\t','[t'),
+                 name,
                  clean_url(url),
                  url
                 )

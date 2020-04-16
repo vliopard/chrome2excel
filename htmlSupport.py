@@ -59,7 +59,7 @@ def gettitle(url):
     else:
         try:
             t = lxml.html.parse(url)
-            return t.find(".//title").text
+            return t.find(".//title").text.replace('\n','[n').replace('\t','[t')
         except:
             return -1
 
