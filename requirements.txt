@@ -4,3 +4,4 @@ shlex
 public
 openpyxl
 mecanize
+BeautifulSoup4

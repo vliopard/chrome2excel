@@ -705,7 +705,7 @@ def run_chrome(profile, refresh, undupe, output, clean):
     print("\u203e"*(get_terminal_width()))
     generate_data(bookmarks)
     if output == "xlsx":
-        generate_workbook(refresh, undupe)
+        generate_workbook(refresh, undupe, clean)
     else:
         generate_html(refresh, undupe, clean)
 

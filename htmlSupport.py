@@ -6,6 +6,7 @@ from urllib.error import URLError, HTTPError
 from mechanize import Browser
 from http import HTTPStatus
 from http.client import RemoteDisconnected
+from bs4 import BeautifulSoup
 
 
 class Parser(HTMLParser):
@@ -27,19 +28,19 @@ class Parser(HTMLParser):
             self._in_title_tag = False
 
 
-def get_title(url):
+def gettitle(url):
     try:
         with urlopen(url) as stream:
             data = stream.read()
     except:
-        return url
+        return -1
 
     parser = Parser()
     parser.feed(data.decode('utf-8', errors='ignore'))
     return parser.title
 
 
-def gettitle(url):
+def get_title(url):
     ret = None
     try:
         req = Request(url)
@@ -73,3 +74,8 @@ def _get_title(url):
     except:
         response = "request disallowed by robots"
     return (response)
+
+
+def url_title(url):
+    soup = BeautifulSoup(urlopen("https://www.google.com"))
+    return soup.title.string
