@@ -380,8 +380,7 @@ def parseURL(value):
 def toDate(value):
     date_value = toNumber(value)
     if date_value:
-        dt = hex(int(date_value)*10)[2:17]
-        microseconds = int(dt, 16) / 10
+        microseconds = int(hex(int(date_value)*10)[2:17], 16) / 10
         seconds, microseconds = divmod(microseconds, 1000000)
         days, seconds = divmod(seconds, 86400)
         return datetime(1601, 1, 1) + timedelta(days, seconds, microseconds)
@@ -521,8 +520,35 @@ def get_title_conditional(pbar, disabled, url_name, url):
     return url_title
 
 
-def generate_html(refresh, undupe, clean):
+def import_txt():
+    url_list = []
+    with open("chrome.txt",encoding='utf-8') as bm:
+        for line in bm:
+            url_list.append(line)
+    return url_list
+
+
+def append_dataheader(url_list):
+    for line in url_list:
+        url_parts= parseURL(line)
+        stub_date =  toDate(13163688297)
+        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
+                   stub_date, stub_date, stub_date, 'Folder Name', 
+                   'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
+                   stub_date, stub_date, stub_date, 'URL Name', 
+                   clean_url(line), line, 'Scheme', 'Netloc', url_parts[2], 
+                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password', 
+                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF', 
+                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL', 
+                   'ParamM', 'ParamN', 'ParamO', 'ParamP' )
+        data_header.append(element)
+
+
+def generate_html(refresh, undupe, clean, input):
     print("Generating html...")
+    
+    append_dataheader(import_txt())
+    
     created = set()
     visited = set()
     folders = []
@@ -579,7 +605,6 @@ def generate_html(refresh, undupe, clean):
     print("Done.")
     print("\u203e"*(get_terminal_width()))
     
-
 
 def generate_workbook(refresh, undupe, clean):
     print("Generating workbook...")
@@ -700,7 +725,7 @@ def generate_bookmarks(profile_):
             return email, full, name, Bookmarks(f)
 
 
-def run_chrome(profile, refresh, undupe, output, clean):
+def run_chrome(profile, refresh, undupe, output, clean, input):
     print("\n\n")
     print("_"*(get_terminal_width()))
     print("Starting Chrome Bookmars export.")
@@ -712,7 +737,7 @@ def run_chrome(profile, refresh, undupe, output, clean):
     if output == "xlsx":
         generate_workbook(refresh, undupe, clean)
     else:
-        generate_html(refresh, undupe, clean)
+        generate_html(refresh, undupe, clean, input)
 
 
 if __name__ == "__main__":
@@ -747,6 +772,12 @@ if __name__ == "__main__":
         "--clean",
         "-c",
         help="Remove trackers from URL [on, off]: off Default.",
+        default = "off"
+    )
+    parser.add_argument(
+        "--input",
+        "-i",
+        help="Import TXT file [on, off]: off Default.",
         default = "off"
     )
 
