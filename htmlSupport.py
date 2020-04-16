@@ -35,9 +35,19 @@ def gettitle(url):
     except:
         return -1
 
-    parser = Parser()
-    parser.feed(data.decode('utf-8', errors='ignore'))
-    return parser.title.replace('\n','[n').replace('\t','[t')
+    try:
+        parser = Parser()
+        decoded = data.decode('utf-8', errors='ignore')
+        parser.feed(decoded)
+        value = parser.title.replace('\n','[n').replace('\t','[t').strip()
+        if len(value) > 1:
+            return value
+        else:
+            return "[ NONAME - " + value + "]"
+    except NotImplementedError as e:        
+        return "["+ str(e) + " " + url +" ]"
+    except:
+        return -1
 
 
 def get_title(url):
