@@ -4,6 +4,7 @@ import tools
 import preset
 import bookMarks
 
+import htmlExport
 import htmlSupport
 import screenSupport
 import chromeProfile
@@ -226,7 +227,7 @@ def generate_html(refresh, undupe, clean, input):
     print("_"*(screenSupport.get_terminal_width()))
     print("Saving HTML file...")
     print("\u203e"*(screenSupport.get_terminal_width()))
-    htmlSupport.write_html(folders)
+    htmlExport.write_html(folders)
     print("Done.")
     print("\u203e"*(screenSupport.get_terminal_width()))
 
