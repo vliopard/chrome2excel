@@ -1,5 +1,4 @@
 import wx
-import glob
 import htmlSupport
 import chromeProfile
 
@@ -65,6 +64,8 @@ class urlFrame(wx.Frame):
 
     def __init__(self):
         wx.Frame.__init__(self, parent=None, title='Bookmarks Editor')
+
+        # TODO: Recover settings from disk
         self.selected = ""
         self.file_type = False
         self.reload_title = False
@@ -99,6 +100,7 @@ class urlFrame(wx.Frame):
         dlg = MyDialog(self, -1)
         retval = dlg.ShowModal()
         if retval == wx.ID_OK:
+            # TODO: Load bookmars from Chrome profile
             print("Loading Bookmarks...")
         else:
             self.selected = ""
@@ -218,6 +220,7 @@ class SettingsDialog(wx.Dialog):
         label, value = setButtonToggle(self, rb.GetId())
         rb.SetLabel(label)
         rb.SetValue(value)
+        # TODO: Save settings to disk
 
 
 def setButtonToggle(self, btnId):
