@@ -11,6 +11,8 @@ from html.parser import HTMLParser
 
 from mechanize import Browser
 
+from socket import timeout
+
 from http import HTTPStatus
 from http.client import RemoteDisconnected
 
@@ -90,8 +92,14 @@ def clean_url(url):
 
 def gettitle(url):
     try:
-        with urlopen(url) as stream:
+        with urlopen(url, timeout=10) as stream:
             data = stream.read()
+    except HTTPError as error:
+        return "[ HTTPError - " + str(error) + "]"
+    except URLError as error:
+        return "[ URLError - " + str(error) + "]"
+    except timeout as error:
+        return "[ Timeout - " + str(error) + "]"
     except:
         return -1
 
