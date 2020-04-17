@@ -1,2 +1,2 @@
 @ echo off
-python chromeprofile.py -p %1
+python chromeProfile.py -p %1

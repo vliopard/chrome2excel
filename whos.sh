@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 chromeprofile.py -p $1
+python3 chromeProfile.py -p $1

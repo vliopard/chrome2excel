@@ -23,7 +23,7 @@ For running in default profile:
 
 **To identify local profiles:**
 
-`python chromeprofile.py -p <ProfileNumber>`
+`python chromeProfile.py -p <ProfileNumber>`
 
 For choosing an alternative profile:
 

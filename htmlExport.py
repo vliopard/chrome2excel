@@ -1,49 +1,4 @@
-from datetime import datetime
-
-class Folder:
-
-    def __init__(
-        self,
-        add_date=None,
-        modify_date=None,
-        folder_name=None,
-        children=None
-    ):
-        self.add_date = add_date
-        self.modify_date = modify_date
-        self.folder_name = folder_name
-        self.children = children
-    
-    def add_url(self, url):
-        self.children.append(url)
-
-    def __repr__(self):
-        return str(self.__dict__)
-
-
-class Urls:
-
-    def __init__(
-        self,
-        url=None,
-        add_date=None,
-        title=None
-    ):
-        self.url = url
-        self.add_date = add_date
-        self.title = title
-
-    def __repr__(self):
-        return str(self.__dict__)
-
-
-def dateToWebkit(date_string):
-    if date_string:
-        diff = date_string - datetime(1601, 1, 1)
-        seconds_in_day = 60 * 60 * 24
-        value = '{:<010d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds)
-        return str(value)
-    return("")
+import tools
 
 
 header = """<!DOCTYPE NETSCAPE-Bookmark-file-1>
@@ -58,9 +13,10 @@ tail = """\n</DL><p>"""
 
 level = 1
 
+
 def open_folder(add_date, modified_date, folder_name):
     global level
-    ret = new_line()+new_tab()+'<DT><H3 ADD_DATE="'+dateToWebkit(add_date)+'" LAST_MODIFIED="'+dateToWebkit(modified_date)+'">'+folder_name+'</H3>'+new_line()+new_tab()+'<DL><p>'
+    ret = new_line()+new_tab()+'<DT><H3 ADD_DATE="'+tools.dateToWebkit(add_date)+'" LAST_MODIFIED="'+tools.dateToWebkit(modified_date)+'">'+folder_name+'</H3>'+new_line()+new_tab()+'<DL><p>'
     level = level + 1
     return ret
 
@@ -73,7 +29,7 @@ def close_folder():
 
 
 def add_url(url, add_date, url_title):
-    return new_line()+new_tab()+'<DT><A HREF="'+str(url).strip()+'" ADD_DATE="'+dateToWebkit(add_date)+'">'+str(url_title)+'</A>'
+    return new_line()+new_tab()+'<DT><A HREF="'+str(url).strip()+'" ADD_DATE="'+tools.dateToWebkit(add_date)+'">'+str(url_title)+'</A>'
 
 
 def new_line():
@@ -90,12 +46,12 @@ def write_html(fold):
         chrome_html.write(header)
 
         for item in fold:
-            if isinstance(item, Folder):
+            if isinstance(item, tools.Folder):
                 chrome_html.write(open_folder(item.add_date, item.modify_date, item.folder_name))
                 for url in item.children:
-                    if isinstance(url, Urls):
+                    if isinstance(url, tools.Urls):
                         chrome_html.write(add_url(url.url, url.add_date, url.title))
-                    elif isinstance (url, Folder):
+                    elif isinstance (url, tools.Folder):
                         print("New Folder")
                 chrome_html.write(close_folder())
 

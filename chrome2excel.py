@@ -1,396 +1,17 @@
 import os
-import json
 import tqdm
-import shlex
-import struct
-import public
-import platform
-import subprocess
+import tools
+import preset
+import bookMarks
 
-from urllib import parse
-from urllib.parse import urlencode, urlparse, parse_qsl, urlunparse
+import htmlSupport
+import screenSupport
+import chromeProfile
 
 from openpyxl import Workbook
 from openpyxl.styles import Font
 
 from argparse import ArgumentParser
-from datetime import datetime, timezone, timedelta
-
-from htmlSupport import gettitle
-from htmlExport import Folder, Urls, write_html
-
-
-def get_terminal_width():
-    return ((get_terminal_size()[0])-1)
-
-
-def get_terminal_size():
-    current_os = platform.system()
-    tuple_xy = None
-    if current_os == 'Windows':
-        tuple_xy = _get_terminal_size_windows()
-        if tuple_xy is None:
-            tuple_xy = _get_terminal_size_tput()
-    if current_os in ['Linux', 'Darwin'] or current_os.startswith('CYGWIN'):
-        tuple_xy = _get_terminal_size_linux()
-    if tuple_xy is None:
-        print("default")
-        tuple_xy = (80, 25)
-    return tuple_xy
-
-
-def _get_terminal_size_windows():
-    try:
-        from ctypes import windll, create_string_buffer
-        h = windll.kernel32.GetStdHandle(-12)
-        csbi = create_string_buffer(22)
-        res = windll.kernel32.GetConsoleScreenBufferInfo(h, csbi)
-        if res:
-            (bufx, bufy, curx, cury, wattr,
-             left, top, right, bottom,
-             maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
-            sizex = right - left + 1
-            sizey = bottom - top + 1
-            return sizex, sizey
-    except:
-        pass
-
-
-def _get_terminal_size_tput():
-    try:
-        cols = int(subprocess.check_call(shlex.split('tput cols')))
-        rows = int(subprocess.check_call(shlex.split('tput lines')))
-        return (cols, rows)
-    except:
-        pass
-
-
-def _get_terminal_size_linux():
-    def ioctl_GWINSZ(fd):
-        try:
-            import fcntl
-            import termios
-            cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
-            return cr
-        except:
-            pass
-    cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
-    if not cr:
-        try:
-            fd = os.open(os.ctermid(), os.O_RDONLY)
-            cr = ioctl_GWINSZ(fd)
-            os.close(fd)
-        except:
-            pass
-    if not cr:
-        try:
-            cr = (os.environ['LINES'], os.environ['COLUMNS'])
-        except:
-            return None
-    return int(cr[1]), int(cr[0])
-
-
-@public.add
-class Item(dict):
-
-    @property
-    def id(self):
-        return self["id"]
-
-    @property
-    def name(self):
-        return self["name"]
-
-    @property
-    def type(self):
-        return self["type"]
-
-    @property
-    def url(self):
-        if "url" in self:
-            return self["url"]
-        return ""
-
-    @property
-    def icon(self):
-        if "icon" in self:
-            return self["icon"]
-        return ""
-
-    @property
-    def added(self):
-        return dateFromWebkit(self["date_added"])
-
-    @property
-    def modified(self):
-        if "date_modified" in self:
-            return dateFromWebkit(self["date_modified"])
-
-    @property
-    def folders(self):
-        items = []
-        for children in self["children"]:
-            if children["type"] == "folder":
-                items.append(Item(children))
-        return items
-
-    @property
-    def urls(self):
-        items = []
-        for children in self["children"]:
-            if children["type"] == "url":
-                items.append(Item(children))
-        return items
-
-
-@public.add
-class Bookmarks:
-    path = None
-
-    def __init__(self, path):
-        self.path = path
-        self.data = json.loads(open(path,encoding='utf-8').read())
-        self.attrList = self.processRoots()
-        self.urls = self.attrList["urls"]
-        self.folders = self.attrList["folders"]
-
-    def processRoots(self):
-        attrList = {"urls" : [], "folders" : []}
-        for key, value in json.loads(open(self.path,encoding='utf-8').read())["roots"].items():
-            if "children" in value:
-                self.processTree(attrList, value["children"])
-        return attrList
-
-    def processTree(self, attrList, childrenList):
-        for item in childrenList:
-            self.processUrls(item, attrList, childrenList)
-            self.processFolders(item, attrList, childrenList)
-
-    def processUrls(self, item, attrList, childrenList):
-        if "type" in item and item["type"] == "url":
-            attrList["urls"].append(Item(item))
-
-    def processFolders(self, item, attrList, childrenList):
-        if "type" in item and item["type"] == "folder":
-            attrList["folders"].append(Item(item))
-            if "children" in item:
-                self.processTree(attrList, item["children"])
-
-
-list_size = 0
-
-words = (
-    "__twitter_impression",
-    "bffb",
-    "client_id",
-    "cmpid",
-    "comment_id",
-    "fb_action_ids",
-    "fb_action_types",
-    "fb_comment_id",
-    "fbclid",
-    "fbid",
-    "notif_id",
-    "notif_t",
-    "reply_comment_id",
-    "story_fbid",
-    "total_comments",
-    "campaign",
-    "campanha",
-    "gws_rd",
-    "mkt_tok",
-    "offset",
-    "sc_campaign",
-    "sc_category",
-    "sc_channel",
-    "sc_content",
-    "sc_country",
-    "sc_funnel",
-    "sc_medium",
-    "sc_publisher",
-    "sc_segment",
-    "utm_",
-    "utm_campaign",
-    "utm_content",
-    "utm_medium",
-    "utm_source",
-    "utm_term"
-)
-
-youtube = (
-    "sm",
-    "time_continue",
-    "feature",
-    "app",
-    "bpctr",
-    "1c"
-)
-
-facebook = (
-    "_rdc",
-    "_rdr",
-    "rc",
-    "comment_tracking",
-    "__tn__",
-    "__xts__[0]",
-    "__xts__",
-    "sns",
-    "hc_location",
-    "pnref",
-    "entry_point",
-    "tab",
-    "source_ref",
-    "hc_ref",
-    "__mref",
-    "ref",
-    "eid",
-    "fref",
-    "lst",
-    "__nodl",
-    "permPage",
-    "notif_id"
-)
-
-data_header = [
-    ('Folder GUID',     #00
-     'Folder ID',       #01
-     'Folder Sync',     #02
-     'Type',            #03
-
-     'Folder Added',    #04
-     'Folder Modified', #05
-     'Folder visited',  #06
-
-     'Folder Name',     #07
-     'Folder URL',      #08
-
-     'URL GUID',        #09
-     'URL ID',          #10
-     'URL Sync',        #11
-     'Type',            #12
-
-     'URL Added',       #13
-     'URL Modified',    #14
-     'URL Visited',     #15
-
-     'URL Name',        #16
-     'URL Clean',       #17
-     'URL',             #18
-     'Scheme',          #19
-     'Netloc',          #20
-     'Hostname',        #21
-     'Path',            #22
-     'Port',            #23
-     'Param',           #24
-     'Fragment',        #25
-     'Username',        #26
-     'Password',        #27
-
-     'ParamA',          #28
-     'ParamB',          #29
-     'ParamC',          #30
-     'ParamD',          #31
-     'ParamE',          #32
-     'ParamF',          #33
-     'ParamG',          #34
-     'ParamH',          #35
-     'ParamI',          #36
-     'ParamJ',          #37
-     'ParamK',          #38
-     'ParamL',          #39
-     'ParamM',          #40
-     'ParamN',          #41
-     'ParamO',          #42
-     'ParamP'           #43
-    )
-    ]
-
-
-def debug(msg):
-    print(msg)
-
-
-def dateFromWebkit(timestamp):
-    return (datetime(1601,1,1) + timedelta(microseconds=int(timestamp))).replace(tzinfo=timezone.utc).astimezone()
-
-
-def clean_url(url):
-    parsed = urlparse(url)
-    qd = parse_qsl(parsed.query, keep_blank_values=True)
-    filtered = {}
-    if parsed.hostname:
-        hname = parsed.hostname
-    else:
-        hname = parsed.netloc
-    for k, v in qd:
-        if ("youtube.com" in hname or "youtu.be" in hname):
-            if not k.startswith(youtube) and not k.startswith(words):
-                filtered.update([(k,v)])
-        elif ("facebook.com" in hname):
-            if not k.startswith(facebook) and not k.startswith(words):
-                filtered.update([(k,v)])
-        elif not k.startswith(words):
-            filtered.update([(k,v)])
-
-    newurl = urlunparse([
-        parsed.scheme,
-        parsed.netloc,
-        parsed.path,
-        parsed.params,
-        urlencode(filtered, doseq=True),
-        parsed.fragment
-    ])
-    return newurl
-
-
-def checkNone(val):
-    if val is None:
-        return '[Empty]'
-    return str(val)
-
-
-def getUser(userpath):
-    username = json.loads(open(userpath,encoding='utf-8').read())["account_info"][0]
-    return username['email'], username['full_name'], username['given_name']
-
-
-def parseURL(value):
-    parsed = urlparse(value)
-    dt = dict(parse.parse_qsl(parse.urlsplit(value).query))
-
-    additional0 = (
-                    checkNone(parsed.scheme),
-                    checkNone(parsed.netloc),
-                    checkNone(parsed.hostname),
-                    checkNone(parsed.path),
-                    checkNone(parsed.port),
-                    checkNone(parsed.params),
-                    checkNone(parsed.fragment),
-                    checkNone(parsed.username),
-                    checkNone(parsed.password)
-                  )
-
-    additional1 = ()
-    for d in dt:
-        additional1 = additional1 + (d+"<=>"+dt[d],)
-
-    return additional0 + additional1
-
-
-def toDate(value):
-    date_value = toNumber(value)
-    if date_value:
-        microseconds = int(hex(int(date_value)*10)[2:17], 16) / 10
-        seconds, microseconds = divmod(microseconds, 1000000)
-        days, seconds = divmod(seconds, 86400)
-        return datetime(1601, 1, 1) + timedelta(days, seconds, microseconds)
-    return None
-
-
-def toNumber(value):
-    if value != '[Empty]':
-        return int(value)
-    return None
 
 
 def read_content(content):
@@ -399,11 +20,11 @@ def read_content(content):
         date_added = '[Empty]'
         date_modified = '[Empty]'
         guid = '[Empty]'
-        id = '[Empty]'
+        item_id = '[Empty]'
         last_visited = '[Empty]'
         name = '[Empty]'
         sync_transaction_version = '[Empty]'
-        type = '[Empty]'
+        item_type = '[Empty]'
         url = '[Empty]'
         icon = '[Empty]'
         for x in chrome_url:
@@ -423,32 +44,32 @@ def read_content(content):
                 # TODO: Add icon to the spreadsheet
                 icon = chrome_url[x]
             elif x == 'id':
-                id = chrome_url[x]
+                item_id = chrome_url[x]
             elif x == 'name':
                 name = chrome_url[x]
             elif x == 'sync_transaction_version':
                 sync_transaction_version = chrome_url[x]
             elif x == 'type':
-                type = chrome_url[x]
+                item_type = chrome_url[x]
             elif x == 'url':        
                 url = chrome_url[x]
             else:
-                debug('WARNING: '+str(x))
+                tools.debug('WARNING: '+str(x))
         part1 = (
                  guid,
-                 toNumber(id),
-                 toNumber(sync_transaction_version),
-                 type,
+                 tools.toNumber(item_id),
+                 tools.toNumber(sync_transaction_version),
+                 item_type,
 
-                 toDate(date_added),
-                 toDate(date_modified),
-                 toDate(last_visited),
+                 tools.toDate(date_added),
+                 tools.toDate(date_modified),
+                 tools.toDate(last_visited),
 
                  name,
-                 clean_url(url),
+                 htmlSupport.clean_url(url),
                  url
                 )
-        part2 = parseURL(url)
+        part2 = htmlSupport.parseURL(url)
         part3 = part1 + part2
         data.append (part3)
     return data
@@ -490,16 +111,16 @@ def generate_data(instance):
             elif x == 'url':        
                 f_url = folder[x]
             else:
-                debug('WARNING: '+str(x))
+                tools.debug('WARNING: '+str(x))
         f_data= (
                     f_guid,
-                    toNumber(f_id),
-                    toNumber(f_sync_transaction_version),
+                    tools.toNumber(f_id),
+                    tools.toNumber(f_sync_transaction_version),
                     f_type,
 
-                    toDate(f_date_added),
-                    toDate(f_date_modified),
-                    toDate(f_last_visited),
+                    tools.toDate(f_date_added),
+                    tools.toDate(f_date_modified),
+                    tools.toDate(f_last_visited),
 
                     f_name,
                     f_url
@@ -507,14 +128,14 @@ def generate_data(instance):
 
         for d in data:
             new_data = f_data + d
-            data_header.append(new_data)
+            preset.data_header.append(new_data)
 
 
 def get_title_conditional(pbar, disabled, url_name, url):
     url_title = ""
     if not disabled:
         pbar.update(1)
-        url_title = gettitle(url)
+        url_title = htmlSupport.gettitle(url)
         if url_title == -1:
             url_title = "[NO REFRESH - " + url_name + " ]"
     return url_title
@@ -532,18 +153,18 @@ def import_txt():
 def append_dataheader(url_list):
     print("Appending dataheader...")
     for line in url_list:
-        url_parts= parseURL(line)
-        stub_date =  toDate(131636882970000)
+        url_parts= htmlSupport.parseURL(line)
+        stub_date =  tools.toDate(131636882970000)
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
                    stub_date, stub_date, stub_date, 'Folder Name', 
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
                    stub_date, stub_date, stub_date, 'URL Name', 
-                   clean_url(line), line, 'Scheme', 'Netloc', url_parts[2], 
+                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2], 
                    'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password', 
                    'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF', 
                    'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL', 
                    'ParamM', 'ParamN', 'ParamO', 'ParamP' )
-        data_header.append(element)
+        preset.data_header.append(element)
 
 
 def generate_html(refresh, undupe, clean, input):
@@ -556,11 +177,11 @@ def generate_html(refresh, undupe, clean, input):
     folders = []
     data_header_undupe = []
     if undupe == 'on':
-        print("_"*(get_terminal_width()))
+        print("_"*(screenSupport.get_terminal_width()))
         print("Removing duplicates...")
-        print("\u203e"*(get_terminal_width()))
-        with tqdm.tqdm(total=len(data_header)) as pbar:
-            for a in data_header:
+        print("\u203e"*(screenSupport.get_terminal_width()))
+        with tqdm.tqdm(total=len(preset.data_header)) as pbar:
+            for a in preset.data_header:
                 pbar.update(1)
                 if clean == 'on':
                     website = a[17]
@@ -570,11 +191,11 @@ def generate_html(refresh, undupe, clean, input):
                     visited.add(website)
                     data_header_undupe.append(a)
     else:
-        data_header_undupe = data_header
+        data_header_undupe = preset.data_header
 
-    print("_"*(get_terminal_width()))
+    print("_"*(screenSupport.get_terminal_width()))
     print("Writting html...")
-    print("\u203e"*(get_terminal_width()))
+    print("\u203e"*(screenSupport.get_terminal_width()))
     with tqdm.tqdm(total=len(data_header_undupe[1:])) as pbar:
         for a in data_header_undupe[1:]:
             pbar.update(1)
@@ -587,28 +208,28 @@ def generate_html(refresh, undupe, clean, input):
 
             title = a[16]
             if refresh == 'on':
-                title=gettitle(website)
+                title=htmlSupport.gettitle(website)
                 if title == -1:
                     title = "[NO REFRESH - " + a[16] + " ]"
 
             if not fold in created:
-                url = Urls(website, a[13], title)
-                fold = Folder(a[4], a[5], hostname, [url])
+                url = tools.Urls(website, a[13], title)
+                fold = tools.Folder(a[4], a[5], hostname, [url])
                 created.add(hostname)
                 folders.append(fold)
             else:
-                url = Urls(website, a[13], title)
+                url = tools.Urls(website, a[13], title)
                 for x in folders:
                     if x.folder_name == hostname:
                         x.add_url(url)
 
-    print("_"*(get_terminal_width()))
+    print("_"*(screenSupport.get_terminal_width()))
     print("Saving HTML file...")
-    print("\u203e"*(get_terminal_width()))
-    write_html(folders)
+    print("\u203e"*(screenSupport.get_terminal_width()))
+    htmlSupport.write_html(folders)
     print("Done.")
-    print("\u203e"*(get_terminal_width()))
-    
+    print("\u203e"*(screenSupport.get_terminal_width()))
+
 
 def generate_workbook(refresh, undupe, clean):
     print("Generating workbook...")
@@ -620,16 +241,16 @@ def generate_workbook(refresh, undupe, clean):
     data_header_undupe = []
     print("Find duplicate lines...")
     if refresh != "off":
-        print("_"*(get_terminal_width()))
+        print("_"*(screenSupport.get_terminal_width()))
         print("Getting URL Status...")
-        print("\u203e"*(get_terminal_width()))
+        print("\u203e"*(screenSupport.get_terminal_width()))
 
     disabled = True
     if refresh != "off":
         disabled = False
         
-    with tqdm.tqdm(total=len(data_header),disable=disabled) as pbar:
-        for a in data_header:
+    with tqdm.tqdm(total=len(preset.data_header),disable=disabled) as pbar:
+        for a in preset.data_header:
             if clean == 'on':
                 website = a[17]
             else:
@@ -641,7 +262,7 @@ def generate_workbook(refresh, undupe, clean):
                 data_header_undupe.append(( "DUPE", get_title_conditional(pbar, disabled, a[16], website) ) + a)
 
     print("Writting spreadsheet...")
-    print("\u203e"*(get_terminal_width()))
+    print("\u203e"*(screenSupport.get_terminal_width()))
     with tqdm.tqdm(total=len(data_header_undupe)) as pbar:
         for row in data_header_undupe:
             pbar.update(1)
@@ -650,19 +271,22 @@ def generate_workbook(refresh, undupe, clean):
     sheet.freeze_panes = "A2"
     sheet.auto_filter.ref = "A1:AT30000"
 
-    print("_"*(get_terminal_width()))
+    print("_"*(screenSupport.get_terminal_width()))
     print("Formating columns...")
-    print("\u203e"*(get_terminal_width()))
-    courier = ['T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS']
+    print("\u203e"*(screenSupport.get_terminal_width()))
+    courier = ['T','U','V','W','X','Y','Z',
+               'AA','AB','AC','AD','AE','AF',
+               'AG','AH','AI','AJ','AK','AL',
+               'AM','AN','AO','AP','AQ','AR','AS']
     with tqdm.tqdm(total=(len(courier)*len(sheet['T']))) as pbar:
         for l in courier:
             for col_cell in sheet[l]:
                 pbar.update(1)
                 col_cell.font = Font(size = 10, name = 'Courier New')
 
-    print("_"*(get_terminal_width()))
+    print("_"*(screenSupport.get_terminal_width()))
     print("Formating dates...")
-    print("\u203e"*(get_terminal_width()))
+    print("\u203e"*(screenSupport.get_terminal_width()))
     dates = ['G','H','I','P','Q','R']
     with tqdm.tqdm(total=(len(dates)*len(sheet['G']))) as pbar:
         for d in dates:
@@ -671,7 +295,7 @@ def generate_workbook(refresh, undupe, clean):
                 pbar.update(1)
                 col_cell.number_format = "YYYY/MM/DD hh:mm:ss"
 
-    print("_"*(get_terminal_width()))
+    print("_"*(screenSupport.get_terminal_width()))
     print("Hiding columns...")
     hidden = ['C','D','E','F','G','H','I','J','K','L','Z','AA','AB','AC']
     for h in hidden:
@@ -689,7 +313,7 @@ def generate_workbook(refresh, undupe, clean):
     print("Saving workbook...")
     book.save("chrome.xlsx")
     print("Done.")
-    print("\u203e"*(get_terminal_width()))
+    print("\u203e"*(screenSupport.get_terminal_width()))
 
 
 def generate_bookmarks(profile_):
@@ -709,7 +333,7 @@ def generate_bookmarks(profile_):
     for f in user:
         if os.path.exists(f):
             try:
-                email, full, name = getUser(f)
+                email, full, name = chromeProfile.getUser(f)
                 found = True
             except:
                 found = False
@@ -726,17 +350,17 @@ def generate_bookmarks(profile_):
 
     for f in paths:
         if os.path.exists(f):
-            return email, full, name, Bookmarks(f)
+            return email, full, name, bookMarks.Bookmarks(f)
 
 
 def run_chrome(profile, refresh, undupe, output, clean, input):
     print("\n\n")
-    print("_"*(get_terminal_width()))
+    print("_"*(screenSupport.get_terminal_width()))
     print("Starting Chrome Bookmars export.")
     email, full, name, bookmarks = generate_bookmarks(profile)
-    print("_"*(get_terminal_width()))
+    print("_"*(screenSupport.get_terminal_width()))
     print("Processing user: {",full,"} ["+email+"]")
-    print("\u203e"*(get_terminal_width()))
+    print("\u203e"*(screenSupport.get_terminal_width()))
     generate_data(bookmarks)
     if output == "xlsx":
         generate_workbook(refresh, undupe, clean)
