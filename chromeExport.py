@@ -1,6 +1,5 @@
 import wx
 import glob
-import eyed3
 
 date_added="Date Added"
 date_modified="Date Modified"
@@ -42,11 +41,18 @@ class urlPanel(wx.Panel):
         urls = glob.glob(folder_path + '/*.txt')
         url_objects = []
         index = 0
-        for url in urls:
-            url_object = eyed3.load(url)
-            self.list_ctrl.InsertItem(index, url_object.tag.date_added)
-            self.list_ctrl.SetItem(index, 1, url_object.tag.date_modified)
-            self.list_ctrl.SetItem(index, 2, url_object.tag.date_visited)
+
+		url_list = []
+		with open("chrome.txt",encoding='utf-8') as bm:
+			for line in bm:
+				url_list.append(line)
+
+        for url in url_list:
+            url_parts = htmlSupport.parseURL(line)
+            self.list_ctrl.InsertItem(index, url_parts[2])
+            self.list_ctrl.SetItem(index, 1, htmlSupport.clean_url(url)
+            self.list_ctrl.SetItem(index, 2, url)
+
             url_objects.append(url_object)
             self.row_obj_dict[index] = url_object
             index += 1

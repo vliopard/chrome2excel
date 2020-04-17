@@ -154,7 +154,7 @@ def import_txt():
 def append_dataheader(url_list):
     print("Appending dataheader...")
     for line in url_list:
-        url_parts= htmlSupport.parseURL(line)
+        url_parts = htmlSupport.parseURL(line)
         stub_date =  tools.toDate(131636882970000)
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
                    stub_date, stub_date, stub_date, 'Folder Name', 
