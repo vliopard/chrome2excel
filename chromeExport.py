@@ -124,9 +124,49 @@ class EditDialog(wx.Dialog):
         self.Close()
 
 
+class MyDialog(wx.Dialog):
+
+    def __init__(self, parent, id, title = "Test", size=(600,400)):
+        wx.Dialog.__init__(self, parent, id, title)
+
+        valueA = "Av"
+        valueB = "Bv"
+        valueC = "Cv"
+
+        pnl = wx.Panel(self)
+        self.myval = valueA
+        self.rb1 = wx.RadioButton(pnl, 11, label = valueA, pos = (10,10), style = wx.RB_GROUP) 
+        self.rb2 = wx.RadioButton(pnl, 22, label = valueB, pos = (10,30)) 
+        self.rb3 = wx.RadioButton(pnl, 33, label = valueC, pos = (10,50)) 
+        self.Bind(wx.EVT_RADIOBUTTON, self.OnRadiogroup)
+
+        self.btn1 = wx.Button(pnl, wx.ID_OK, " OK ", pos = (10,80))
+        self.btn2 = wx.Button(pnl, wx.ID_CANCEL, " Cancel ", pos = (10,110))
+
+        self.Centre() 
+        self.Show(True)
+        
+    def OnRadiogroup(self, e): 
+       rb = e.GetEventObject() 
+       self.myval = rb.GetLabel()
+
+    def GetValue(self):
+        return self.myval
+
+
+
 if __name__ == '__main__':
     app = wx.App(False)
     frame = urlFrame()
+    '''
+    dlg = MyDialog(None, -1)
+    retval = dlg.ShowModal()
+    if retval == wx.ID_OK:
+        print (dlg.GetValue())
+    else:
+        print ('None selected')
+    dlg.Destroy()
+    '''
     app.MainLoop()
 
 
