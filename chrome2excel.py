@@ -133,12 +133,12 @@ def generate_data(instance):
 
 
 def get_title_conditional(pbar, disabled, url_name, url):
-    url_title = ""
+    url_title = None
     if not disabled:
         pbar.update(1)
-        url_title = htmlSupport.gettitle(url)
-        if url_title == -1:
-            url_title = "[NO REFRESH - " + url_name + " ]"
+        nro, url_title = htmlSupport.gettitle(url)
+        if nro != 0:
+            url_title = "[ " + url_title + " " + str(nro) + " - " + url_name + " ]"
     return url_title
 
 
@@ -200,20 +200,28 @@ def generate_html(refresh, undupe, clean, input):
     with tqdm.tqdm(total=len(data_header_undupe[1:])) as pbar:
         for a in data_header_undupe[1:]:
             pbar.update(1)
-            fold = a[21]
-            hostname = a[21]
+
+            title = a[16]
+
             if clean == 'on':
                 website = a[17]
             else:
                 website = a[18]
 
-            title = a[16]
-            if refresh == 'on':
-                title=htmlSupport.gettitle(website)
-                if title == -1:
-                    title = "[NO REFRESH - " + a[16] + " ]"
+            hostname = a[21]
+            host_name = a[21]
 
-            if not fold in created:
+            if refresh == 'on':
+
+                nro, title = htmlSupport.gettitle(website)
+                if nro != 0:
+                    title = "[ " + title + " " + str(nro) + " - " + a[16] + " ]"
+
+                nro, hostname = htmlSupport.gettitle("http://"+host_name)
+                if nro != 0:
+                    hostname = "[ " + hostname + " " + str(nro) + " - " + host_name + " ]"
+
+            if not hostname in created:
                 url = tools.Urls(website, a[13], title)
                 fold = tools.Folder(a[4], a[5], hostname, [url])
                 created.add(hostname)
