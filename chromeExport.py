@@ -42,10 +42,10 @@ class urlPanel(wx.Panel):
         url_objects = []
         index = 0
 
-		url_list = []
-		with open("chrome.txt",encoding='utf-8') as bm:
-			for line in bm:
-				url_list.append(line)
+        url_list = []
+        with open("chrome.txt",encoding='utf-8') as bm:
+            for line in bm:
+                url_list.append(line)
 
         for url in url_list:
             url_parts = htmlSupport.parseURL(line)
