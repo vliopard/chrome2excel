@@ -1,6 +1,7 @@
 import wx
 import glob
 import htmlSupport
+import chromeProfile
 
 hostname="Hostname"
 url_title="Title"
@@ -64,6 +65,13 @@ class urlFrame(wx.Frame):
 
     def __init__(self):
         wx.Frame.__init__(self, parent=None, title='Bookmarks Editor')
+        self.selected = ""
+        self.file_type = False
+        self.reload_title = False
+        self.undupe_url = False
+        self.clean_url = False
+        self.text_import = False
+        
         self.panel = urlPanel(self)
         self.create_menu()
         self.Show()
@@ -71,15 +79,16 @@ class urlFrame(wx.Frame):
     def create_menu(self):
         menu_bar = wx.MenuBar()
         file_menu = wx.Menu()
-        open_folder_menu_item = file_menu.Append(wx.ID_ANY, 'Open File', 'Open a text file with URLs')
-        open_account_menu_item = file_menu.Append(wx.ID_ANY, 'Import Account', 'Import Account from Chrome')
-        menu_bar.Append(file_menu, '&File')
+        open_account_menu_item = file_menu.Append(wx.ID_ANY, 'Import &Account', 'Import Account from Chrome')
+        open_folder_menu_item = file_menu.Append(wx.ID_ANY, 'Open &File', 'Open a text file with URLs')
+        open_settings_menu_item = file_menu.Append(wx.ID_ANY, '&Settings', 'Set options on/off')
+        menu_bar.Append(file_menu, '&Options')
+        self.Bind(event=wx.EVT_MENU, handler=self.on_open_account, source=open_account_menu_item)
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_folder, source=open_folder_menu_item)
-        self.Bind(event=wx.EVT_MENU, handler=self.on_open_folder, source=open_account_menu_item)
+        self.Bind(event=wx.EVT_MENU, handler=self.on_open_settings, source=open_settings_menu_item)
         self.SetMenuBar(menu_bar)       
 
     def on_open_folder(self, event):
-        #dlg = wx.DirDialog(self, "Choose a directory:", style=wx.DD_DEFAULT_STYLE)
         wildcard = "Text file (*.txt)|*.txt"
         dlg = wx.FileDialog(self, message="Choose a file:", defaultFile="chrome.txt", wildcard=wildcard, style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
@@ -87,7 +96,19 @@ class urlFrame(wx.Frame):
         dlg.Destroy()
 
     def on_open_account(self, event):
-        pass
+        dlg = MyDialog(self, -1)
+        retval = dlg.ShowModal()
+        if retval == wx.ID_OK:
+            print("Loading Bookmarks...")
+        else:
+            self.selected = ""
+        dlg.Destroy()
+
+    def on_open_settings(self, event):
+        dlg = SettingsDialog(self, -1)
+        retval = dlg.ShowModal()
+        dlg.Destroy()
+    
 
 class EditDialog(wx.Dialog):    
     def __init__(self, url):
@@ -126,47 +147,166 @@ class EditDialog(wx.Dialog):
 
 class MyDialog(wx.Dialog):
 
-    def __init__(self, parent, id, title = "Test", size=(600,400)):
+    def __init__(self, parent, id, title = "Profile Chooser", size=(600, 600)):
         wx.Dialog.__init__(self, parent, id, title)
 
-        valueA = "Av"
-        valueB = "Bv"
-        valueC = "Cv"
-
         pnl = wx.Panel(self)
-        self.myval = valueA
-        self.rb1 = wx.RadioButton(pnl, 11, label = valueA, pos = (10,10), style = wx.RB_GROUP) 
-        self.rb2 = wx.RadioButton(pnl, 22, label = valueB, pos = (10,30)) 
-        self.rb3 = wx.RadioButton(pnl, 33, label = valueC, pos = (10,50)) 
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        
+        my_list = chromeProfile.profile_list()
+        
+        self.parent = parent
+        self.parent.selected = my_list[0]
+
+        position = 10        
+        sizer.Add(wx.RadioButton(pnl, 0, label = my_list[0], pos = (10, 10), style = wx.RB_GROUP))
+        for nro, x in enumerate(my_list[1:]):            
+            position = position + 20
+            sizer.Add(wx.RadioButton(pnl, nro+1, label = x, pos = (10, position)))
+            
         self.Bind(wx.EVT_RADIOBUTTON, self.OnRadiogroup)
 
-        self.btn1 = wx.Button(pnl, wx.ID_OK, " OK ", pos = (10,80))
-        self.btn2 = wx.Button(pnl, wx.ID_CANCEL, " Cancel ", pos = (10,110))
+        position = position + 20
+        sizer.Add(wx.Button(pnl, wx.ID_OK, " OK ", pos = (10, position)))
+        position = position + 30        
+        sizer.Add(wx.Button(pnl, wx.ID_CANCEL, " Cancel ", pos = (10, position)))
 
         self.Centre() 
         self.Show(True)
-        
+
     def OnRadiogroup(self, e): 
        rb = e.GetEventObject() 
-       self.myval = rb.GetLabel()
+       self.myval = rb.GetId()
+       self.parent.selected = rb.GetId()
 
-    def GetValue(self):
-        return self.myval
+
+class SettingsDialog(wx.Dialog):
+
+    def __init__(self, parent, id, title = "Settings", size=(500, 200)):
+        wx.Dialog.__init__(self, parent, id, title)
+      
+        self.parent = parent
+        
+        label, value = setButton(self,0)
+        self.tb1=wx.ToggleButton(self, id=0, label=label, pos = (10, 10))
+        self.tb1.SetValue(value)
+        
+        label, value = setButton(self,1)
+        self.tb2=wx.ToggleButton(self, id=1, label=label, pos = (10, 40))
+        self.tb2.SetValue(value)
+        
+        label, value = setButton(self,2)
+        self.tb3=wx.ToggleButton(self, id=2, label=label, pos = (10, 70))
+        self.tb3.SetValue(value)
+        
+        label, value = setButton(self,3)
+        self.tb4=wx.ToggleButton(self, id=3, label=label, pos = (10, 100))
+        self.tb4.SetValue(value)
+        
+        label, value = setButton(self,4)
+        self.tb5=wx.ToggleButton(self, id=4, label=label, pos = (10, 130))
+        self.tb5.SetValue(value)
+
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.OnRadiogroup)
+
+        self.btn=wx.Button(self, wx.ID_OK, " OK ", pos = (10, 250))
+        self.Centre() 
+        self.Show(True)
+
+    def OnRadiogroup(self, e): 
+        rb = e.GetEventObject() 
+        label, value = setButtonToggle(self, rb.GetId())
+        rb.SetLabel(label)
+        rb.SetValue(value)
+
+
+def setButtonToggle(self, btnId):
+    label = None
+    if btnId == 0:
+        self.parent.file_type = not self.parent.file_type
+        if self.parent.file_type:
+            label = "[html]  Output type"
+            value = True
+        else:
+            label = "[xlsx] Output type"
+            value = False
+    if btnId == 1:
+        self.parent.reload_title = not self.parent.reload_title
+        if self.parent.reload_title:
+            label = "[on]  Refresh URL"
+            value = True
+        else:
+            label = "[off] Refresh URL"
+            value = False
+    if btnId == 2:
+        self.parent.undupe_url = not self.parent.undupe_url
+        if self.parent.undupe_url:
+            label = "[on]  Undupe URLs"
+            value = True
+        else:
+            label = "[off] Undupe URLs"
+            value = False
+    if btnId == 3:
+        self.parent.clean_url = not self.parent.clean_url
+        if self.parent.clean_url:
+            label = "[on]  Clean URL"
+            value = True
+        else:
+            label = "[off] Clean URL"
+            value = False
+    if btnId == 4:
+        self.parent.text_import = not self.parent.text_import
+        if self.parent.text_import:
+            label = "[on]  Import TXT"
+            value = True
+        else:
+            label = "[off] Import TXT"
+            value = False
+    return label, value
+
+
+def setButton(self, btnId):
+    label = None
+    if btnId == 0:
+        if self.parent.file_type:
+            label = "[html]  Output type"
+            value = True
+        else:
+            label = "[xlsx] Output type"
+            value = False
+    if btnId == 1:
+        if self.parent.reload_title:
+            label = "[on]  Refresh URL"
+            value = True
+        else:
+            label = "[off] Refresh URL"
+            value = False
+    if btnId == 2:
+        if self.parent.undupe_url:
+            label = "[on]  Undupe URLs"
+            value = True
+        else:
+            label = "[off] Undupe URLs"
+            value = False
+    if btnId == 3:
+        if self.parent.clean_url:
+            label = "[on]  Clean URL"
+            value = True
+        else:
+            label = "[off] Clean URL"
+            value = False
+    if btnId == 4:
+        if self.parent.text_import:
+            label = "[on]  Import TXT"
+            value = True
+        else:
+            label = "[off] Import TXT"
+            value = False
+    return label, value
 
 
 
 if __name__ == '__main__':
     app = wx.App(False)
     frame = urlFrame()
-    '''
-    dlg = MyDialog(None, -1)
-    retval = dlg.ShowModal()
-    if retval == wx.ID_OK:
-        print (dlg.GetValue())
-    else:
-        print ('None selected')
-    dlg.Destroy()
-    '''
     app.MainLoop()
-
-

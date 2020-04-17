@@ -35,6 +35,19 @@ def retrieve_profile(profile_):
     return email, full, name
 
 
+def profile_list():
+    user_list = []
+    x = 0
+    while True:
+        try:
+            email, full, name = retrieve_profile(str(x))
+            user_list.append(full + " - " + email)
+            x = x + 1
+        except Exception as e:
+            break
+    return user_list
+
+
 def get_profile(profile):
     if profile == "all":
         for x in range(0, 100):
