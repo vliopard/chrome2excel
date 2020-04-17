@@ -1,7 +1,9 @@
 lxml
 tqdm
 shlex
+eyed3
 public
 openpyxl
 mecanize
+wxpython
 BeautifulSoup4
