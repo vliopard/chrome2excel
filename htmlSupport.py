@@ -92,30 +92,36 @@ def clean_url(url):
 
 def gettitle(url):
     try:
-        with urlopen(url, timeout=10) as stream:
+        with urlopen(url, timeout=30) as stream:
             data = stream.read()
     except HTTPError as error:
-        return "[ HTTPError - " + str(error) + "]"
+        err = str(error)
+        err = err.replace("<","[").replace(">","]")
+        return -2, "HTTPError - " + err
     except URLError as error:
-        return "[ URLError - " + str(error) + "]"
+        err = str(error)
+        err = err.replace("<","[").replace(">","]")
+        return -2, "URLError - " + err
     except timeout as error:
-        return "[ Timeout - " + str(error) + "]"
+        err = str(error)
+        err = err.replace("<","[").replace(">","]")
+        return -2, "Timeout - " + err
     except:
-        return -1
+        return -1, "Unknown Exception"
 
     try:
         parser = Parser()
         decoded = data.decode('utf-8', errors='ignore')
         parser.feed(decoded)
         value = parser.title.replace('\n','[n').replace('\t','[t').strip()
-        if len(value) > 1:
-            return value
+        if len(value) > 0:
+            return 0, value
         else:
-            return "[ NONAME - " + value + "]"
+            return -2, "NONAME - " + value
     except NotImplementedError as e:        
-        return "["+ str(e) + " " + url +" ]"
+        return -2, str(e) + " - " + url
     except:
-        return -1
+        return -1, "Unknown Exception"
 
 
 def get_title(url):
