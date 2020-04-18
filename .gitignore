@@ -1,0 +1,6 @@
+__pycache__
+*.pyc
+*.ini
+*.txt
+*.xls*
+*.htm*

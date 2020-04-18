@@ -1,3 +1,5 @@
+import os
+
 
 words = (
     "__twitter_impression",
@@ -124,3 +126,30 @@ data_header = [
      'ParamP'           #43
     )
     ]
+
+
+def getProfile(profile_):
+    profile_ = str(profile_)
+    if profile_ == "0":
+        profile_ = "Default"
+    else:
+        profile_ = "Profile "+profile_
+    return profile_
+
+
+def retUser(profile_):
+    profile_ = getProfile(profile_)
+    return [
+            os.path.expanduser("~/.config/google-chrome/"+profile_+"/Preferences"),
+            os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Preferences"),
+            os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Preferences")
+           ]
+
+
+def retPath(profile_):
+    profile_ = getProfile(profile_)
+    return [
+            os.path.expanduser("~/.config/google-chrome/"+profile_+"/Bookmarks"),
+            os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Bookmarks"),
+            os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
+           ] 

@@ -90,7 +90,7 @@ def clean_url(url):
     return newurl
 
 
-def gettitle(url):
+def gettitle(url): # TODO: If not enabled, returns current name or url 
     try:
         with urlopen(url, timeout=30) as stream:
             data = stream.read()

@@ -1,6 +1,9 @@
 import wx
+import tools
 import htmlSupport
 import chromeProfile
+import chrome2excel
+from configparser import ConfigParser, DuplicateSectionError
 
 hostname="Hostname"
 url_title="Title"
@@ -8,7 +11,10 @@ url_addr="URL"
 date_added="Date Added"
 date_modified="Date Modified"
 date_visited="Date Visited"
-original_url="Original URL"
+url_name="URL Name"
+url_clean="URL Clean"
+original_url="URL Address"
+url_hostname="Hostname"
 
 class urlPanel(wx.Panel):
 
@@ -16,15 +22,34 @@ class urlPanel(wx.Panel):
         super().__init__(parent)
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.row_obj_dict = {}
-        self.list_ctrl = wx.ListCtrl(self, size=(-1, 100), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
-        self.list_ctrl.InsertColumn(0, hostname, width=140)
-        self.list_ctrl.InsertColumn(1, url_title, width=140)
+        self.list_ctrl = wx.ListCtrl(self, size=(-1, 300), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+        self.list_ctrl.InsertColumn(0, hostname, width=200)
+        self.list_ctrl.InsertColumn(1, url_title, width=200)
         self.list_ctrl.InsertColumn(2, url_addr, width=200)
         main_sizer.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 5)
+        main_sizer.AddStretchSpacer()
+
         edit_button = wx.Button(self, label='Edit')
         edit_button.Bind(wx.EVT_BUTTON, self.on_edit)
-        main_sizer.Add(edit_button, 0, wx.ALL | wx.CENTER, 5)
+        html_button = wx.Button(self, label='Export to HTML')
+        html_button.Bind(wx.EVT_BUTTON, self.on_html)
+        xlsx_button = wx.Button(self, label='Export to XLSX')
+        xlsx_button.Bind(wx.EVT_BUTTON, self.on_xlsx)
+
+        box = wx.BoxSizer(wx.HORIZONTAL)
+        box.Add(edit_button, 1, wx.EXPAND)
+        box.Add(html_button, 1, wx.EXPAND)
+        box.Add(xlsx_button, 1, wx.EXPAND)
+        main_sizer.Add(box, 1, wx.EXPAND)
+        
         self.SetSizer(main_sizer)
+        
+
+    def on_html(self, event):
+        print("html")
+
+    def on_xlsx(self, event):
+        print("xlsx")
 
     def on_edit(self, event):
         selection = self.list_ctrl.GetFocusedItem()
@@ -38,22 +63,27 @@ class urlPanel(wx.Panel):
     def update_url_listing(self, folder_path):
         self.current_folder_path = folder_path
         self.list_ctrl.ClearAll()
-        self.list_ctrl.InsertColumn(0, date_added, width=140)
-        self.list_ctrl.InsertColumn(1, date_modified, width=140)
-        self.list_ctrl.InsertColumn(2, date_visited, width=200)
-        self.list_ctrl.InsertColumn(3, original_url, width=200)
+        self.list_ctrl.InsertColumn(0, date_added, width=115)
+        self.list_ctrl.InsertColumn(1, date_modified, width=118)
+        self.list_ctrl.InsertColumn(2, date_visited, width=120)
+        self.list_ctrl.InsertColumn(3, url_name, width=150)
+        self.list_ctrl.InsertColumn(4, url_clean, width=150)
+        self.list_ctrl.InsertColumn(5, original_url, width=150)
+        self.list_ctrl.InsertColumn(6, url_hostname, width=150)
         index = 0
         url_objects = []
         url_list = []
-        with open(folder_path, encoding='utf-8') as bm:
-            for line in bm:
-                url_list.append(line)
 
-        for url in url_list:            
-            self.list_ctrl.InsertItem(index, "IndexA"+str(index))
-            self.list_ctrl.SetItem(index, 1, "IndexB"+str(index))
-            self.list_ctrl.SetItem(index, 2, "IndexC"+str(index))
-            self.list_ctrl.SetItem(index, 3, url)
+        url_list = chrome2excel.generate_from_txt(chrome2excel.import_txt(folder_path))
+        for url in url_list:
+            print(url[16])
+            self.list_ctrl.InsertItem(index, tools.stringDate(url[13])) #'URL Added',       #13
+            self.list_ctrl.SetItem(index, 1, tools.stringDate(url[14])) #'URL Modified',    #14
+            self.list_ctrl.SetItem(index, 2, tools.stringDate(url[15])) #'URL Visited',     #15
+            self.list_ctrl.SetItem(index, 3, url[16])         #'URL Name',        #16
+            self.list_ctrl.SetItem(index, 4, url[17])         #'URL Clean',       #17
+            self.list_ctrl.SetItem(index, 5, url[18])         #'URL',             #18
+            self.list_ctrl.SetItem(index, 6, url[21])         #'Hostname',        #21
             url_object = { "Hostname":"HN"+str(index), "Title":"TT"+str(index), "URL":"UR"+str(index) }
             url_objects.append(url_object)
             self.row_obj_dict[index] = url_object
@@ -63,15 +93,17 @@ class urlPanel(wx.Panel):
 class urlFrame(wx.Frame):
 
     def __init__(self):
-        wx.Frame.__init__(self, parent=None, title='Bookmarks Editor')
+        wx.Frame.__init__(self, parent=None, title='Bookmarks Editor', size=(1200,600))
 
-        # TODO: Recover settings from disk
-        self.selected = ""
-        self.file_type = False
+        self.export_file_type = False
         self.reload_title = False
-        self.undupe_url = False
+        self.remove_duplicates = False
         self.clean_url = False
-        self.text_import = False
+        self.import_txt = False
+
+        loadSettings(self)
+
+        self.selected = -1
         
         self.panel = urlPanel(self)
         self.create_menu()
@@ -83,10 +115,12 @@ class urlFrame(wx.Frame):
         open_account_menu_item = file_menu.Append(wx.ID_ANY, 'Import &Account', 'Import Account from Chrome')
         open_folder_menu_item = file_menu.Append(wx.ID_ANY, 'Open &File', 'Open a text file with URLs')
         open_settings_menu_item = file_menu.Append(wx.ID_ANY, '&Settings', 'Set options on/off')
+        open_exit_menu_item = file_menu.Append(wx.ID_ANY, '&Exit', 'Set options on/off')
         menu_bar.Append(file_menu, '&Options')
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_account, source=open_account_menu_item)
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_folder, source=open_folder_menu_item)
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_settings, source=open_settings_menu_item)
+        self.Bind(event=wx.EVT_MENU, handler=self.on_open_exit, source=open_exit_menu_item)
         self.SetMenuBar(menu_bar)       
 
     def on_open_folder(self, event):
@@ -102,15 +136,23 @@ class urlFrame(wx.Frame):
         if retval == wx.ID_OK:
             # TODO: Load bookmars from Chrome profile
             print("Loading Bookmarks...")
+            
         else:
-            self.selected = ""
+            self.selected = -1
         dlg.Destroy()
 
     def on_open_settings(self, event):
         dlg = SettingsDialog(self, -1)
         retval = dlg.ShowModal()
         dlg.Destroy()
-    
+
+    def on_open_exit(self, event):
+        #dlg = ExitDialog(self, -1)
+        #retval = dlg.ShowModal()
+        #dlg.Destroy()
+        #if retval == wx.ID_OK:
+        exit(1)
+
 
 class EditDialog(wx.Dialog):    
     def __init__(self, url):
@@ -158,7 +200,7 @@ class MyDialog(wx.Dialog):
         my_list = chromeProfile.profile_list()
         
         self.parent = parent
-        self.parent.selected = my_list[0]
+        self.parent.selected = 0
 
         position = 10        
         sizer.Add(wx.RadioButton(pnl, 0, label = my_list[0], pos = (10, 10), style = wx.RB_GROUP))
@@ -184,57 +226,60 @@ class MyDialog(wx.Dialog):
 
 class SettingsDialog(wx.Dialog):
 
-    def __init__(self, parent, id, title = "Settings", size=(500, 200)):
+    def __init__(self, parent, id, title = "Settings", size=(200, 100)):
         wx.Dialog.__init__(self, parent, id, title)
       
         self.parent = parent
         
-        label, value = setButton(self,0)
+        label, value = setButtonToggle(self,0,False)
         self.tb1=wx.ToggleButton(self, id=0, label=label, pos = (10, 10))
         self.tb1.SetValue(value)
         
-        label, value = setButton(self,1)
+        label, value = setButtonToggle(self,1,False)
         self.tb2=wx.ToggleButton(self, id=1, label=label, pos = (10, 40))
         self.tb2.SetValue(value)
         
-        label, value = setButton(self,2)
+        label, value = setButtonToggle(self,2,False)
         self.tb3=wx.ToggleButton(self, id=2, label=label, pos = (10, 70))
         self.tb3.SetValue(value)
         
-        label, value = setButton(self,3)
+        label, value = setButtonToggle(self,3,False)
         self.tb4=wx.ToggleButton(self, id=3, label=label, pos = (10, 100))
         self.tb4.SetValue(value)
         
-        label, value = setButton(self,4)
+        label, value = setButtonToggle(self,4,False)
         self.tb5=wx.ToggleButton(self, id=4, label=label, pos = (10, 130))
         self.tb5.SetValue(value)
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnRadiogroup)
 
-        self.btn=wx.Button(self, wx.ID_OK, " OK ", pos = (10, 250))
+        self.btn=wx.Button(self, wx.ID_OK, " OK ", pos = (10, 160))
         self.Centre() 
         self.Show(True)
 
     def OnRadiogroup(self, e): 
         rb = e.GetEventObject() 
-        label, value = setButtonToggle(self, rb.GetId())
+        label, value = setButtonToggle(self, rb.GetId(),True)
         rb.SetLabel(label)
         rb.SetValue(value)
-        # TODO: Save settings to disk
+        saveSettings(self.parent)
 
 
-def setButtonToggle(self, btnId):
+
+def setButtonToggle(self, btnId, toggle):
     label = None
     if btnId == 0:
-        self.parent.file_type = not self.parent.file_type
-        if self.parent.file_type:
+        if toggle:
+            self.parent.export_file_type = not self.parent.export_file_type
+        if self.parent.export_file_type:
             label = "[html]  Output type"
             value = True
         else:
             label = "[xlsx] Output type"
             value = False
     if btnId == 1:
-        self.parent.reload_title = not self.parent.reload_title
+        if toggle:
+            self.parent.reload_title = not self.parent.reload_title
         if self.parent.reload_title:
             label = "[on]  Refresh URL"
             value = True
@@ -242,7 +287,8 @@ def setButtonToggle(self, btnId):
             label = "[off] Refresh URL"
             value = False
     if btnId == 2:
-        self.parent.undupe_url = not self.parent.undupe_url
+        if toggle:
+            self.parent.undupe_url = not self.parent.undupe_url
         if self.parent.undupe_url:
             label = "[on]  Undupe URLs"
             value = True
@@ -250,7 +296,8 @@ def setButtonToggle(self, btnId):
             label = "[off] Undupe URLs"
             value = False
     if btnId == 3:
-        self.parent.clean_url = not self.parent.clean_url
+        if toggle:
+            self.parent.clean_url = not self.parent.clean_url
         if self.parent.clean_url:
             label = "[on]  Clean URL"
             value = True
@@ -258,7 +305,8 @@ def setButtonToggle(self, btnId):
             label = "[off] Clean URL"
             value = False
     if btnId == 4:
-        self.parent.text_import = not self.parent.text_import
+        if toggle:
+            self.parent.text_import = not self.parent.text_import
         if self.parent.text_import:
             label = "[on]  Import TXT"
             value = True
@@ -268,45 +316,38 @@ def setButtonToggle(self, btnId):
     return label, value
 
 
-def setButton(self, btnId):
-    label = None
-    if btnId == 0:
-        if self.parent.file_type:
-            label = "[html]  Output type"
-            value = True
-        else:
-            label = "[xlsx] Output type"
-            value = False
-    if btnId == 1:
-        if self.parent.reload_title:
-            label = "[on]  Refresh URL"
-            value = True
-        else:
-            label = "[off] Refresh URL"
-            value = False
-    if btnId == 2:
-        if self.parent.undupe_url:
-            label = "[on]  Undupe URLs"
-            value = True
-        else:
-            label = "[off] Undupe URLs"
-            value = False
-    if btnId == 3:
-        if self.parent.clean_url:
-            label = "[on]  Clean URL"
-            value = True
-        else:
-            label = "[off] Clean URL"
-            value = False
-    if btnId == 4:
-        if self.parent.text_import:
-            label = "[on]  Import TXT"
-            value = True
-        else:
-            label = "[off] Import TXT"
-            value = False
-    return label, value
+def saveSettings(settings):
+    category = 'main'
+    config_file = 'config.ini'
+    config = ConfigParser()
+    config.read(config_file)
+    try:
+        config.add_section(category)
+    except DuplicateSectionError as e:
+        pass
+        
+    #config.set(category, 'selected_account', str(settings.selected))
+    config.set(category, 'export_file_type', str(settings.export_file_type))
+    config.set(category, 'reload_title', str(settings.reload_title))
+    config.set(category, 'remove_duplicates', str(settings.undupe_url))
+    config.set(category, 'clean_url', str(settings.clean_url))
+    config.set(category, 'import_txt', str(settings.text_import))
+    with open(config_file, 'w') as f:
+        config.write(f)
 
+
+def loadSettings(settings):
+    category = 'main'
+    config_file = 'config.ini'
+    config = ConfigParser()
+    config.read(config_file)
+    #settings.selected = config.get(category, 'selected_account')
+    settings.export_file_type = config.getboolean(category, 'export_file_type')
+    settings.reload_title = config.getboolean(category, 'reload_title')
+    settings.undupe_url = config.getboolean(category, 'remove_duplicates')
+    settings.clean_url = config.getboolean(category, 'clean_url')
+    settings.text_import = config.getboolean(category, 'import_txt')
+    return settings
 
 
 if __name__ == '__main__':

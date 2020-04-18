@@ -142,10 +142,10 @@ def get_title_conditional(pbar, disabled, url_name, url):
     return url_title
 
 
-def import_txt():
+def import_txt(txt="chrome.txt"):
     print("Importing text file...")
     url_list = []
-    with open("chrome.txt",encoding='utf-8') as bm:
+    with open(txt,encoding='utf-8') as bm:
         for line in bm:
             url_list.append(line)
     return url_list
@@ -155,7 +155,7 @@ def append_dataheader(url_list):
     print("Appending dataheader...")
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
-        stub_date =  tools.toDate(131636882970000)
+        stub_date =  tools.toDate(13231709218000000)
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
                    stub_date, stub_date, stub_date, 'Folder Name', 
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
@@ -168,11 +168,30 @@ def append_dataheader(url_list):
         preset.data_header.append(element)
 
 
+def generate_from_txt(url_list):
+    print("Generating from TXT...")
+    txt_header = []
+    for line in url_list:
+        url_parts = htmlSupport.parseURL(line)
+        stub_date =  tools.toDate(13231709218000000)
+        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
+                   stub_date, stub_date, stub_date, 'Folder Name', 
+                   'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
+                   stub_date, stub_date, stub_date, 'URL Name', # TODO: If not enabled, returns current name or url 
+                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2], 
+                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password', 
+                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF', 
+                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL', 
+                   'ParamM', 'ParamN', 'ParamO', 'ParamP' )
+        txt_header.append(element)
+    return txt_header
+
+
 def generate_html(refresh, undupe, clean, input):
     print("Generating html...")
-    
+
     append_dataheader(import_txt())
-    
+
     created = set()
     visited = set()
     folders = []
@@ -325,21 +344,10 @@ def generate_workbook(refresh, undupe, clean):
     print("\u203e"*(screenSupport.get_terminal_width()))
 
 
-def generate_bookmarks(profile_):
-    print("Generating bookmarks...")
-    if profile_ == "0":
-        profile_ = "Default"
-    else:
-        profile_ = "Profile "+profile_
-
-    user = [
-        os.path.expanduser("~/.config/google-chrome/"+profile_+"/Preferences"),
-        os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Preferences"),
-        os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Preferences")
-    ]
-
+def get_User(profile_):
+    print("Retrieving user...")
     found = False
-    for f in user:
+    for f in preset.retUser(profile_):
         if os.path.exists(f):
             try:
                 email, full, name = chromeProfile.getUser(f)
@@ -350,23 +358,22 @@ def generate_bookmarks(profile_):
     if not found:
         print("Invalid profile.")
         exit(1)
+    return email, full, name
 
-    paths = [
-        os.path.expanduser("~/.config/google-chrome/"+profile_+"/Bookmarks"),
-        os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Bookmarks"),
-        os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
-    ]
 
-    for f in paths:
+def generate_bookmarks(profile_):
+    print("Generating bookmarks...")
+    for f in preset.retPath(profile_):
         if os.path.exists(f):
-            return email, full, name, bookMarks.Bookmarks(f)
+            return bookMarks.Bookmarks(f)
 
 
 def run_chrome(profile, refresh, undupe, output, clean, input):
     print("\n\n")
     print("_"*(screenSupport.get_terminal_width()))
     print("Starting Chrome Bookmars export.")
-    email, full, name, bookmarks = generate_bookmarks(profile)
+    email, full, name = get_User(profile)
+    bookmarks = generate_bookmarks(profile)
     print("_"*(screenSupport.get_terminal_width()))
     print("Processing user: {",full,"} ["+email+"]")
     print("\u203e"*(screenSupport.get_terminal_width()))

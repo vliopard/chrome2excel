@@ -64,6 +64,10 @@ def toDate(value):
     return None
 
 
+def stringDate(value):
+    return value.strftime("%Y/%m/%d, %H:%M:%S")
+
+
 def dateFromWebkit(timestamp):
     return (datetime(1601,1,1) + timedelta(microseconds=int(timestamp))).replace(tzinfo=timezone.utc).astimezone()
 
@@ -75,3 +79,4 @@ def dateToWebkit(date_string):
         value = '{:<010d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds)
         return str(value)
     return("")
+

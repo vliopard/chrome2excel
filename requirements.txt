@@ -1,8 +1,7 @@
 lxml
 tqdm
-shlex
 public
 openpyxl
-mecanize
+mechanize
 wxpython
 BeautifulSoup4
