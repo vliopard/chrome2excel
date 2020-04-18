@@ -1,5 +1,6 @@
 import wx
 import tools
+import bookMarks
 import htmlSupport
 import chromeProfile
 import chrome2excel
@@ -16,6 +17,8 @@ url_clean="URL Clean"
 original_url="URL Address"
 url_hostname="Hostname"
 
+
+        
 class urlPanel(wx.Panel):
 
     def __init__(self, parent):
@@ -76,7 +79,6 @@ class urlPanel(wx.Panel):
 
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_txt(folder_path))
         for url in url_list:
-            print(url[16])
             self.list_ctrl.InsertItem(index, tools.stringDate(url[13])) #'URL Added',       #13
             self.list_ctrl.SetItem(index, 1, tools.stringDate(url[14])) #'URL Modified',    #14
             self.list_ctrl.SetItem(index, 2, tools.stringDate(url[15])) #'URL Visited',     #15
@@ -84,7 +86,15 @@ class urlPanel(wx.Panel):
             self.list_ctrl.SetItem(index, 4, url[17])         #'URL Clean',       #17
             self.list_ctrl.SetItem(index, 5, url[18])         #'URL',             #18
             self.list_ctrl.SetItem(index, 6, url[21])         #'Hostname',        #21
-            url_object = { "Hostname":"HN"+str(index), "Title":"TT"+str(index), "URL":"UR"+str(index) }
+            # TODO: Sync list_ctrl with url_object data
+            url_object = bookMarks.nobj("dv", "da", "dm")
+            
+            url_objects.append(url_object)
+            url_objects.append(url_object)
+            url_objects.append(url_object)
+            url_objects.append(url_object)
+            url_objects.append(url_object)
+            url_objects.append(url_object)
             url_objects.append(url_object)
             self.row_obj_dict[index] = url_object
             index += 1
@@ -156,6 +166,7 @@ class urlFrame(wx.Frame):
 
 class EditDialog(wx.Dialog):    
     def __init__(self, url):
+        print(url)
         date_visited = f'Editing "{url.date_visited}"'
         super().__init__(parent=None, title=date_visited)        
         self.url = url        

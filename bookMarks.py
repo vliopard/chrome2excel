@@ -3,6 +3,17 @@ import tools
 import public
 
 @public.add
+class nobj:
+    def __init__(self, date_visited, date_added, date_modified):
+        self.date_visited = date_visited
+        self.date_added = date_added
+        self.date_modified = date_modified
+
+    def save():
+        pass
+
+
+@public.add
 class Item(dict):
 
     @property
