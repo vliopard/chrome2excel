@@ -79,4 +79,3 @@ def dateToWebkit(date_string):
         value = '{:<010d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds)
         return str(value)
     return("")
-

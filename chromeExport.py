@@ -23,9 +23,10 @@ class urlPanel(wx.Panel):
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.row_obj_dict = {}
-        self.list_ctrl = wx.ListCtrl(self, size=(-1, 300), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+        self.list_ctrl = wx.ListCtrl(self, size=(-1, 500), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
         self.list_ctrl.InsertColumn(0, hostname, width=200)
         self.list_ctrl.InsertColumn(1, url_title, width=200)
         self.list_ctrl.InsertColumn(2, url_addr, width=200)
@@ -46,13 +47,24 @@ class urlPanel(wx.Panel):
         main_sizer.Add(box, 1, wx.EXPAND)
         
         self.SetSizer(main_sizer)
-        
 
     def on_html(self, event):
-        print("html")
+        # TODO: https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
+        print("_______________")
+        print("HTML SETUP")
+        print("reload:",self.parent.reload_title)
+        print("undupe:",self.parent.remove_duplicates)
+        print("clean:",self.parent.clean_url)
+        print("txt:",self.parent.import_txt)
+        #chrome2excel.generate_html(refresh, undupe, clean, input)
 
     def on_xlsx(self, event):
-        print("xlsx")
+        print("_______________")
+        print("XLSX SETUP")
+        print("reload:",self.parent.reload_title)
+        print("undupe:",self.parent.remove_duplicates)
+        print("clean:",self.parent.clean_url)
+        #chrome2excel.generate_workbook(refresh, undupe, clean)
 
     def on_edit(self, event):
         selection = self.list_ctrl.GetFocusedItem()
@@ -120,17 +132,27 @@ class urlFrame(wx.Frame):
         self.Show()
 
     def create_menu(self):
+        # TODO: http://zetcode.com/wxpython/menustoolbars/
         menu_bar = wx.MenuBar()
         file_menu = wx.Menu()
+
         open_account_menu_item = file_menu.Append(wx.ID_ANY, 'Import &Account', 'Import Account from Chrome')
         open_folder_menu_item = file_menu.Append(wx.ID_ANY, 'Open &File', 'Open a text file with URLs')
         open_settings_menu_item = file_menu.Append(wx.ID_ANY, '&Settings', 'Set options on/off')
         open_exit_menu_item = file_menu.Append(wx.ID_ANY, '&Exit', 'Set options on/off')
+
         menu_bar.Append(file_menu, '&Options')
+
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_account, source=open_account_menu_item)
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_folder, source=open_folder_menu_item)
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_settings, source=open_settings_menu_item)
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_exit, source=open_exit_menu_item)
+
+        file_menu2 = wx.Menu()
+        open_about_menu_item = file_menu2.Append(wx.ID_ANY, '&About', 'About software')
+        menu_bar.Append(file_menu2, '&About')
+        self.Bind(event=wx.EVT_MENU, handler=self.on_about, source=open_about_menu_item)
+
         self.SetMenuBar(menu_bar)       
 
     def on_open_folder(self, event):
@@ -155,6 +177,14 @@ class urlFrame(wx.Frame):
         dlg = SettingsDialog(self, -1)
         retval = dlg.ShowModal()
         dlg.Destroy()
+
+    def on_about(self, event):
+        '''
+        dlg = AboutDialog(self, -1)
+        retval = dlg.ShowModal()
+        dlg.Destroy()
+        '''
+        pass
 
     def on_open_exit(self, event):
         #dlg = ExitDialog(self, -1)

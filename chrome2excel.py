@@ -187,7 +187,7 @@ def generate_from_txt(url_list):
     return txt_header
 
 
-def generate_html(refresh, undupe, clean, input):
+def generate_html(refresh, undupe, clean, import_txt):
     print("Generating html...")
 
     append_dataheader(import_txt())
@@ -368,7 +368,7 @@ def generate_bookmarks(profile_):
             return bookMarks.Bookmarks(f)
 
 
-def run_chrome(profile, refresh, undupe, output, clean, input):
+def run_chrome(profile, refresh, undupe, output, clean, import_txt):
     print("\n\n")
     print("_"*(screenSupport.get_terminal_width()))
     print("Starting Chrome Bookmars export.")
@@ -381,7 +381,7 @@ def run_chrome(profile, refresh, undupe, output, clean, input):
     if output == "xlsx":
         generate_workbook(refresh, undupe, clean)
     else:
-        generate_html(refresh, undupe, clean, input)
+        generate_html(refresh, undupe, clean, import_txt)
 
 
 if __name__ == "__main__":
@@ -419,7 +419,7 @@ if __name__ == "__main__":
         default = "off"
     )
     parser.add_argument(
-        "--input",
+        "--import_txt",
         "-i",
         help="Import TXT file [on, off]: off Default.",
         default = "off"
