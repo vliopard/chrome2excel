@@ -10,8 +10,9 @@ It also has features regarding to clean URLs, stripping tracking tokens.
 
 ## How to install:
 
-Just run command
-`pip install -r requirements.txt`
+Run command:
+`apt install python3-bs4`
+`pip install --user -r requirements.txt`
 
 ## How to run:
 

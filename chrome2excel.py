@@ -14,6 +14,7 @@ from openpyxl.styles import Font
 
 from argparse import ArgumentParser
 
+stub_date = 13231709218000000
 
 def read_content(content):
     data = []
@@ -155,7 +156,7 @@ def append_dataheader(url_list):
     print("Appending dataheader...")
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
-        stub_date =  tools.toDate(13231709218000000)
+        stub_date =  tools.toDate(stub_date)
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
                    stub_date, stub_date, stub_date, 'Folder Name', 
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
@@ -173,7 +174,7 @@ def generate_from_txt(url_list):
     txt_header = []
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
-        stub_date =  tools.toDate(13231709218000000)
+        stub_date =  tools.toDate(stub_date)
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
                    stub_date, stub_date, stub_date, 'Folder Name', 
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',

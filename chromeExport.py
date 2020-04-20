@@ -1,4 +1,5 @@
 import wx
+import wx.adv
 import tools
 import bookMarks
 import htmlSupport
@@ -18,7 +19,7 @@ original_url="URL Address"
 url_hostname="Hostname"
 
 
-        
+
 class urlPanel(wx.Panel):
 
     def __init__(self, parent):
@@ -168,35 +169,43 @@ class urlFrame(wx.Frame):
         if retval == wx.ID_OK:
             # TODO: Load bookmars from Chrome profile
             print("Loading Bookmarks...")
-            
         else:
             self.selected = -1
         dlg.Destroy()
 
     def on_open_settings(self, event):
         dlg = SettingsDialog(self, -1)
-        retval = dlg.ShowModal()
+        dlg.ShowModal()
         dlg.Destroy()
 
     def on_about(self, event):
-        '''
-        dlg = AboutDialog(self, -1)
-        retval = dlg.ShowModal()
-        dlg.Destroy()
-        '''
-        pass
+        AboutDialog()
 
     def on_open_exit(self, event):
-        #dlg = ExitDialog(self, -1)
-        #retval = dlg.ShowModal()
-        #dlg.Destroy()
-        #if retval == wx.ID_OK:
-        exit(1)
+        dlg = wx.MessageDialog(self, "Want to exit?", "Exit", wx.YES_NO | wx.ICON_QUESTION)
+        if dlg.ShowModal() == wx.ID_YES:
+            self.Destroy()
+        dlg.Destroy()
+        #self.Close(True)
+
+
+class AboutDialog(wx.Dialog):    
+    def __init__(self):
+        info = wx.adv.AboutDialogInfo()
+        info.Name = "Chrome Exporter"
+        info.Version = "1.0"
+        info.Copyright = "OTDS H Co."
+        info.Description = "This Python Application helps you to convert your Google Bookmarks to a Microsoft Excel Spreadsheet.\n\nHow it works:\n\nThis software access your Google Chrome Bookmarks and dump database to Excel Spreadsheet format.\nIt also has features regarding to clean URLs, stripping tracking tokens."
+        info.WebSite = ("https://github.com/vliopard/chrome2excel",
+                        "Chrome Bookmarks to Microsoft Excel")
+        info.Developers = [ "Vincent Liopard." ]
+        info.License = "This is an Open Source Project that uses other General Public License (GPL) sources from the web."
+
+        wx.adv.AboutBox(info) 
 
 
 class EditDialog(wx.Dialog):    
     def __init__(self, url):
-        print(url)
         date_visited = f'Editing "{url.date_visited}"'
         super().__init__(parent=None, title=date_visited)        
         self.url = url        
@@ -367,7 +376,6 @@ def saveSettings(settings):
     except DuplicateSectionError as e:
         pass
         
-    #config.set(category, 'selected_account', str(settings.selected))
     config.set(category, 'export_file_type', str(settings.export_file_type))
     config.set(category, 'reload_title', str(settings.reload_title))
     config.set(category, 'remove_duplicates', str(settings.undupe_url))
@@ -381,13 +389,19 @@ def loadSettings(settings):
     category = 'main'
     config_file = 'config.ini'
     config = ConfigParser()
-    config.read(config_file)
-    #settings.selected = config.get(category, 'selected_account')
-    settings.export_file_type = config.getboolean(category, 'export_file_type')
-    settings.reload_title = config.getboolean(category, 'reload_title')
-    settings.undupe_url = config.getboolean(category, 'remove_duplicates')
-    settings.clean_url = config.getboolean(category, 'clean_url')
-    settings.text_import = config.getboolean(category, 'import_txt')
+    try:
+        config.read(config_file)
+        settings.export_file_type = config.getboolean(category, 'export_file_type')
+        settings.reload_title = config.getboolean(category, 'reload_title')
+        settings.undupe_url = config.getboolean(category, 'remove_duplicates')
+        settings.clean_url = config.getboolean(category, 'clean_url')
+        settings.text_import = config.getboolean(category, 'import_txt')
+    except:
+        settings.export_file_type = False
+        settings.reload_title = False
+        settings.undupe_url = False
+        settings.clean_url = False
+        settings.text_import = False
     return settings
 
 
