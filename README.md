@@ -12,7 +12,7 @@ It also has features regarding to clean URLs, stripping tracking tokens.
 
 Run command:
 `apt install python3-bs4`
-`pip install --user -r requirements.txt`
+`pip install --user -U -r requirements.txt`
 
 ## How to run:
 

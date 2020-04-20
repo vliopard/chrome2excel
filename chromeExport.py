@@ -2,7 +2,6 @@ import wx
 import wx.adv
 import tools
 import bookMarks
-import htmlSupport
 import chromeProfile
 import chrome2excel
 from configparser import ConfigParser, DuplicateSectionError
@@ -127,7 +126,7 @@ class urlFrame(wx.Frame):
         loadSettings(self)
 
         self.selected = -1
-        
+
         self.panel = urlPanel(self)
         self.create_menu()
         self.Show()
@@ -154,7 +153,7 @@ class urlFrame(wx.Frame):
         menu_bar.Append(file_menu2, '&About')
         self.Bind(event=wx.EVT_MENU, handler=self.on_about, source=open_about_menu_item)
 
-        self.SetMenuBar(menu_bar)       
+        self.SetMenuBar(menu_bar)
 
     def on_open_folder(self, event):
         wildcard = "Text file (*.txt)|*.txt"
@@ -169,6 +168,7 @@ class urlFrame(wx.Frame):
         if retval == wx.ID_OK:
             # TODO: Load bookmars from Chrome profile
             print("Loading Bookmarks...")
+            bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
         else:
             self.selected = -1
         dlg.Destroy()
@@ -189,7 +189,7 @@ class urlFrame(wx.Frame):
         #self.Close(True)
 
 
-class AboutDialog(wx.Dialog):    
+class AboutDialog(wx.Dialog):
     def __init__(self):
         info = wx.adv.AboutDialogInfo()
         info.Name = "Chrome Exporter"
@@ -204,12 +204,12 @@ class AboutDialog(wx.Dialog):
         wx.adv.AboutBox(info) 
 
 
-class EditDialog(wx.Dialog):    
+class EditDialog(wx.Dialog):
     def __init__(self, url):
         date_visited = f'Editing "{url.date_visited}"'
-        super().__init__(parent=None, title=date_visited)        
-        self.url = url        
-        self.main_sizer = wx.BoxSizer(wx.VERTICAL)        
+        super().__init__(parent=None, title=date_visited)
+        self.url = url
+        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.date_added = wx.TextCtrl(self, value=self.url.date_added)
         self.add_widgets(date_added, self.date_added)
         self.date_modified = wx.TextCtrl(self, value=self.url.date_modified)
@@ -246,26 +246,28 @@ class MyDialog(wx.Dialog):
 
         pnl = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        
+
         my_list = chromeProfile.profile_list()
-        
+
         self.parent = parent
         self.parent.selected = 0
+        position = 10
+        if my_list:
+            sizer.Add(wx.RadioButton(pnl, 0, label = my_list[0], pos = (10, 10), style = wx.RB_GROUP))
+            for nro, x in enumerate(my_list[1:]):
+                position = position + 20
+                sizer.Add(wx.RadioButton(pnl, nro+1, label = x, pos = (10, position)))
 
-        position = 10        
-        sizer.Add(wx.RadioButton(pnl, 0, label = my_list[0], pos = (10, 10), style = wx.RB_GROUP))
-        for nro, x in enumerate(my_list[1:]):            
+            self.Bind(wx.EVT_RADIOBUTTON, self.OnRadiogroup)
+
             position = position + 20
-            sizer.Add(wx.RadioButton(pnl, nro+1, label = x, pos = (10, position)))
-            
-        self.Bind(wx.EVT_RADIOBUTTON, self.OnRadiogroup)
+            sizer.Add(wx.Button(pnl, wx.ID_OK, " OK ", pos = ( 10, position )))
+        else:
+            sizer.Add(wx.StaticText(pnl,wx.ID_ANY, label="No account installed on Chrome",pos=(10,position)))
 
-        position = position + 20
-        sizer.Add(wx.Button(pnl, wx.ID_OK, " OK ", pos = (10, position)))
-        position = position + 30        
-        sizer.Add(wx.Button(pnl, wx.ID_CANCEL, " Cancel ", pos = (10, position)))
+        sizer.Add(wx.Button(pnl, wx.ID_CANCEL, " Cancel ", pos = (130, position )))
 
-        self.Centre() 
+        self.Centre()
         self.Show(True)
 
     def OnRadiogroup(self, e): 
@@ -304,7 +306,7 @@ class SettingsDialog(wx.Dialog):
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnRadiogroup)
 
         self.btn=wx.Button(self, wx.ID_OK, " OK ", pos = (10, 160))
-        self.Centre() 
+        self.Centre()
         self.Show(True)
 
     def OnRadiogroup(self, e): 
@@ -373,7 +375,7 @@ def saveSettings(settings):
     config.read(config_file)
     try:
         config.add_section(category)
-    except DuplicateSectionError as e:
+    except DuplicateSectionError:
         pass
         
     config.set(category, 'export_file_type', str(settings.export_file_type))
