@@ -14,7 +14,7 @@ class Folder:
         self.modify_date = modify_date
         self.folder_name = folder_name
         self.children = children
-    
+
     def add_url(self, url):
         self.children.append(url)
 
@@ -65,6 +65,8 @@ def toDate(value):
 
 
 def stringDate(value):
+    if not value:
+        return "None"
     return value.strftime("%Y/%m/%d, %H:%M:%S")
 
 

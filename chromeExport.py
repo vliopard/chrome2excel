@@ -45,7 +45,7 @@ class urlPanel(wx.Panel):
         box.Add(html_button, 1, wx.EXPAND)
         box.Add(xlsx_button, 1, wx.EXPAND)
         main_sizer.Add(box, 1, wx.EXPAND)
-        
+
         self.SetSizer(main_sizer)
 
     def on_html(self, event):
@@ -56,6 +56,7 @@ class urlPanel(wx.Panel):
         print("undupe:",self.parent.remove_duplicates)
         print("clean:",self.parent.clean_url)
         print("txt:",self.parent.import_txt)
+        # TODO: Generate HTML
         #chrome2excel.generate_html(refresh, undupe, clean, input)
 
     def on_xlsx(self, event):
@@ -64,6 +65,7 @@ class urlPanel(wx.Panel):
         print("reload:",self.parent.reload_title)
         print("undupe:",self.parent.remove_duplicates)
         print("clean:",self.parent.clean_url)
+        # TODO: Generate XLSX
         #chrome2excel.generate_workbook(refresh, undupe, clean)
 
     def on_edit(self, event):
@@ -85,31 +87,41 @@ class urlPanel(wx.Panel):
         self.list_ctrl.InsertColumn(4, url_clean, width=150)
         self.list_ctrl.InsertColumn(5, original_url, width=150)
         self.list_ctrl.InsertColumn(6, url_hostname, width=150)
-        index = 0
-        url_objects = []
         url_list = []
-
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_txt(folder_path))
-        for url in url_list:
-            self.list_ctrl.InsertItem(index, tools.stringDate(url[13])) #'URL Added',       #13
-            self.list_ctrl.SetItem(index, 1, tools.stringDate(url[14])) #'URL Modified',    #14
-            self.list_ctrl.SetItem(index, 2, tools.stringDate(url[15])) #'URL Visited',     #15
-            self.list_ctrl.SetItem(index, 3, url[16])         #'URL Name',        #16
-            self.list_ctrl.SetItem(index, 4, url[17])         #'URL Clean',       #17
-            self.list_ctrl.SetItem(index, 5, url[18])         #'URL',             #18
-            self.list_ctrl.SetItem(index, 6, url[21])         #'Hostname',        #21
-            # TODO: Sync list_ctrl with url_object data
-            url_object = bookMarks.nobj("dv", "da", "dm")
-            
-            url_objects.append(url_object)
-            url_objects.append(url_object)
-            url_objects.append(url_object)
-            url_objects.append(url_object)
-            url_objects.append(url_object)
-            url_objects.append(url_object)
-            url_objects.append(url_object)
-            self.row_obj_dict[index] = url_object
-            index += 1
+        self.update_list(url_list)
+
+
+    def update_list(self, url_list):
+            index = 0
+            url_objects = []
+            print("Generating Start.")
+            for url in url_list[1:]:
+                print("="*50)
+                for x,y in enumerate(url):
+                    print(x, y)
+                print("="*50)
+                self.list_ctrl.InsertItem(index, tools.stringDate(url[13])) #'URL Added',       #13
+                self.list_ctrl.SetItem(index, 1, tools.stringDate(url[14])) #'URL Modified',    #14
+                self.list_ctrl.SetItem(index, 2, tools.stringDate(url[15])) #'URL Visited',     #15
+                # TODO: BUGFIX for out of bounds
+                self.list_ctrl.SetItem(index, 3, url[16])                   #'URL Name',        #16
+                self.list_ctrl.SetItem(index, 4, url[17])                   #'URL Clean',       #17
+                self.list_ctrl.SetItem(index, 5, url[18])                   #'URL',             #18
+                self.list_ctrl.SetItem(index, 6, url[21])                   #'Hostname',        #21
+                # TODO: Sync list_ctrl with url_object data
+                url_object = bookMarks.nobj("dv", "da", "dm")
+
+                url_objects.append(url_object)
+                url_objects.append(url_object)
+                url_objects.append(url_object)
+                url_objects.append(url_object)
+                url_objects.append(url_object)
+                url_objects.append(url_object)
+                url_objects.append(url_object)
+                self.row_obj_dict[index] = url_object
+                index += 1
+            print("Generating Done.")
 
 
 class urlFrame(wx.Frame):
@@ -168,7 +180,8 @@ class urlFrame(wx.Frame):
         if retval == wx.ID_OK:
             # TODO: Load bookmars from Chrome profile
             print("Loading Bookmarks...")
-            bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
+            url_data = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
+            self.panel.update_list(url_data)
         else:
             self.selected = -1
         dlg.Destroy()
@@ -201,7 +214,7 @@ class AboutDialog(wx.Dialog):
         info.Developers = [ "Vincent Liopard." ]
         info.License = "This is an Open Source Project that uses other General Public License (GPL) sources from the web."
 
-        wx.adv.AboutBox(info) 
+        wx.adv.AboutBox(info)
 
 
 class EditDialog(wx.Dialog):
@@ -264,14 +277,15 @@ class MyDialog(wx.Dialog):
             sizer.Add(wx.Button(pnl, wx.ID_OK, " OK ", pos = ( 10, position )))
         else:
             sizer.Add(wx.StaticText(pnl,wx.ID_ANY, label="No account installed on Chrome",pos=(10,position)))
+            position = position + 30
 
         sizer.Add(wx.Button(pnl, wx.ID_CANCEL, " Cancel ", pos = (130, position )))
 
         self.Centre()
         self.Show(True)
 
-    def OnRadiogroup(self, e): 
-       rb = e.GetEventObject() 
+    def OnRadiogroup(self, e):
+       rb = e.GetEventObject()
        self.myval = rb.GetId()
        self.parent.selected = rb.GetId()
 
@@ -280,25 +294,25 @@ class SettingsDialog(wx.Dialog):
 
     def __init__(self, parent, id, title = "Settings", size=(200, 100)):
         wx.Dialog.__init__(self, parent, id, title)
-      
+
         self.parent = parent
-        
+
         label, value = setButtonToggle(self,0,False)
         self.tb1=wx.ToggleButton(self, id=0, label=label, pos = (10, 10))
         self.tb1.SetValue(value)
-        
+
         label, value = setButtonToggle(self,1,False)
         self.tb2=wx.ToggleButton(self, id=1, label=label, pos = (10, 40))
         self.tb2.SetValue(value)
-        
+
         label, value = setButtonToggle(self,2,False)
         self.tb3=wx.ToggleButton(self, id=2, label=label, pos = (10, 70))
         self.tb3.SetValue(value)
-        
+
         label, value = setButtonToggle(self,3,False)
         self.tb4=wx.ToggleButton(self, id=3, label=label, pos = (10, 100))
         self.tb4.SetValue(value)
-        
+
         label, value = setButtonToggle(self,4,False)
         self.tb5=wx.ToggleButton(self, id=4, label=label, pos = (10, 130))
         self.tb5.SetValue(value)
@@ -309,8 +323,8 @@ class SettingsDialog(wx.Dialog):
         self.Centre()
         self.Show(True)
 
-    def OnRadiogroup(self, e): 
-        rb = e.GetEventObject() 
+    def OnRadiogroup(self, e):
+        rb = e.GetEventObject()
         label, value = setButtonToggle(self, rb.GetId(),True)
         rb.SetLabel(label)
         rb.SetValue(value)
@@ -377,7 +391,7 @@ def saveSettings(settings):
         config.add_section(category)
     except DuplicateSectionError:
         pass
-        
+
     config.set(category, 'export_file_type', str(settings.export_file_type))
     config.set(category, 'reload_title', str(settings.reload_title))
     config.set(category, 'remove_duplicates', str(settings.undupe_url))

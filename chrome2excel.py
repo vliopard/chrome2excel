@@ -14,9 +14,6 @@ from openpyxl.styles import Font
 
 from argparse import ArgumentParser
 
-stub_date = 13231709218000000
-
-
 
 
 
@@ -40,38 +37,36 @@ def import_txt(txt="chrome.txt"):
 
 
 def append_dataheader(url_list):
-    global stub_date
     print("Appending dataheader...")
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
-        stub_date =  tools.toDate(stub_date)
-        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
-                   stub_date, stub_date, stub_date, 'Folder Name', 
+        stub_date =  tools.toDate(13231709218000000)
+        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
+                   stub_date, stub_date, stub_date, 'Folder Name',
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'URL Name', 
-                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2], 
-                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password', 
-                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF', 
-                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL', 
+                   stub_date, stub_date, stub_date, 'URL Name',
+                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2],
+                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password',
+                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
+                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
                    'ParamM', 'ParamN', 'ParamO', 'ParamP' )
         preset.data_header.append(element)
 
 
 def generate_from_txt(url_list):
-    global stub_date
     print("Generating from TXT...")
     txt_header = []
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
-        stub_date =  tools.toDate(stub_date)
-        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type', 
-                   stub_date, stub_date, stub_date, 'Folder Name', 
+        stub_date = tools.toDate(13231709218000000)
+        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
+                   stub_date, stub_date, stub_date, 'Folder Name',
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'URL Name', # TODO: If not enabled, returns current name or url 
-                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2], 
-                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password', 
-                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF', 
-                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL', 
+                   stub_date, stub_date, stub_date, 'URL Name', # TODO: If not enabled, returns current name or url
+                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2],
+                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password',
+                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
+                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
                    'ParamM', 'ParamN', 'ParamO', 'ParamP' )
         txt_header.append(element)
     return txt_header
@@ -166,7 +161,7 @@ def generate_workbook(refresh, undupe, clean):
     disabled = True
     if refresh != "off":
         disabled = False
-        
+
     with tqdm.tqdm(total=len(preset.data_header),disable=disabled) as pbar:
         for a in preset.data_header:
             if clean == 'on':
