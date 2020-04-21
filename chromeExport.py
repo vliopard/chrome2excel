@@ -23,6 +23,9 @@ class urlPanel(wx.Panel):
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.row_obj_dict = {}
         self.list_ctrl = wx.ListCtrl(self, size=(10, 500), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+        # TODO: SAVE COLUMNS WIDTH
+        # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
+        # TODO: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
         self.list_ctrl.InsertColumn(0, date_added, width=200)
         self.list_ctrl.InsertColumn(1, date_modified, width=200)
         self.list_ctrl.InsertColumn(2, date_visited, width=200)

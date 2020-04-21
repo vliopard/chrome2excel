@@ -11,7 +11,9 @@ It also has features regarding to clean URLs, stripping tracking tokens.
 ## How to install:
 
 Run command:
+
 `apt install python3-bs4`
+
 `pip install --user -U -r requirements.txt`
 
 ## How to run:
