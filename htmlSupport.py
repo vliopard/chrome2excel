@@ -72,12 +72,12 @@ def clean_url(url):
     for k, v in qd:
         if ("youtube.com" in hname or "youtu.be" in hname):
             if not k.startswith(preset.youtube) and not k.startswith(preset.words):
-                filtered.update([(k,v)])
+                filtered.update([(k, v)])
         elif ("facebook.com" in hname):
             if not k.startswith(preset.facebook) and not k.startswith(preset.words):
-                filtered.update([(k,v)])
+                filtered.update([(k, v)])
         elif not k.startswith(preset.words):
-            filtered.update([(k,v)])
+            filtered.update([(k, v)])
 
     newurl = urlunparse([
         parsed.scheme,
@@ -90,21 +90,21 @@ def clean_url(url):
     return newurl
 
 
-def gettitle(url): # TODO: If not enabled, returns current name or url 
+def gettitle(url):  # TODO: If not enabled, returns current name or url
     try:
         with urlopen(url, timeout=30) as stream:
             data = stream.read()
     except HTTPError as error:
         err = str(error)
-        err = err.replace("<","[").replace(">","]")
+        err = err.replace("<", "[").replace(">", "]")
         return -2, "HTTPError - " + err
     except URLError as error:
         err = str(error)
-        err = err.replace("<","[").replace(">","]")
+        err = err.replace("<", "[").replace(">", "]")
         return -2, "URLError - " + err
     except timeout as error:
         err = str(error)
-        err = err.replace("<","[").replace(">","]")
+        err = err.replace("<", "[").replace(">", "]")
         return -2, "Timeout - " + err
     except:
         return -1, "Unknown Exception"
@@ -113,12 +113,12 @@ def gettitle(url): # TODO: If not enabled, returns current name or url
         parser = Parser()
         decoded = data.decode('utf-8', errors='ignore')
         parser.feed(decoded)
-        value = parser.title.replace('\n','[n').replace('\t','[t').strip()
+        value = parser.title.replace('\n', '[n').replace('\t', '[t').strip()
         if len(value) > 0:
             return 0, value
         else:
             return -2, "NONAME - " + value
-    except NotImplementedError as e:        
+    except NotImplementedError as e:
         return -2, str(e) + " - " + url
     except:
         return -1, "Unknown Exception"
@@ -144,7 +144,7 @@ def get_title(url):
     else:
         try:
             t = lxml.html.parse(url)
-            return t.find(".//title").text.replace('\n','[n').replace('\t','[t')
+            return t.find(".//title").text.replace('\n', '[n').replace('\t', '[t')
         except:
             return -1
 

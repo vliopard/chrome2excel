@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 
 
 def getUser(userpath):
-    username = json.loads(open(userpath,encoding='utf-8').read())["account_info"][0]
+    username = json.loads(open(userpath, encoding='utf-8').read())["account_info"][0]
     return username['email'], username['full_name'], username['given_name']
 
 
@@ -43,7 +43,7 @@ def profile_list():
             email, full, name = retrieve_profile(str(x))
             user_list.append(full + " - " + email)
             x = x + 1
-        except Exception as e:
+        except Exception:
             break
     return user_list
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         "--profile",
         "-p",
         help="Profile number to extract: 'all' is Default.",
-        default = "all"
+        default="all"
     )
 
     args = vars(parser.parse_args())

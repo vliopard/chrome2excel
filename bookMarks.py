@@ -5,6 +5,7 @@ import public
 import preset
 import htmlSupport
 
+
 @public.add
 class nobj:
     def __init__(self, date_visited, date_added, date_modified):
@@ -75,14 +76,14 @@ class Bookmarks:
 
     def __init__(self, path):
         self.path = path
-        self.data = json.loads(open(path,encoding='utf-8').read())
+        self.data = json.loads(open(path, encoding='utf-8').read())
         self.attrList = self.processRoots()
         self.urls = self.attrList["urls"]
         self.folders = self.attrList["folders"]
 
     def processRoots(self):
-        attrList = {"urls" : [], "folders" : []}
-        for key, value in json.loads(open(self.path,encoding='utf-8').read())["roots"].items():
+        attrList = {"urls": [], "folders": []}
+        for key, value in json.loads(open(self.path, encoding='utf-8').read())["roots"].items():
             if "children" in value:
                 self.processTree(attrList, value["children"])
         return attrList
@@ -160,7 +161,7 @@ def read_content(content):
                 )
         part2 = htmlSupport.parseURL(url)
         part3 = part1 + part2
-        data.append (part3)
+        data.append(part3)
     return data
 
 
@@ -208,7 +209,7 @@ def generate_data(instance):
                 f_url = folder[x]
             else:
                 tools.debug('WARNING: '+str(x))
-        f_data= (
+        f_data = (
                     f_guid,
                     tools.toNumber(f_id),
                     tools.toNumber(f_sync_transaction_version),
@@ -220,7 +221,7 @@ def generate_data(instance):
 
                     f_name,
                     f_url
-                )
+                 )
 
         for d in data:
             new_data = f_data + d

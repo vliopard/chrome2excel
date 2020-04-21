@@ -74,58 +74,59 @@ facebook = (
 )
 
 data_header = [
-    ('Folder GUID',     #00
-     'Folder ID',       #01
-     'Folder Sync',     #02
-     'Type',            #03
+    (
+        'Folder GUID',      # 00
+        'Folder ID',        # 01
+        'Folder Sync',      # 02
+        'Type',             # 03
 
-     'Folder Added',    #04
-     'Folder Modified', #05
-     'Folder visited',  #06
+        'Folder Added',     # 04
+        'Folder Modified',  # 05
+        'Folder visited',   # 06
 
-     'Folder Name',     #07
-     'Folder URL',      #08
+        'Folder Name',      # 07
+        'Folder URL',       # 08
 
-     'URL GUID',        #09
-     'URL ID',          #10
-     'URL Sync',        #11
-     'Type',            #12
+        'URL GUID',         # 09
+        'URL ID',           # 10
+        'URL Sync',         # 11
+        'Type',             # 12
 
-     'URL Added',       #13
-     'URL Modified',    #14
-     'URL Visited',     #15
+        'URL Added',        # 13
+        'URL Modified',     # 14
+        'URL Visited',      # 15
 
-     'URL Name',        #16
-     'URL Clean',       #17
-     'URL',             #18
-     'Scheme',          #19
-     'Netloc',          #20
-     'Hostname',        #21
-     'Path',            #22
-     'Port',            #23
-     'Param',           #24
-     'Fragment',        #25
-     'Username',        #26
-     'Password',        #27
+        'URL Name',         # 16
+        'URL Clean',        # 17
+        'URL',              # 18
+        'Scheme',           # 19
+        'Netloc',           # 20
+        'Hostname',         # 21
+        'Path',             # 22
+        'Port',             # 23
+        'Param',            # 24
+        'Fragment',         # 25
+        'Username',         # 26
+        'Password',         # 27
 
-     'ParamA',          #28
-     'ParamB',          #29
-     'ParamC',          #30
-     'ParamD',          #31
-     'ParamE',          #32
-     'ParamF',          #33
-     'ParamG',          #34
-     'ParamH',          #35
-     'ParamI',          #36
-     'ParamJ',          #37
-     'ParamK',          #38
-     'ParamL',          #39
-     'ParamM',          #40
-     'ParamN',          #41
-     'ParamO',          #42
-     'ParamP'           #43
+        'ParamA',           # 28
+        'ParamB',           # 29
+        'ParamC',           # 30
+        'ParamD',           # 31
+        'ParamE',           # 32
+        'ParamF',           # 33
+        'ParamG',           # 34
+        'ParamH',           # 35
+        'ParamI',           # 36
+        'ParamJ',           # 37
+        'ParamK',           # 38
+        'ParamL',           # 39
+        'ParamM',           # 40
+        'ParamN',           # 41
+        'ParamO',           # 42
+        'ParamP'            # 43
     )
-    ]
+]
 
 
 def getProfile(profile_):
@@ -152,4 +153,4 @@ def retPath(profile_):
             os.path.expanduser("~/.config/google-chrome/"+profile_+"/Bookmarks"),
             os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Bookmarks"),
             os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
-           ] 
+           ]

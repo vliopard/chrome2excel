@@ -15,8 +15,6 @@ from openpyxl.styles import Font
 from argparse import ArgumentParser
 
 
-
-
 def get_title_conditional(pbar, disabled, url_name, url):
     url_title = None
     if not disabled:
@@ -30,7 +28,7 @@ def get_title_conditional(pbar, disabled, url_name, url):
 def import_txt(txt="chrome.txt"):
     print("Importing text file...")
     url_list = []
-    with open(txt,encoding='utf-8') as bm:
+    with open(txt, encoding='utf-8') as bm:
         for line in bm:
             url_list.append(line)
     return url_list
@@ -40,7 +38,7 @@ def append_dataheader(url_list):
     print("Appending dataheader...")
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
-        stub_date =  tools.toDate(13231709218000000)
+        stub_date = tools.toDate(13231709218000000)
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
                    stub_date, stub_date, stub_date, 'Folder Name',
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
@@ -49,7 +47,7 @@ def append_dataheader(url_list):
                    'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password',
                    'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
                    'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
-                   'ParamM', 'ParamN', 'ParamO', 'ParamP' )
+                   'ParamM', 'ParamN', 'ParamO', 'ParamP')
         preset.data_header.append(element)
 
 
@@ -62,12 +60,12 @@ def generate_from_txt(url_list):
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
                    stub_date, stub_date, stub_date, 'Folder Name',
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'URL Name', # TODO: If not enabled, returns current name or url
+                   stub_date, stub_date, stub_date, 'URL Name',  # TODO: If not enabled, returns current name or url
                    htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2],
                    'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password',
                    'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
                    'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
-                   'ParamM', 'ParamN', 'ParamO', 'ParamP' )
+                   'ParamM', 'ParamN', 'ParamO', 'ParamP')
         txt_header.append(element)
     return txt_header
 
@@ -92,7 +90,7 @@ def generate_html(refresh, undupe, clean, import_txt):
                     website = a[17]
                 else:
                     website = a[18]
-                if not website in visited:
+                if website not in visited:
                     visited.add(website)
                     data_header_undupe.append(a)
     else:
@@ -125,7 +123,7 @@ def generate_html(refresh, undupe, clean, import_txt):
                 if nro != 0:
                     hostname = "[ " + hostname + " " + str(nro) + " - " + host_name + " ]"
 
-            if not hostname in created:
+            if hostname not in created:
                 url = tools.Urls(website, a[13], title)
                 fold = tools.Folder(a[4], a[5], hostname, [url])
                 created.add(hostname)
@@ -162,17 +160,17 @@ def generate_workbook(refresh, undupe, clean):
     if refresh != "off":
         disabled = False
 
-    with tqdm.tqdm(total=len(preset.data_header),disable=disabled) as pbar:
+    with tqdm.tqdm(total=len(preset.data_header), disable=disabled) as pbar:
         for a in preset.data_header:
             if clean == 'on':
                 website = a[17]
             else:
                 website = a[18]
-            if not website in visited:
+            if website not in visited:
                 visited.add(website)
-                data_header_undupe.append(( "MAIN", get_title_conditional(pbar, disabled, a[16], website) ) + a)
+                data_header_undupe.append(("MAIN", get_title_conditional(pbar, disabled, a[16], website)) + a)
             elif undupe == "off":
-                data_header_undupe.append(( "DUPE", get_title_conditional(pbar, disabled, a[16], website) ) + a)
+                data_header_undupe.append(("DUPE", get_title_conditional(pbar, disabled, a[16], website)) + a)
 
     print("Writting spreadsheet...")
     print("\u203e"*(screenSupport.get_terminal_width()))
@@ -187,20 +185,20 @@ def generate_workbook(refresh, undupe, clean):
     print("_"*(screenSupport.get_terminal_width()))
     print("Formating columns...")
     print("\u203e"*(screenSupport.get_terminal_width()))
-    courier = ['T','U','V','W','X','Y','Z',
-               'AA','AB','AC','AD','AE','AF',
-               'AG','AH','AI','AJ','AK','AL',
-               'AM','AN','AO','AP','AQ','AR','AS']
+    courier = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+               'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
+               'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
+               'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS']
     with tqdm.tqdm(total=(len(courier)*len(sheet['T']))) as pbar:
         for l in courier:
             for col_cell in sheet[l]:
                 pbar.update(1)
-                col_cell.font = Font(size = 10, name = 'Courier New')
+                col_cell.font = Font(size=10, name='Courier New')
 
     print("_"*(screenSupport.get_terminal_width()))
     print("Formating dates...")
     print("\u203e"*(screenSupport.get_terminal_width()))
-    dates = ['G','H','I','P','Q','R']
+    dates = ['G', 'H', 'I', 'P', 'Q', 'R']
     with tqdm.tqdm(total=(len(dates)*len(sheet['G']))) as pbar:
         for d in dates:
             sheet.column_dimensions[d].width = 18
@@ -210,7 +208,7 @@ def generate_workbook(refresh, undupe, clean):
 
     print("_"*(screenSupport.get_terminal_width()))
     print("Hiding columns...")
-    hidden = ['C','D','E','F','G','H','I','J','K','L','Z','AA','AB','AC']
+    hidden = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Z', 'AA', 'AB', 'AC']
     for h in hidden:
         sheet.column_dimensions[h].width = 9
         sheet.column_dimensions[h].hidden = True
@@ -253,7 +251,7 @@ def run_chrome(profile, refresh, undupe, output, clean, import_txt):
     email, full, name = get_User(profile)
     bookmarks = bookMarks.generate_bookmarks(profile)
     print("_"*(screenSupport.get_terminal_width()))
-    print("Processing user: {",full,"} ["+email+"]")
+    print("Processing user: {", full, "} [" + email + "]")
     print("\u203e"*(screenSupport.get_terminal_width()))
     bookmarks_data = bookMarks.generate_data(bookmarks)
     if output == "xlsx":
@@ -270,37 +268,37 @@ if __name__ == "__main__":
         "--profile",
         "-p",
         help="Profile number to extract: 0 Default.",
-        default = "0"
+        default="0"
     )
     parser.add_argument(
         "--output",
         "-o",
         help="Output file type [html, xlsx]: xlsx Default.",
-        default = "xlsx"
+        default="xlsx"
     )
     parser.add_argument(
         "--refresh",
         "-r",
         help="Refresh URL Title [on, off]: off Default.",
-        default = "off"
+        default="off"
     )
     parser.add_argument(
         "--undupe",
         "-u",
         help="Remove duplicated URL [on, off]: off Default.",
-        default = "off"
+        default="off"
     )
     parser.add_argument(
         "--clean",
         "-c",
         help="Remove trackers from URL [on, off]: off Default.",
-        default = "off"
+        default="off"
     )
     parser.add_argument(
         "--import_txt",
         "-i",
         help="Import TXT file [on, off]: off Default.",
-        default = "off"
+        default="off"
     )
 
     args = vars(parser.parse_args())
