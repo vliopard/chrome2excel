@@ -71,7 +71,7 @@ def stringDate(value):
 
 
 def dateFromWebkit(timestamp):
-    return (datetime(1601,1,1) + timedelta(microseconds=int(timestamp))).replace(tzinfo=timezone.utc).astimezone()
+    return (datetime(1601, 1, 1) + timedelta(microseconds=int(timestamp))).replace(tzinfo=timezone.utc).astimezone()
 
 
 def dateToWebkit(date_string):
