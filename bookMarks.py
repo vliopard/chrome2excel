@@ -8,10 +8,14 @@ import htmlSupport
 
 @public.add
 class nobj:
-    def __init__(self, date_visited, date_added, date_modified):
-        self.date_visited = date_visited
-        self.date_added = date_added
-        self.date_modified = date_modified
+    def __init__(self, element):
+        self.date_added = element[0]
+        self.date_modified = element[1]
+        self.date_visited = element[2]
+        self.url_name = element[3]
+        self.url_clean = element[4]
+        self.original_url = element[5]
+        self.url_hostname = element[6]
 
     def save():
         pass

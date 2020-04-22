@@ -37,14 +37,12 @@ def retrieve_profile(profile_):
 
 def profile_list():
     user_list = []
-    x = 0
-    while True:
+    for x in range(0, 100):
         try:
             email, full, name = retrieve_profile(str(x))
-            user_list.append(full + " - " + email)
-            x = x + 1
-        except Exception:
-            break
+            user_list.append([x, full + " - " + email])
+        except:
+            pass
     return user_list
 
 
@@ -59,13 +57,13 @@ def get_profile(profile):
                     tab = ""
                 print("User[" + str(x) + "]: {", full, "}\t" + tab + " [", email, "]")
             except:
-                exit(1)
+                pass
     else:
         try:
             email, full, name = retrieve_profile(profile)
             print("User: {", full, "} [" + email + "]")
         except Exception as e:
-            print (e)
+            print(e)
 
 
 if __name__ == "__main__":

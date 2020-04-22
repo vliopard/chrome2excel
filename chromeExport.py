@@ -109,13 +109,13 @@ class urlPanel(wx.Panel):
             self.list_ctrl.SetItem(index, 5, url[18])                    # 'URL',             #18
             self.list_ctrl.SetItem(index, 6, url[21])                    # 'Hostname',        #21
             # TODO: Sync list_ctrl with url_object data
-            url_object = bookMarks.nobj(tools.stringDate(url[13]),
+            url_object = bookMarks.nobj([tools.stringDate(url[13]),
                                         tools.stringDate(url[14]),
                                         tools.stringDate(url[15]),
                                         url[16],
                                         url[17],
                                         url[18],
-                                        url[21])
+                                        url[21]])
             url_objects.append(url_object)
             self.row_obj_dict[index] = url_object
             index += 1
@@ -123,7 +123,8 @@ class urlPanel(wx.Panel):
 
 class urlFrame(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self, parent=None,
+        wx.Frame.__init__(self,
+                          parent=None,
                           title='Bookmarks Editor',
                           size=(1200, 600))
 
@@ -224,6 +225,7 @@ class AboutDialog(wx.Dialog):
         info.Developers = ["Vincent Liopard."]
         info.License = "This is an Open Source Project that uses other General Public License (GPL) " \
                        "sources from the web."
+        info.SetTranslators = ["Vincent Liopard."]
 
         wx.adv.AboutBox(info)
 
@@ -276,10 +278,10 @@ class MyDialog(wx.Dialog):
         self.parent.selected = 0
         position = 10
         if my_list:
-            sizer.Add(wx.RadioButton(pnl, 0, label=my_list[0], pos=(10, 10), style=wx.RB_GROUP))
-            for nro, x in enumerate(my_list[1:]):
+            sizer.Add(wx.RadioButton(pnl, 0, label=my_list[0][1], pos=(10, 10), style=wx.RB_GROUP))
+            for x in my_list[1:]:
                 position = position + 20
-                sizer.Add(wx.RadioButton(pnl, nro+1, label=x, pos=(10, position)))
+                sizer.Add(wx.RadioButton(pnl, x[0], label=x[1], pos=(10, position)))
 
             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadiogroup)
 

@@ -154,3 +154,27 @@ def retPath(profile_):
             os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Bookmarks"),
             os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
            ]
+
+
+# TODO: Evaluate to change from tuple to Pandas DataFrame
+'''
+
+import pandas as pd
+
+# df = pd.DataFrame([[1, 2, 3]], columns=["A", "B", "C"])
+
+data = pd.read_pickle('data.pickle')
+
+df = pd.DataFrame(data)
+
+df1 = pd.DataFrame([[4, 5, 6],[7, 8, 9]], columns=["A", "B", "C"])
+
+df = pd.concat([df, df1], ignore_index=True)
+
+df2 = pd.DataFrame([['a', 'b', 'c'], ['d', 'e', 'f']], columns=["A", "B", "C"])
+
+df = pd.concat([df, df2], ignore_index=True)
+
+df.to_pickle('data.pickle')
+
+'''

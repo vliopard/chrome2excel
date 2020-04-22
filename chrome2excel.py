@@ -25,7 +25,7 @@ def get_title_conditional(pbar, disabled, url_name, url):
     return url_title
 
 
-def import_txt(txt="chrome.txt"):
+def import_text(txt="chrome.txt"):
     print("Importing text file...")
     url_list = []
     with open(txt, encoding='utf-8') as bm:
@@ -34,7 +34,7 @@ def import_txt(txt="chrome.txt"):
     return url_list
 
 
-def append_dataheader(url_list):
+def append_dataheader(data_header, url_list):
     print("Appending dataheader...")
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
@@ -48,7 +48,8 @@ def append_dataheader(url_list):
                    'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
                    'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
                    'ParamM', 'ParamN', 'ParamO', 'ParamP')
-        preset.data_header.append(element)
+        data_header.append(element)
+    return data_header
 
 
 def generate_from_txt(url_list):
@@ -70,10 +71,10 @@ def generate_from_txt(url_list):
     return txt_header
 
 
-def generate_html(refresh, undupe, clean, import_txt):
+def generate_html(data_header, refresh, undupe, clean, import_txt):
     print("Generating html...")
 
-    append_dataheader(import_txt())
+    data_header = append_dataheader(data_header, import_text())
 
     created = set()
     visited = set()
@@ -83,8 +84,8 @@ def generate_html(refresh, undupe, clean, import_txt):
         print("_"*(screenSupport.get_terminal_width()))
         print("Removing duplicates...")
         print("\u203e"*(screenSupport.get_terminal_width()))
-        with tqdm.tqdm(total=len(preset.data_header)) as pbar:
-            for a in preset.data_header:
+        with tqdm.tqdm(total=len(data_header)) as pbar:
+            for a in data_header:
                 pbar.update(1)
                 if clean == 'on':
                     website = a[17]
@@ -94,7 +95,7 @@ def generate_html(refresh, undupe, clean, import_txt):
                     visited.add(website)
                     data_header_undupe.append(a)
     else:
-        data_header_undupe = preset.data_header
+        data_header_undupe = data_header
 
     print("_"*(screenSupport.get_terminal_width()))
     print("Writting html...")
@@ -142,7 +143,7 @@ def generate_html(refresh, undupe, clean, import_txt):
     print("\u203e"*(screenSupport.get_terminal_width()))
 
 
-def generate_workbook(refresh, undupe, clean):
+def generate_workbook(data_header, refresh, undupe, clean):
     print("Generating workbook...")
     book = Workbook()
     sheet = book.active
@@ -160,8 +161,8 @@ def generate_workbook(refresh, undupe, clean):
     if refresh != "off":
         disabled = False
 
-    with tqdm.tqdm(total=len(preset.data_header), disable=disabled) as pbar:
-        for a in preset.data_header:
+    with tqdm.tqdm(total=len(data_header), disable=disabled) as pbar:
+        for a in data_header:
             if clean == 'on':
                 website = a[17]
             else:
@@ -255,9 +256,9 @@ def run_chrome(profile, refresh, undupe, output, clean, import_txt):
     print("\u203e"*(screenSupport.get_terminal_width()))
     bookmarks_data = bookMarks.generate_data(bookmarks)
     if output == "xlsx":
-        generate_workbook(refresh, undupe, clean)
+        generate_workbook(bookmarks_data, refresh, undupe, clean)
     else:
-        generate_html(refresh, undupe, clean, import_txt)
+        generate_html(bookmarks_data, refresh, undupe, clean, import_txt)
 
 
 if __name__ == "__main__":
