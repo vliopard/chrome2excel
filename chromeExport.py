@@ -4,7 +4,6 @@ import tools
 import bookMarks
 import chromeProfile
 import chrome2excel
-from configparser import ConfigParser, DuplicateSectionError
 
 
 date_added = "Date Added"
@@ -128,13 +127,9 @@ class urlFrame(wx.Frame):
                           title='Bookmarks Editor',
                           size=(1200, 600))
 
-        self.export_file_type = False
-        self.reload_title = False
-        self.remove_duplicates = False
-        self.clean_url = False
-        self.import_txt = False
+        self.settings = bookMarks.Options()
 
-        loadSettings(self)
+        self.settings.loadSettings()
 
         self.selected = -1
 
@@ -191,7 +186,7 @@ class urlFrame(wx.Frame):
         dlg.Destroy()
 
     def on_open_settings(self, event):
-        dlg = SettingsDialog(self, -1)
+        dlg = SettingsDialog(self, 0)
         dlg.ShowModal()
         dlg.Destroy()
 
@@ -199,6 +194,7 @@ class urlFrame(wx.Frame):
         AboutDialog()
 
     def on_open_exit(self, event):
+        # TODO: EXIT CONFIRMATION SHOW NEXT TICKER
         dlg = wx.MessageDialog(self,
                                "Want to exit?",
                                "Exit",
@@ -304,10 +300,12 @@ class MyDialog(wx.Dialog):
 
 class SettingsDialog(wx.Dialog):
 
-    def __init__(self, parent, id, title="Settings", size=(200, 100)):
+    def __init__(self, parent, id, title="Settings"):
         wx.Dialog.__init__(self, parent, id, title)
 
         self.parent = parent
+
+        self.SetSize((280, 190))
 
         label, value = setButtonToggle(self, 0, False)
         self.tb1 = wx.ToggleButton(self, id=0, label=label, pos=(10, 10))
@@ -322,16 +320,20 @@ class SettingsDialog(wx.Dialog):
         self.tb3.SetValue(value)
 
         label, value = setButtonToggle(self, 3, False)
-        self.tb4 = wx.ToggleButton(self, id=3, label=label, pos=(10, 100))
+        self.tb4 = wx.ToggleButton(self, id=3, label=label, pos=(130, 10))
         self.tb4.SetValue(value)
 
         label, value = setButtonToggle(self, 4, False)
-        self.tb5 = wx.ToggleButton(self, id=4, label=label, pos=(10, 130))
+        self.tb5 = wx.ToggleButton(self, id=4, label=label, pos=(130, 40))
         self.tb5.SetValue(value)
+
+        label, value = setButtonToggle(self, 5, False)
+        self.tb6 = wx.ToggleButton(self, id=5, label=label, pos=(130, 70))
+        self.tb6.SetValue(value)
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnRadiogroup)
 
-        self.btn = wx.Button(self, wx.ID_OK, " OK ", pos=(10, 160))
+        self.btn = wx.Button(self, wx.ID_OK, " OK ", pos=(80, 110))
         self.Centre()
         self.Show(True)
 
@@ -340,15 +342,15 @@ class SettingsDialog(wx.Dialog):
         label, value = setButtonToggle(self, rb.GetId(), True)
         rb.SetLabel(label)
         rb.SetValue(value)
-        saveSettings(self.parent)
+        self.parent.settings.saveSettings()
 
 
 def setButtonToggle(self, btnId, toggle):
     label = None
     if btnId == 0:
         if toggle:
-            self.parent.export_file_type = not self.parent.export_file_type
-        if self.parent.export_file_type:
+            self.parent.settings.export_file_type = not self.parent.settings.export_file_type
+        if self.parent.settings.export_file_type:
             label = "[html]  Output type"
             value = True
         else:
@@ -356,8 +358,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 1:
         if toggle:
-            self.parent.reload_title = not self.parent.reload_title
-        if self.parent.reload_title:
+            self.parent.settings.reload_title = not self.parent.settings.reload_title
+        if self.parent.settings.reload_title:
             label = "[on]  Refresh URL"
             value = True
         else:
@@ -365,8 +367,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 2:
         if toggle:
-            self.parent.undupe_url = not self.parent.undupe_url
-        if self.parent.undupe_url:
+            self.parent.settings.undupe_url = not self.parent.settings.undupe_url
+        if self.parent.settings.undupe_url:
             label = "[on]  Undupe URLs"
             value = True
         else:
@@ -374,8 +376,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 3:
         if toggle:
-            self.parent.clean_url = not self.parent.clean_url
-        if self.parent.clean_url:
+            self.parent.settings.clean_url = not self.parent.settings.clean_url
+        if self.parent.settings.clean_url:
             label = "[on]  Clean URL"
             value = True
         else:
@@ -383,53 +385,23 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 4:
         if toggle:
-            self.parent.text_import = not self.parent.text_import
-        if self.parent.text_import:
+            self.parent.settings.text_import = not self.parent.settings.text_import
+        if self.parent.settings.text_import:
             label = "[on]  Import TXT"
             value = True
         else:
             label = "[off] Import TXT"
             value = False
+    if btnId == 5:
+        if toggle:
+            self.parent.settings.check_host = not self.parent.settings.check_host
+        if self.parent.settings.check_host:
+            label = "[on]  Check hostname"
+            value = True
+        else:
+            label = "[off] Check hostname"
+            value = False
     return label, value
-
-
-def saveSettings(settings):
-    category = 'main'
-    config_file = 'config.ini'
-    config = ConfigParser()
-    config.read(config_file)
-    try:
-        config.add_section(category)
-    except DuplicateSectionError:
-        pass
-
-    config.set(category, 'export_file_type', str(settings.export_file_type))
-    config.set(category, 'reload_title', str(settings.reload_title))
-    config.set(category, 'remove_duplicates', str(settings.undupe_url))
-    config.set(category, 'clean_url', str(settings.clean_url))
-    config.set(category, 'import_txt', str(settings.text_import))
-    with open(config_file, 'w') as f:
-        config.write(f)
-
-
-def loadSettings(settings):
-    category = 'main'
-    config_file = 'config.ini'
-    config = ConfigParser()
-    try:
-        config.read(config_file)
-        settings.export_file_type = config.getboolean(category, 'export_file_type')
-        settings.reload_title = config.getboolean(category, 'reload_title')
-        settings.undupe_url = config.getboolean(category, 'remove_duplicates')
-        settings.clean_url = config.getboolean(category, 'clean_url')
-        settings.text_import = config.getboolean(category, 'import_txt')
-    except:
-        settings.export_file_type = False
-        settings.reload_title = False
-        settings.undupe_url = False
-        settings.clean_url = False
-        settings.text_import = False
-    return settings
 
 
 if __name__ == '__main__':

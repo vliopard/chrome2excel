@@ -71,7 +71,8 @@ def generate_from_txt(url_list):
     return txt_header
 
 
-def generate_html(data_header, refresh, undupe, clean, import_txt):
+# TODO: SETTINGS MUST BE AVAILABLE BY SETTINGS LOAD FUNCTION
+def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
     print("Generating html...")
 
     data_header = append_dataheader(data_header, import_text())
@@ -120,6 +121,7 @@ def generate_html(data_header, refresh, undupe, clean, import_txt):
                 if nro != 0:
                     title = "[ " + title + " " + str(nro) + " - " + a[16] + " ]"
 
+            if checkhost == 'on':
                 nro, hostname = htmlSupport.gettitle("http://"+host_name)
                 if nro != 0:
                     hostname = "[ " + hostname + " " + str(nro) + " - " + host_name + " ]"
@@ -245,7 +247,7 @@ def get_User(profile_):
     return email, full, name
 
 
-def run_chrome(profile, refresh, undupe, output, clean, import_txt):
+def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
     print("\n\n")
     print("_"*(screenSupport.get_terminal_width()))
     print("Starting Chrome Bookmars export.")
@@ -258,7 +260,7 @@ def run_chrome(profile, refresh, undupe, output, clean, import_txt):
     if output == "xlsx":
         generate_workbook(bookmarks_data, refresh, undupe, clean)
     else:
-        generate_html(bookmarks_data, refresh, undupe, clean, import_txt)
+        generate_html(bookmarks_data, refresh, undupe, clean, import_txt, get_hostname)
 
 
 if __name__ == "__main__":
@@ -299,6 +301,12 @@ if __name__ == "__main__":
         "--import_txt",
         "-i",
         help="Import TXT file [on, off]: off Default.",
+        default="off"
+    )
+    parser.add_argument(
+        "--get_hostname",
+        "-g",
+        help="Get hostname [on, off]: off Default.",
         default="off"
     )
 

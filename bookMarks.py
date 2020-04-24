@@ -5,6 +5,58 @@ import public
 import preset
 import htmlSupport
 
+from configparser import ConfigParser, DuplicateSectionError
+
+
+@public.add
+class Options:
+    def __init__(self):
+        self.export_file_type = False
+        self.reload_title = False
+        self.remove_duplicates = False
+        self.clean_url = False
+        self.import_txt = False
+        self.check_host = False
+
+    def saveSettings(self):
+        category = 'main'
+        config_file = 'config.ini'
+        config = ConfigParser()
+        config.read(config_file)
+        try:
+            config.add_section(category)
+        except DuplicateSectionError:
+            pass
+
+        config.set(category, 'export_file_type', str(self.export_file_type))
+        config.set(category, 'reload_title', str(self.reload_title))
+        config.set(category, 'remove_duplicates', str(self.undupe_url))
+        config.set(category, 'clean_url', str(self.clean_url))
+        config.set(category, 'import_txt', str(self.text_import))
+        config.set(category, 'check_host', str(self.check_host))
+        with open(config_file, 'w') as f:
+            config.write(f)
+
+    def loadSettings(self):
+        category = 'main'
+        config_file = 'config.ini'
+        config = ConfigParser()
+        try:
+            config.read(config_file)
+            self.export_file_type = config.getboolean(category, 'export_file_type')
+            self.reload_title = config.getboolean(category, 'reload_title')
+            self.undupe_url = config.getboolean(category, 'remove_duplicates')
+            self.clean_url = config.getboolean(category, 'clean_url')
+            self.text_import = config.getboolean(category, 'import_txt')
+            self.check_host = config.getboolean(category, 'check_host')
+        except:
+            self.export_file_type = False
+            self.reload_title = False
+            self.undupe_url = False
+            self.clean_url = False
+            self.text_import = False
+            self.check_host = False
+
 
 @public.add
 class nobj:
