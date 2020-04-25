@@ -12,13 +12,19 @@ It also has features regarding to clean URLs, stripping tracking tokens.
 
 Run command:
 
-`apt install python3-bs4`
-
 `pip install --user -U -r requirements.txt`
 
 ## How to run:
 
-For running in default profile:
+### Run in GUI:
+
+For running Graphical User Interface:
+
+`python chromeExport.py`
+
+### Run in CLI:
+
+For running default profile in Command Line Interface:
 
 `python chrome2excel.py`
 
@@ -41,6 +47,10 @@ For choosing an alternative profile:
 **To turn on refresh URL Title:**
 
 `python chrome2excel.py -p <ProfileNumber> -r [on, off]`
+
+**To turn on get Hostname:**
+
+`python chrome2excel.py -p <ProfileNumber> -g [on, off]`
 
 **To turn on clean URL from tracking**
 
