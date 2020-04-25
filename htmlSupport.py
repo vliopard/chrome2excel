@@ -16,8 +16,6 @@ from socket import timeout
 from http import HTTPStatus
 from http.client import RemoteDisconnected
 
-from bs4 import BeautifulSoup
-
 
 class Parser(HTMLParser):
     def __init__(self):
@@ -130,6 +128,7 @@ def gettitle(url):
         return -1, "Unknown Exception: " + str(e)
 
 
+'''
 def get_title(url):
     ret = None
     try:
@@ -154,8 +153,9 @@ def get_title(url):
         except Exception as e:
             tools.display("Exception:", str(e))
             return -1
+'''
 
-
+'''
 def _get_title(url):
     response = ""
     try:
@@ -165,8 +165,12 @@ def _get_title(url):
     except Exception as e:
         response = "request disallowed by robots: " + str(e)
     return (response)
+'''
 
+'''
+from bs4 import BeautifulSoup
 
 def url_title(url):
     soup = BeautifulSoup(urlopen("https://www.google.com"))
     return soup.title.string
+'''

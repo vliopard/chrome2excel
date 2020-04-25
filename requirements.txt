@@ -3,6 +3,5 @@ tqdm
 public
 pandas
 openpyxl
-mechanize
 wxpython
-BeautifulSoup4
+mechanize

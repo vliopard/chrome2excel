@@ -24,7 +24,6 @@ class Folder:
 
 
 class Urls:
-
     def __init__(
         self,
         url=None,
@@ -51,9 +50,17 @@ def display(*args):
         return 0
 
 
-def debug(msg):
+def debug(*args):
     if debug_mode:
-        display(msg)
+        argCount = len(args)
+        if argCount > 0:
+            text = ""
+            for elem in args:
+                text = text + elem + " "
+            text = text.rstrip()
+            print(text)
+        else:
+            return 0
 
 
 def add(val):

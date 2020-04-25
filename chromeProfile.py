@@ -69,7 +69,7 @@ def get_profile(profile):
 
 if __name__ == "__main__":
     parser = ArgumentParser(
-        description="Script to extract bookmarks from Google Chrome to Microsoft Excel Spreadsheet."
+        description="Script to list users from Google Chrome."
     )
     parser.add_argument(
         "--profile",
