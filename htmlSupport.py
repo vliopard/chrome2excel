@@ -90,9 +90,14 @@ def clean_url(url):
     return newurl
 
 
-def gettitle(url):  # TODO: If not enabled, returns current name or url
+def gettitle(url):
+    #######################################################################################
+    # TODO: If not enabled, returns current name or url
+    #######################################################################################
     try:
+        #######################################################################################
         # TODO: Place timeout in a settings file
+        #######################################################################################
         with urlopen(url, timeout=120) as stream:
             data = stream.read()
     except HTTPError as error:

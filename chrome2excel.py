@@ -61,7 +61,10 @@ def generate_from_txt(url_list):
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
                    stub_date, stub_date, stub_date, 'Folder Name',
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'URL Name',  # TODO: If not enabled, returns current name or url
+                   stub_date, stub_date, stub_date, 'URL Name',
+                   #######################################################################################
+                   # TODO: If not enabled, returns current name or url
+                   #######################################################################################
                    htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2],
                    'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password',
                    'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
@@ -71,8 +74,10 @@ def generate_from_txt(url_list):
     return txt_header
 
 
-# TODO: SETTINGS MUST BE AVAILABLE BY SETTINGS LOAD FUNCTION
 def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
+    #######################################################################################
+    # TODO: SETTINGS MUST BE AVAILABLE BY SETTINGS LOAD FUNCTION
+    #######################################################################################
     tools.display("Generating html...")
 
     data_header = append_dataheader(data_header, import_text())

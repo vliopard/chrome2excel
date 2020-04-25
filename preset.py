@@ -155,8 +155,11 @@ def retPath(profile_):
             os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
            ]
 
-
+#######################################################################################
 # TODO: Evaluate to change from tuple to Pandas DataFrame
+#######################################################################################
+
+
 '''
 
 import pandas as pd

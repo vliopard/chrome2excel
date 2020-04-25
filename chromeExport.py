@@ -24,9 +24,13 @@ class urlPanel(wx.Panel):
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.row_obj_dict = {}
         self.list_ctrl = wx.ListCtrl(self, size=(10, 500), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+        #######################################################################################
         # TODO: SAVE COLUMNS WIDTH
+        #######################################################################################
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
+        #######################################################################################
         # TODO: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
+        #######################################################################################
         pos = [-1]
 
         self.list_ctrl.InsertColumn(add(pos), date_added, width=200)
@@ -57,15 +61,20 @@ class urlPanel(wx.Panel):
         self.SetSizer(main_sizer)
 
     def on_html(self, event):
+        #######################################################################################
         # TODO: https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
+        #######################################################################################
         tools.display("_______________")
         tools.display("HTML SETUP")
         tools.display("reload:", self.parent.reload_title)
         tools.display("undupe:", self.parent.remove_duplicates)
         tools.display("clean:", self.parent.clean_url)
         tools.display("txt:", self.parent.import_txt)
+        #######################################################################################
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
+        #######################################################################################
         # TODO: Generate HTML
+        #######################################################################################
         # chrome2excel.generate_html(refresh, undupe, clean, input)
 
     def on_xlsx(self, event):
@@ -74,8 +83,11 @@ class urlPanel(wx.Panel):
         tools.display("reload:", self.parent.reload_title)
         tools.display("undupe:", self.parent.remove_duplicates)
         tools.display("clean:", self.parent.clean_url)
+        #######################################################################################
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
+        #######################################################################################
         # TODO: Generate XLSX
+        #######################################################################################
         # chrome2excel.generate_workbook(refresh, undupe, clean)
 
     def on_edit(self, event):
@@ -116,7 +128,9 @@ class urlPanel(wx.Panel):
             self.list_ctrl.SetItem(index, add(pos), url[17])                    # 'URL Clean',       #17
             self.list_ctrl.SetItem(index, add(pos), url[18])                    # 'URL',             #18
             self.list_ctrl.SetItem(index, add(pos), url[21])                    # 'Hostname',        #21
+            #######################################################################################
             # TODO: Sync list_ctrl with url_object data
+            #######################################################################################
             url_object = bookMarks.nobj([tools.stringDate(url[13]),
                                         tools.stringDate(url[14]),
                                         tools.stringDate(url[15]),
@@ -148,7 +162,9 @@ class urlFrame(wx.Frame):
         self.Show()
 
     def create_menu(self):
+        #######################################################################################
         # TODO: http://zetcode.com/wxpython/menustoolbars/
+        #######################################################################################
         menu_bar = wx.MenuBar()
         file_menu = wx.Menu()
 
@@ -186,7 +202,9 @@ class urlFrame(wx.Frame):
         dlg = MyDialog(self, -1)
         retval = dlg.ShowModal()
         if retval == wx.ID_OK:
+            #######################################################################################
             # TODO: Load bookmars from Chrome profile
+            #######################################################################################
             tools.display("Loading Bookmarks...")
             url_data = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
             self.panel.update_list(url_data)
@@ -204,7 +222,9 @@ class urlFrame(wx.Frame):
         AboutDialog()
 
     def on_open_exit(self, event):
+        #######################################################################################
         # TODO: EXIT CONFIRMATION SHOW NEXT TICKER
+        #######################################################################################
         dlg = wx.MessageDialog(self,
                                "Want to exit?",
                                "Exit",

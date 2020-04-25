@@ -190,7 +190,9 @@ def read_content(content):
             elif x == 'guid':
                 guid = chrome_url[x]
             elif x == 'icon':
+                #######################################################################################
                 # TODO: Add icon to the spreadsheet
+                #######################################################################################
                 icon = chrome_url[x]
             elif x == 'id':
                 item_id = chrome_url[x]
