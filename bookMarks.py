@@ -5,6 +5,7 @@ import public
 import preset
 import htmlSupport
 
+from tools import add
 from configparser import ConfigParser, DuplicateSectionError
 
 
@@ -49,7 +50,7 @@ class Options:
             self.clean_url = config.getboolean(category, 'clean_url')
             self.text_import = config.getboolean(category, 'import_txt')
             self.check_host = config.getboolean(category, 'check_host')
-        except:
+        except Exception:
             self.export_file_type = False
             self.reload_title = False
             self.undupe_url = False
@@ -61,13 +62,15 @@ class Options:
 @public.add
 class nobj:
     def __init__(self, element):
-        self.date_added = element[0]
-        self.date_modified = element[1]
-        self.date_visited = element[2]
-        self.url_name = element[3]
-        self.url_clean = element[4]
-        self.original_url = element[5]
-        self.url_hostname = element[6]
+        pos = [-1]
+        self.date_added = element[add(pos)]
+        self.date_modified = element[add(pos)]
+        self.date_visited = element[add(pos)]
+        self.folder_name = element[add(pos)]
+        self.url_name = element[add(pos)]
+        self.url_clean = element[add(pos)]
+        self.original_url = element[add(pos)]
+        self.url_hostname = element[add(pos)]
 
     def save():
         pass
@@ -222,7 +225,7 @@ def read_content(content):
 
 
 def generate_bookmarks(profile_):
-    print("Generating bookmarks...")
+    tools.display("Generating bookmarks...")
     for f in preset.retPath(profile_):
         if os.path.exists(f):
             return Bookmarks(f)

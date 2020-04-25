@@ -107,8 +107,8 @@ def gettitle(url):  # TODO: If not enabled, returns current name or url
         err = str(error)
         err = err.replace("<", "[").replace(">", "]")
         return -2, "Timeout - " + err
-    except:
-        return -1, "Unknown Exception"
+    except Exception as e:
+        return -1, "Unknown Exception: " + str(e)
 
     try:
         parser = Parser()
@@ -121,8 +121,8 @@ def gettitle(url):  # TODO: If not enabled, returns current name or url
             return -2, "NONAME - " + value
     except NotImplementedError as e:
         return -2, str(e) + " - " + url
-    except:
-        return -1, "Unknown Exception"
+    except Exception as e:
+        return -1, "Unknown Exception: " + str(e)
 
 
 def get_title(url):
@@ -146,7 +146,8 @@ def get_title(url):
         try:
             t = lxml.html.parse(url)
             return t.find(".//title").text.replace('\n', '[n').replace('\t', '[t')
-        except:
+        except Exception as e:
+            tools.display("Exception:", str(e))
             return -1
 
 
@@ -156,8 +157,8 @@ def _get_title(url):
         br = Browser()
         br.open(url)
         response = br.title()
-    except:
-        response = "request disallowed by robots"
+    except Exception as e:
+        response = "request disallowed by robots: " + str(e)
     return (response)
 
 

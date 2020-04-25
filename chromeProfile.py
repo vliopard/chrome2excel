@@ -1,5 +1,6 @@
 import os
 import json
+import tools
 
 from argparse import ArgumentParser
 
@@ -27,7 +28,7 @@ def retrieve_profile(profile_):
             try:
                 email, full, name = getUser(f)
                 found = True
-            except:
+            except Exception:
                 found = False
                 pass
     if not found:
@@ -41,7 +42,7 @@ def profile_list():
         try:
             email, full, name = retrieve_profile(str(x))
             user_list.append([x, full + " - " + email])
-        except:
+        except Exception:
             pass
     return user_list
 
@@ -55,15 +56,15 @@ def get_profile(profile):
                     tab = "\t"
                 else:
                     tab = ""
-                print("User[" + str(x) + "]: {", full, "}\t" + tab + " [", email, "]")
-            except:
+                tools.display("User[" + str(x) + "]: {", full, "}\t" + tab + " [", email, "]")
+            except Exception:
                 pass
     else:
         try:
             email, full, name = retrieve_profile(profile)
-            print("User: {", full, "} [" + email + "]")
+            tools.display("User: {", full, "} [" + email + "]")
         except Exception as e:
-            print(e)
+            tools.display(e)
 
 
 if __name__ == "__main__":

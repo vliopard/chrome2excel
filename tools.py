@@ -1,8 +1,9 @@
 from datetime import datetime, timezone, timedelta
 
+debug_mode = False
+
 
 class Folder:
-
     def __init__(
         self,
         add_date=None,
@@ -38,8 +39,26 @@ class Urls:
         return str(self.__dict__)
 
 
+def display(*args):
+    argCount = len(args)
+    if argCount > 0:
+        text = ""
+        for elem in args:
+            text = text + elem + " "
+        text = text.rstrip()
+        print(text)
+    else:
+        return 0
+
+
 def debug(msg):
-    print(msg)
+    if debug_mode:
+        display(msg)
+
+
+def add(val):
+    val[0] = val[0] + 1
+    return val[0]
 
 
 def checkNone(val):

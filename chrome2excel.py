@@ -26,7 +26,7 @@ def get_title_conditional(pbar, disabled, url_name, url):
 
 
 def import_text(txt="chrome.txt"):
-    print("Importing text file...")
+    tools.display("Importing text file...")
     url_list = []
     with open(txt, encoding='utf-8') as bm:
         for line in bm:
@@ -35,7 +35,7 @@ def import_text(txt="chrome.txt"):
 
 
 def append_dataheader(data_header, url_list):
-    print("Appending dataheader...")
+    tools.display("Appending dataheader...")
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
         stub_date = tools.toDate(13231709218000000)
@@ -53,7 +53,7 @@ def append_dataheader(data_header, url_list):
 
 
 def generate_from_txt(url_list):
-    print("Generating from TXT...")
+    tools.display("Generating from TXT...")
     txt_header = []
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
@@ -73,7 +73,7 @@ def generate_from_txt(url_list):
 
 # TODO: SETTINGS MUST BE AVAILABLE BY SETTINGS LOAD FUNCTION
 def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
-    print("Generating html...")
+    tools.display("Generating html...")
 
     data_header = append_dataheader(data_header, import_text())
 
@@ -82,9 +82,9 @@ def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
     folders = []
     data_header_undupe = []
     if undupe == 'on':
-        print("_"*(screenSupport.get_terminal_width()))
-        print("Removing duplicates...")
-        print("\u203e"*(screenSupport.get_terminal_width()))
+        tools.display("_"*(screenSupport.get_terminal_width()))
+        tools.display("Removing duplicates...")
+        tools.display("\u203e"*(screenSupport.get_terminal_width()))
         with tqdm.tqdm(total=len(data_header)) as pbar:
             for a in data_header:
                 pbar.update(1)
@@ -98,9 +98,9 @@ def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
     else:
         data_header_undupe = data_header
 
-    print("_"*(screenSupport.get_terminal_width()))
-    print("Writting html...")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("_"*(screenSupport.get_terminal_width()))
+    tools.display("Writting html...")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
     with tqdm.tqdm(total=len(data_header_undupe[1:])) as pbar:
         for a in data_header_undupe[1:]:
             pbar.update(1)
@@ -137,27 +137,27 @@ def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
                     if x.folder_name == hostname:
                         x.add_url(url)
 
-    print("_"*(screenSupport.get_terminal_width()))
-    print("Saving HTML file...")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("_"*(screenSupport.get_terminal_width()))
+    tools.display("Saving HTML file...")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
     htmlExport.write_html(folders)
-    print("Done.")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("Done.")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
 
 
 def generate_workbook(data_header, refresh, undupe, clean):
-    print("Generating workbook...")
+    tools.display("Generating workbook...")
     book = Workbook()
     sheet = book.active
     sheet.title = "Chrome URLs"
 
     visited = set()
     data_header_undupe = []
-    print("Find duplicate lines...")
+    tools.display("Find duplicate lines...")
     if refresh != "off":
-        print("_"*(screenSupport.get_terminal_width()))
-        print("Getting URL Status...")
-        print("\u203e"*(screenSupport.get_terminal_width()))
+        tools.display("_"*(screenSupport.get_terminal_width()))
+        tools.display("Getting URL Status...")
+        tools.display("\u203e"*(screenSupport.get_terminal_width()))
 
     disabled = True
     if refresh != "off":
@@ -175,8 +175,8 @@ def generate_workbook(data_header, refresh, undupe, clean):
             elif undupe == "off":
                 data_header_undupe.append(("DUPE", get_title_conditional(pbar, disabled, a[16], website)) + a)
 
-    print("Writting spreadsheet...")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("Writting spreadsheet...")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
     with tqdm.tqdm(total=len(data_header_undupe)) as pbar:
         for row in data_header_undupe:
             pbar.update(1)
@@ -185,9 +185,9 @@ def generate_workbook(data_header, refresh, undupe, clean):
     sheet.freeze_panes = "A2"
     sheet.auto_filter.ref = "A1:AT30000"
 
-    print("_"*(screenSupport.get_terminal_width()))
-    print("Formating columns...")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("_"*(screenSupport.get_terminal_width()))
+    tools.display("Formating columns...")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
     courier = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
                'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
@@ -198,9 +198,9 @@ def generate_workbook(data_header, refresh, undupe, clean):
                 pbar.update(1)
                 col_cell.font = Font(size=10, name='Courier New')
 
-    print("_"*(screenSupport.get_terminal_width()))
-    print("Formating dates...")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("_"*(screenSupport.get_terminal_width()))
+    tools.display("Formating dates...")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
     dates = ['G', 'H', 'I', 'P', 'Q', 'R']
     with tqdm.tqdm(total=(len(dates)*len(sheet['G']))) as pbar:
         for d in dates:
@@ -209,53 +209,53 @@ def generate_workbook(data_header, refresh, undupe, clean):
                 pbar.update(1)
                 col_cell.number_format = "YYYY/MM/DD hh:mm:ss"
 
-    print("_"*(screenSupport.get_terminal_width()))
-    print("Hiding columns...")
+    tools.display("_"*(screenSupport.get_terminal_width()))
+    tools.display("Hiding columns...")
     hidden = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Z', 'AA', 'AB', 'AC']
     for h in hidden:
         sheet.column_dimensions[h].width = 9
         sheet.column_dimensions[h].hidden = True
 
-    print("Formating header...")
+    tools.display("Formating header...")
     for cell in sheet["1:1"]:
         cell.font = Font(bold=True)
 
-    print("Sizing columns...")
+    tools.display("Sizing columns...")
     sheet.column_dimensions['S'].width = 30
     sheet.column_dimensions['T'].width = 85
 
-    print("Saving workbook...")
+    tools.display("Saving workbook...")
     book.save("chrome.xlsx")
-    print("Done.")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("Done.")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
 
 
 def get_User(profile_):
-    print("Retrieving user...")
+    tools.display("Retrieving user...")
     found = False
     for f in preset.retUser(profile_):
         if os.path.exists(f):
             try:
                 email, full, name = chromeProfile.getUser(f)
                 found = True
-            except:
+            except Exception:
                 found = False
                 pass
     if not found:
-        print("Invalid profile.")
+        tools.display("Invalid profile.")
         exit(1)
     return email, full, name
 
 
 def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
-    print("\n\n")
-    print("_"*(screenSupport.get_terminal_width()))
-    print("Starting Chrome Bookmars export.")
+    tools.display("\n\n")
+    tools.display("_"*(screenSupport.get_terminal_width()))
+    tools.display("Starting Chrome Bookmars export.")
     email, full, name = get_User(profile)
     bookmarks = bookMarks.generate_bookmarks(profile)
-    print("_"*(screenSupport.get_terminal_width()))
-    print("Processing user: {", full, "} [" + email + "]")
-    print("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display("_"*(screenSupport.get_terminal_width()))
+    tools.display("Processing user: {", full, "} [" + email + "]")
+    tools.display("\u203e"*(screenSupport.get_terminal_width()))
     bookmarks_data = bookMarks.generate_data(bookmarks)
     if output == "xlsx":
         generate_workbook(bookmarks_data, refresh, undupe, clean)

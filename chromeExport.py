@@ -5,6 +5,7 @@ import bookMarks
 import chromeProfile
 import chrome2excel
 
+from tools import add
 
 date_added = "Date Added"
 date_modified = "Date Modified"
@@ -13,6 +14,7 @@ url_name = "URL Name"
 url_clean = "URL Clean"
 original_url = "URL Address"
 url_hostname = "Hostname"
+folder_name = "Folder"
 
 
 class urlPanel(wx.Panel):
@@ -25,13 +27,16 @@ class urlPanel(wx.Panel):
         # TODO: SAVE COLUMNS WIDTH
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
         # TODO: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
-        self.list_ctrl.InsertColumn(0, date_added, width=200)
-        self.list_ctrl.InsertColumn(1, date_modified, width=200)
-        self.list_ctrl.InsertColumn(2, date_visited, width=200)
-        self.list_ctrl.InsertColumn(3, url_name, width=200)
-        self.list_ctrl.InsertColumn(4, url_clean, width=200)
-        self.list_ctrl.InsertColumn(5, original_url, width=200)
-        self.list_ctrl.InsertColumn(6, url_hostname, width=200)
+        pos = [-1]
+
+        self.list_ctrl.InsertColumn(add(pos), date_added, width=200)
+        self.list_ctrl.InsertColumn(add(pos), date_modified, width=200)
+        self.list_ctrl.InsertColumn(add(pos), date_visited, width=200)
+        self.list_ctrl.InsertColumn(add(pos), folder_name, width=200)
+        self.list_ctrl.InsertColumn(add(pos), url_name, width=200)
+        self.list_ctrl.InsertColumn(add(pos), url_clean, width=200)
+        self.list_ctrl.InsertColumn(add(pos), original_url, width=200)
+        self.list_ctrl.InsertColumn(add(pos), url_hostname, width=200)
 
         main_sizer.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 5)
         main_sizer.AddStretchSpacer()
@@ -53,22 +58,22 @@ class urlPanel(wx.Panel):
 
     def on_html(self, event):
         # TODO: https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
-        print("_______________")
-        print("HTML SETUP")
-        print("reload:", self.parent.reload_title)
-        print("undupe:", self.parent.remove_duplicates)
-        print("clean:", self.parent.clean_url)
-        print("txt:", self.parent.import_txt)
+        tools.display("_______________")
+        tools.display("HTML SETUP")
+        tools.display("reload:", self.parent.reload_title)
+        tools.display("undupe:", self.parent.remove_duplicates)
+        tools.display("clean:", self.parent.clean_url)
+        tools.display("txt:", self.parent.import_txt)
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
         # TODO: Generate HTML
         # chrome2excel.generate_html(refresh, undupe, clean, input)
 
     def on_xlsx(self, event):
-        print("_______________")
-        print("XLSX SETUP")
-        print("reload:", self.parent.reload_title)
-        print("undupe:", self.parent.remove_duplicates)
-        print("clean:", self.parent.clean_url)
+        tools.display("_______________")
+        tools.display("XLSX SETUP")
+        tools.display("reload:", self.parent.reload_title)
+        tools.display("undupe:", self.parent.remove_duplicates)
+        tools.display("clean:", self.parent.clean_url)
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
         # TODO: Generate XLSX
         # chrome2excel.generate_workbook(refresh, undupe, clean)
@@ -85,32 +90,37 @@ class urlPanel(wx.Panel):
     def update_url_listing(self, folder_path):
         self.current_folder_path = folder_path
         self.list_ctrl.ClearAll()
-        self.list_ctrl.InsertColumn(0, date_added, width=115)
-        self.list_ctrl.InsertColumn(1, date_modified, width=118)
-        self.list_ctrl.InsertColumn(2, date_visited, width=120)
-        self.list_ctrl.InsertColumn(3, url_name, width=150)
-        self.list_ctrl.InsertColumn(4, url_clean, width=150)
-        self.list_ctrl.InsertColumn(5, original_url, width=150)
-        self.list_ctrl.InsertColumn(6, url_hostname, width=150)
+        pos = [-1]
+        self.list_ctrl.InsertColumn(add(pos), date_added, width=115)
+        self.list_ctrl.InsertColumn(add(pos), date_modified, width=118)
+        self.list_ctrl.InsertColumn(add(pos), date_visited, width=120)
+        self.list_ctrl.InsertColumn(add(pos), folder_name, width=150)
+        self.list_ctrl.InsertColumn(add(pos), url_name, width=150)
+        self.list_ctrl.InsertColumn(add(pos), url_clean, width=150)
+        self.list_ctrl.InsertColumn(add(pos), original_url, width=150)
+        self.list_ctrl.InsertColumn(add(pos), url_hostname, width=150)
         url_list = []
-        url_list = chrome2excel.generate_from_txt(chrome2excel.import_txt(folder_path))
+        url_list = chrome2excel.generate_from_txt(chrome2excel.import_text(folder_path))
         self.update_list(url_list)
 
     def update_list(self, url_list):
         index = 0
         url_objects = []
         for url in url_list[1:]:
+            pos = [0]
             self.list_ctrl.InsertItem(index, tools.stringDate(url[13]))  # 'URL Added',       #13
-            self.list_ctrl.SetItem(index, 1, tools.stringDate(url[14]))  # 'URL Modified',    #14
-            self.list_ctrl.SetItem(index, 2, tools.stringDate(url[15]))  # 'URL Visited',     #15
-            self.list_ctrl.SetItem(index, 3, url[16])                    # 'URL Name',        #16
-            self.list_ctrl.SetItem(index, 4, url[17])                    # 'URL Clean',       #17
-            self.list_ctrl.SetItem(index, 5, url[18])                    # 'URL',             #18
-            self.list_ctrl.SetItem(index, 6, url[21])                    # 'Hostname',        #21
+            self.list_ctrl.SetItem(index, add(pos), tools.stringDate(url[14]))  # 'URL Modified',    #14
+            self.list_ctrl.SetItem(index, add(pos), tools.stringDate(url[15]))  # 'URL Visited',     #15
+            self.list_ctrl.SetItem(index, add(pos), url[7])                    # 'Folder Name',     #07
+            self.list_ctrl.SetItem(index, add(pos), url[16])                    # 'URL Name',        #16
+            self.list_ctrl.SetItem(index, add(pos), url[17])                    # 'URL Clean',       #17
+            self.list_ctrl.SetItem(index, add(pos), url[18])                    # 'URL',             #18
+            self.list_ctrl.SetItem(index, add(pos), url[21])                    # 'Hostname',        #21
             # TODO: Sync list_ctrl with url_object data
             url_object = bookMarks.nobj([tools.stringDate(url[13]),
                                         tools.stringDate(url[14]),
                                         tools.stringDate(url[15]),
+                                        url[7],
                                         url[16],
                                         url[17],
                                         url[18],
@@ -177,7 +187,7 @@ class urlFrame(wx.Frame):
         retval = dlg.ShowModal()
         if retval == wx.ID_OK:
             # TODO: Load bookmars from Chrome profile
-            print("Loading Bookmarks...")
+            tools.display("Loading Bookmarks...")
             url_data = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
             self.panel.update_list(url_data)
             self.panel.Update()
@@ -305,35 +315,36 @@ class SettingsDialog(wx.Dialog):
 
         self.parent = parent
 
-        self.SetSize((280, 190))
+        self.SetSize((320, 190))
+        btSize = (135, 25)
 
         label, value = setButtonToggle(self, 0, False)
-        self.tb1 = wx.ToggleButton(self, id=0, label=label, pos=(10, 10))
+        self.tb1 = wx.ToggleButton(self, id=0, label=label, size=btSize, pos=(10, 10), style=wx.BU_LEFT)
         self.tb1.SetValue(value)
 
         label, value = setButtonToggle(self, 1, False)
-        self.tb2 = wx.ToggleButton(self, id=1, label=label, pos=(10, 40))
+        self.tb2 = wx.ToggleButton(self, id=1, label=label, size=btSize, pos=(10, 40), style=wx.BU_LEFT)
         self.tb2.SetValue(value)
 
         label, value = setButtonToggle(self, 2, False)
-        self.tb3 = wx.ToggleButton(self, id=2, label=label, pos=(10, 70))
+        self.tb3 = wx.ToggleButton(self, id=2, label=label, size=btSize, pos=(10, 70), style=wx.BU_LEFT)
         self.tb3.SetValue(value)
 
         label, value = setButtonToggle(self, 3, False)
-        self.tb4 = wx.ToggleButton(self, id=3, label=label, pos=(130, 10))
+        self.tb4 = wx.ToggleButton(self, id=3, label=label, size=btSize, pos=(150, 10), style=wx.BU_LEFT)
         self.tb4.SetValue(value)
 
         label, value = setButtonToggle(self, 4, False)
-        self.tb5 = wx.ToggleButton(self, id=4, label=label, pos=(130, 40))
+        self.tb5 = wx.ToggleButton(self, id=4, label=label, size=btSize, pos=(150, 40), style=wx.BU_LEFT)
         self.tb5.SetValue(value)
 
         label, value = setButtonToggle(self, 5, False)
-        self.tb6 = wx.ToggleButton(self, id=5, label=label, pos=(130, 70))
+        self.tb6 = wx.ToggleButton(self, id=5, label=label, size=btSize, pos=(150, 70), style=wx.BU_LEFT)
         self.tb6.SetValue(value)
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnRadiogroup)
 
-        self.btn = wx.Button(self, wx.ID_OK, " OK ", pos=(80, 110))
+        self.btn = wx.Button(self, wx.ID_OK, " OK ", size=btSize, pos=(60, 130))
         self.Centre()
         self.Show(True)
 
@@ -351,55 +362,55 @@ def setButtonToggle(self, btnId, toggle):
         if toggle:
             self.parent.settings.export_file_type = not self.parent.settings.export_file_type
         if self.parent.settings.export_file_type:
-            label = "[html]  Output type"
+            label = " [html]  Output type"
             value = True
         else:
-            label = "[xlsx] Output type"
+            label = " [xlsx] Output type"
             value = False
     if btnId == 1:
         if toggle:
             self.parent.settings.reload_title = not self.parent.settings.reload_title
         if self.parent.settings.reload_title:
-            label = "[on]  Refresh URL"
+            label = " [ON]  Refresh URL"
             value = True
         else:
-            label = "[off] Refresh URL"
+            label = " [off] Refresh URL"
             value = False
     if btnId == 2:
         if toggle:
             self.parent.settings.undupe_url = not self.parent.settings.undupe_url
         if self.parent.settings.undupe_url:
-            label = "[on]  Undupe URLs"
+            label = " [ON]  Undupe URLs"
             value = True
         else:
-            label = "[off] Undupe URLs"
+            label = " [off] Undupe URLs"
             value = False
     if btnId == 3:
         if toggle:
             self.parent.settings.clean_url = not self.parent.settings.clean_url
         if self.parent.settings.clean_url:
-            label = "[on]  Clean URL"
+            label = " [ON]  Clean URL"
             value = True
         else:
-            label = "[off] Clean URL"
+            label = " [off] Clean URL"
             value = False
     if btnId == 4:
         if toggle:
             self.parent.settings.text_import = not self.parent.settings.text_import
         if self.parent.settings.text_import:
-            label = "[on]  Import TXT"
+            label = " [ON]  Import TXT"
             value = True
         else:
-            label = "[off] Import TXT"
+            label = " [off] Import TXT"
             value = False
     if btnId == 5:
         if toggle:
             self.parent.settings.check_host = not self.parent.settings.check_host
         if self.parent.settings.check_host:
-            label = "[on]  Check hostname"
+            label = " [ON]  Check hostname"
             value = True
         else:
-            label = "[off] Check hostname"
+            label = " [off] Check hostname"
             value = False
     return label, value
 

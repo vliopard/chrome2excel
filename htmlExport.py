@@ -58,7 +58,7 @@ def write_html(fold):
                     if isinstance(url, tools.Urls):
                         chrome_html.write(add_url(url.url, url.add_date, url.title))
                     elif isinstance(url, tools.Folder):
-                        print("New Folder")
+                        tools.display("New Folder")
                 chrome_html.write(close_folder())
 
         chrome_html.write(tail)
