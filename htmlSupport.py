@@ -1,20 +1,13 @@
 import tools
 import preset
-import lxml.html
-
-from urllib import parse
-from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError
-from urllib.parse import urlparse, urlunparse, urlencode, parse_qsl
-
-from html.parser import HTMLParser
-
-from mechanize import Browser
 
 from socket import timeout
+from html.parser import HTMLParser
 
-from http import HTTPStatus
-from http.client import RemoteDisconnected
+from urllib import parse
+from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
+from urllib.parse import urlparse, urlunparse, urlencode, parse_qsl
 
 
 class Parser(HTMLParser):
@@ -129,6 +122,13 @@ def gettitle(url):
 
 
 '''
+import lxml.html
+
+from http import HTTPStatus
+from http.client import RemoteDisconnected
+from urllib.request import urlopen, Request
+
+
 def get_title(url):
     ret = None
     try:
@@ -156,6 +156,8 @@ def get_title(url):
 '''
 
 '''
+from mechanize import Browser
+
 def _get_title(url):
     response = ""
     try:
