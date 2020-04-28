@@ -1,7 +1,6 @@
 lxml
 tqdm
 public
-pandas
 openpyxl
 wxpython
 mechanize

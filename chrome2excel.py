@@ -47,17 +47,6 @@ def append_dataheader(data_header, url_list):
         head.URL_Clean = htmlSupport.clean_url(line)
         head.URL = line
         element = head.toTuple()
-        '''
-        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'Folder Name',
-                   'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'URL Name',
-                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2],
-                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password',
-                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
-                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
-                   'ParamM', 'ParamN', 'ParamO', 'ParamP')
-        '''
         data_header.append(element)
     return data_header
 
