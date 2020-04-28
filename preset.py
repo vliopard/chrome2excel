@@ -1,5 +1,5 @@
 import os
-from tools import add, toDate
+from tools import add, to_date
 
 
 words = (
@@ -82,7 +82,7 @@ facebook = (
 class Header:
     def __init__(self):
         pos = [-1]
-        stub_date = toDate(13231709218000000)
+        stub_date = to_date(13231709218000000)
         self._Folder_GUID = (None, add(pos))
         self._Folder_ID = (None, add(pos))
         self._Folder_Sync = (None, add(pos))

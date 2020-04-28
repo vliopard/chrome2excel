@@ -105,12 +105,12 @@ class Item(dict):
 
     @property
     def added(self):
-        return tools.dateFromWebkit(self["date_added"])
+        return tools.date_from_webkit(self["date_added"])
 
     @property
     def modified(self):
         if "date_modified" in self:
-            return tools.dateFromWebkit(self["date_modified"])
+            return tools.date_from_webkit(self["date_modified"])
 
     @property
     def folders(self):
@@ -208,13 +208,13 @@ def read_content(content):
                 tools.debug('WARNING: '+str(x))
         part1 = (
                  guid,
-                 tools.toNumber(item_id),
-                 tools.toNumber(sync_transaction_version),
+                 tools.to_number(item_id),
+                 tools.to_number(sync_transaction_version),
                  item_type,
 
-                 tools.toDate(date_added),
-                 tools.toDate(date_modified),
-                 tools.toDate(last_visited),
+                 tools.to_date(date_added),
+                 tools.to_date(date_modified),
+                 tools.to_date(last_visited),
 
                  name,
                  htmlSupport.clean_url(url),
@@ -272,13 +272,13 @@ def generate_data(instance):
                 tools.debug('WARNING: '+str(x))
         f_data = (
                     f_guid,
-                    tools.toNumber(f_id),
-                    tools.toNumber(f_sync_transaction_version),
+                    tools.to_number(f_id),
+                    tools.to_number(f_sync_transaction_version),
                     f_type,
 
-                    tools.toDate(f_date_added),
-                    tools.toDate(f_date_modified),
-                    tools.toDate(f_last_visited),
+                    tools.to_date(f_date_added),
+                    tools.to_date(f_date_modified),
+                    tools.to_date(f_last_visited),
 
                     f_name,
                     f_url

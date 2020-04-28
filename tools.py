@@ -68,20 +68,20 @@ def add(val):
     return val[0]
 
 
-def checkNone(val):
+def check_is_none(val):
     if val is None:
         return '[Empty]'
     return str(val)
 
 
-def toNumber(value):
+def to_number(value):
     if value != '[Empty]':
         return int(value)
     return None
 
 
-def toDate(value):
-    date_value = toNumber(value)
+def to_date(value):
+    date_value = to_number(value)
     if date_value:
         microseconds = int(hex(int(date_value)*10)[2:17], 16) / 10
         seconds, microseconds = divmod(microseconds, 1000000)
@@ -96,14 +96,14 @@ def stringDate(value):
     return value.strftime("%Y/%m/%d, %H:%M:%S")
 
 
-def dateFromWebkit(timestamp):
+def date_from_webkit(timestamp):
     return (datetime(1601, 1, 1) + timedelta(microseconds=int(timestamp))).replace(tzinfo=timezone.utc).astimezone()
 
 
-def dateToWebkit(date_string):
+def date_to_webkit(date_string):
     if date_string:
         diff = date_string - datetime(1601, 1, 1)
         seconds_in_day = 60 * 60 * 24
         value = '{:<010d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds)
         return str(value)
-    return("")
+    return ""

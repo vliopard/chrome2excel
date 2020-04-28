@@ -34,15 +34,15 @@ def parseURL(value):
     dt = dict(parse.parse_qsl(parse.urlsplit(value).query))
 
     additional0 = (
-                    tools.checkNone(parsed.scheme),
-                    tools.checkNone(parsed.netloc),
-                    tools.checkNone(parsed.hostname),
-                    tools.checkNone(parsed.path),
-                    tools.checkNone(parsed.port),
-                    tools.checkNone(parsed.params),
-                    tools.checkNone(parsed.fragment),
-                    tools.checkNone(parsed.username),
-                    tools.checkNone(parsed.password)
+                    tools.check_is_none(parsed.scheme),
+                    tools.check_is_none(parsed.netloc),
+                    tools.check_is_none(parsed.hostname),
+                    tools.check_is_none(parsed.path),
+                    tools.check_is_none(parsed.port),
+                    tools.check_is_none(parsed.params),
+                    tools.check_is_none(parsed.fragment),
+                    tools.check_is_none(parsed.username),
+                    tools.check_is_none(parsed.password)
                   )
 
     additional1 = ()
@@ -61,10 +61,10 @@ def clean_url(url):
     else:
         hname = parsed.netloc
     for k, v in qd:
-        if ("youtube.com" in hname or "youtu.be" in hname):
+        if "youtube.com" in hname or "youtu.be" in hname:
             if not k.startswith(preset.youtube) and not k.startswith(preset.words):
                 filtered.update([(k, v)])
-        elif ("facebook.com" in hname):
+        elif "facebook.com" in hname:
             if not k.startswith(preset.facebook) and not k.startswith(preset.words):
                 filtered.update([(k, v)])
         elif not k.startswith(preset.words):

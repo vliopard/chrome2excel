@@ -1,6 +1,4 @@
-lxml
 tqdm
 public
 openpyxl
 wxpython
-mechanize

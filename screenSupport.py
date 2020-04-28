@@ -7,7 +7,7 @@ import subprocess
 
 
 def get_terminal_width():
-    return ((get_terminal_size()[0])-1)
+    return (get_terminal_size()[0])-1
 
 
 def get_terminal_size():

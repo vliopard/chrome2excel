@@ -17,8 +17,8 @@ level = 1
 def open_folder(add_date, modified_date, folder_name):
     global level
     ret = new_line() + new_tab() + \
-        '<DT><H3 ADD_DATE="' + tools.dateToWebkit(add_date) + \
-        '" LAST_MODIFIED="' + tools.dateToWebkit(modified_date) + \
+        '<DT><H3 ADD_DATE="' + tools.date_to_webkit(add_date) + \
+        '" LAST_MODIFIED="' + tools.date_to_webkit(modified_date) + \
         '">' + folder_name + '</H3>' + new_line() + new_tab() + '<DL><p>'
     level = level + 1
     return ret
@@ -34,7 +34,7 @@ def close_folder():
 def add_url(url, add_date, url_title):
     return new_line() + new_tab() + \
         '<DT><A HREF="' + str(url).strip() + \
-        '" ADD_DATE="' + tools.dateToWebkit(add_date) + \
+        '" ADD_DATE="' + tools.date_to_webkit(add_date) + \
         '">' + str(url_title) + '</A>'
 
 
