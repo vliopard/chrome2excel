@@ -38,7 +38,16 @@ def append_dataheader(data_header, url_list):
     tools.display("Appending dataheader...")
     for line in url_list:
         url_parts = htmlSupport.parseURL(line)
-        stub_date = tools.toDate(13231709218000000)
+        # stub_date = tools.toDate(13231709218000000)
+        head = preset.Header()
+        head.Hostname = url_parts[2]
+        #######################################################################################
+        # TODO: If not enabled, returns current name or url
+        #######################################################################################
+        head.URL_Clean = htmlSupport.clean_url(line)
+        head.URL = line
+        element = head.toTuple()
+        '''
         element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
                    stub_date, stub_date, stub_date, 'Folder Name',
                    'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
@@ -48,6 +57,7 @@ def append_dataheader(data_header, url_list):
                    'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
                    'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
                    'ParamM', 'ParamN', 'ParamO', 'ParamP')
+        '''
         data_header.append(element)
     return data_header
 
@@ -55,23 +65,7 @@ def append_dataheader(data_header, url_list):
 def generate_from_txt(url_list):
     tools.display("Generating from TXT...")
     txt_header = []
-    for line in url_list:
-        url_parts = htmlSupport.parseURL(line)
-        stub_date = tools.toDate(13231709218000000)
-        element = ('Folder GUID', 'Folder ID', 'Folder Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'Folder Name',
-                   'Folder URL', 'URL GUID', 'URL ID', 'URL Sync', 'Type',
-                   stub_date, stub_date, stub_date, 'URL Name',
-                   #######################################################################################
-                   # TODO: If not enabled, returns current name or url
-                   #######################################################################################
-                   htmlSupport.clean_url(line), line, 'Scheme', 'Netloc', url_parts[2],
-                   'Path', 'Port', 'Param', 'Fragment', 'Username', 'Password',
-                   'ParamA', 'ParamB', 'ParamC', 'ParamD', 'ParamE', 'ParamF',
-                   'ParamG', 'ParamH', 'ParamI', 'ParamJ', 'ParamK', 'ParamL',
-                   'ParamM', 'ParamN', 'ParamO', 'ParamP')
-        txt_header.append(element)
-    return txt_header
+    return append_dataheader(txt_header, url_list)
 
 
 def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):

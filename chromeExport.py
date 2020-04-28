@@ -111,15 +111,21 @@ class urlPanel(wx.Panel):
         self.list_ctrl.InsertColumn(add(pos), url_clean, width=150)
         self.list_ctrl.InsertColumn(add(pos), original_url, width=150)
         self.list_ctrl.InsertColumn(add(pos), url_hostname, width=150)
-        url_list = []
+
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_text(folder_path))
         self.update_list(url_list)
 
     def update_list(self, url_list):
         index = 0
         url_objects = []
+        #######################################################################################
+        # TODO: Using Class Header no need of strip url_list[header:]
+        #######################################################################################
         for url in url_list[1:]:
             pos = [0]
+            #######################################################################################
+            # TODO: May change from index to dict key
+            #######################################################################################
             self.list_ctrl.InsertItem(index, tools.stringDate(url[13]))  # 'URL Added',       #13
             self.list_ctrl.SetItem(index, add(pos), tools.stringDate(url[14]))  # 'URL Modified',    #14
             self.list_ctrl.SetItem(index, add(pos), tools.stringDate(url[15]))  # 'URL Visited',     #15
@@ -364,7 +370,7 @@ class SettingsDialog(wx.Dialog):
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnRadiogroup)
 
-        self.btn = wx.Button(self, wx.ID_OK, " OK ", size=btSize, pos=(60, 130))
+        self.btn = wx.Button(self, wx.ID_OK, " OK ", size=btSize, pos=(70, 120))
         self.Centre()
         self.Show(True)
 
