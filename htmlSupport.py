@@ -31,7 +31,7 @@ class Parser(HTMLParser):
 
 def parse_url(value):
     parsed = urlparse(value)
-    dt = dict(parse.parse_qsl(parse.urlsplit(value).query))
+    dictionary = dict(parse.parse_qsl(parse.urlsplit(value).query))
 
     additional0 = (
                     tools.check_is_none(parsed.scheme),
@@ -46,31 +46,31 @@ def parse_url(value):
                   )
 
     additional1 = ()
-    for d in dt:
-        additional1 = additional1 + (d+"<=>"+dt[d],)
+    for element in dictionary:
+        additional1 = additional1 + (element + "<=>" + dictionary[element], )
 
     return additional0 + additional1
 
 
 def clean_url(url):
     parsed = urlparse(url)
-    qd = parse_qsl(parsed.query, keep_blank_values=True)
+    qsl_parsed = parse_qsl(parsed.query, keep_blank_values=True)
     filtered = {}
     if parsed.hostname:
-        hname = parsed.hostname
+        host_name = parsed.hostname
     else:
-        hname = parsed.netloc
-    for k, v in qd:
-        if "youtube.com" in hname or "youtu.be" in hname:
-            if not k.startswith(preset.youtube) and not k.startswith(preset.words):
-                filtered.update([(k, v)])
-        elif "facebook.com" in hname:
-            if not k.startswith(preset.facebook) and not k.startswith(preset.words):
-                filtered.update([(k, v)])
-        elif not k.startswith(preset.words):
-            filtered.update([(k, v)])
+        host_name = parsed.netloc
+    for key, value in qsl_parsed:
+        if "youtube.com" in host_name or "youtu.be" in host_name:
+            if not key.startswith(preset.youtube) and not key.startswith(preset.words):
+                filtered.update([(key, value)])
+        elif "facebook.com" in host_name:
+            if not key.startswith(preset.facebook) and not key.startswith(preset.words):
+                filtered.update([(key, value)])
+        elif not key.startswith(preset.words):
+            filtered.update([(key, value)])
 
-    newurl = urlunparse([
+    new_url = urlunparse([
         parsed.scheme,
         parsed.netloc,
         parsed.path,
@@ -78,7 +78,7 @@ def clean_url(url):
         urlencode(filtered, doseq=True),
         parsed.fragment
     ])
-    return newurl
+    return new_url
 
 
 def get_title(url):

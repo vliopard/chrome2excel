@@ -16,19 +16,18 @@ level = 1
 
 def open_folder(add_date, modified_date, folder_name):
     global level
-    ret = new_line() + new_tab() + \
+    return_value = new_line() + new_tab() + \
         '<DT><H3 ADD_DATE="' + tools.date_to_webkit(add_date) + \
         '" LAST_MODIFIED="' + tools.date_to_webkit(modified_date) + \
         '">' + folder_name + '</H3>' + new_line() + new_tab() + '<DL><p>'
     level = level + 1
-    return ret
+    return return_value
 
 
 def close_folder():
     global level
     level = level - 1
-    ret = new_line() + new_tab() + '</DL><p>'
-    return ret
+    return new_line() + new_tab() + '</DL><p>'
 
 
 def add_url(url, add_date, url_title):
@@ -47,18 +46,22 @@ def new_tab():
     return "\t"*level
 
 
-def write_html(fold):
-    with open('chrome.html', 'w', encoding='utf-8') as chrome_html:
-        chrome_html.write(header)
+def write_html(folder):
+    #######################################################################################
+    # TODO: MAY CHANGE CHROME.HTML TO OTHER FILENAME
+    #######################################################################################
 
-        for item in fold:
+    with open('chrome.html', 'w', encoding='utf-8') as html_file:
+        html_file.write(header)
+
+        for item in folder:
             if isinstance(item, tools.Folder):
-                chrome_html.write(open_folder(item.add_date, item.modify_date, item.folder_name))
+                html_file.write(open_folder(item.add_date, item.modify_date, item.folder_name))
                 for url in item.children:
                     if isinstance(url, tools.Urls):
-                        chrome_html.write(add_url(url.url, url.add_date, url.title))
+                        html_file.write(add_url(url.url, url.add_date, url.title))
                     elif isinstance(url, tools.Folder):
                         tools.display("New Folder")
-                chrome_html.write(close_folder())
+                html_file.write(close_folder())
 
-        chrome_html.write(tail)
+        html_file.write(tail)

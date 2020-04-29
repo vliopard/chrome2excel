@@ -66,9 +66,9 @@ class urlPanel(wx.Panel):
         #######################################################################################
         tools.display("_______________")
         tools.display("HTML SETUP")
-        tools.display("reload:", self.parent.reload_title)
+        tools.display("reload:", self.parent.refresh_url_title)
         tools.display("undupe:", self.parent.remove_duplicates)
-        tools.display("clean:", self.parent.clean_url)
+        tools.display("clean:", self.parent.remove_tracking_tokens_from_url)
         tools.display("txt:", self.parent.import_txt)
         #######################################################################################
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
@@ -80,9 +80,9 @@ class urlPanel(wx.Panel):
     def on_xlsx(self, event):
         tools.display("_______________")
         tools.display("XLSX SETUP")
-        tools.display("reload:", self.parent.reload_title)
+        tools.display("reload:", self.parent.refresh_url_title)
         tools.display("undupe:", self.parent.remove_duplicates)
-        tools.display("clean:", self.parent.clean_url)
+        tools.display("clean:", self.parent.remove_tracking_tokens_from_url)
         #######################################################################################
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
         #######################################################################################
@@ -137,14 +137,14 @@ class urlPanel(wx.Panel):
             #######################################################################################
             # TODO: Sync list_ctrl with url_object data
             #######################################################################################
-            url_object = bookMarks.nobj([tools.date_to_string(url[13]),
-                                        tools.date_to_string(url[14]),
-                                        tools.date_to_string(url[15]),
-                                        url[7],
-                                        url[16],
-                                        url[17],
-                                        url[18],
-                                        url[21]])
+            url_object = bookMarks.TemporaryObject([tools.date_to_string(url[13]),
+                                                    tools.date_to_string(url[14]),
+                                                    tools.date_to_string(url[15]),
+                                                    url[7],
+                                                    url[16],
+                                                    url[17],
+                                                    url[18],
+                                                    url[21]])
             url_objects.append(url_object)
             self.row_obj_dict[index] = url_object
             index += 1
@@ -396,8 +396,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 1:
         if toggle:
-            self.parent.settings.reload_title = not self.parent.settings.reload_title
-        if self.parent.settings.reload_title:
+            self.parent.settings.refresh_url_title = not self.parent.settings.refresh_url_title
+        if self.parent.settings.refresh_url_title:
             label = " [ON]  Refresh URL"
             value = True
         else:
@@ -405,8 +405,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 2:
         if toggle:
-            self.parent.settings.undupe_url = not self.parent.settings.undupe_url
-        if self.parent.settings.undupe_url:
+            self.parent.settings.remove_duplicated_urls = not self.parent.settings.remove_duplicated_urls
+        if self.parent.settings.remove_duplicated_urls:
             label = " [ON]  Undupe URLs"
             value = True
         else:
@@ -414,8 +414,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 3:
         if toggle:
-            self.parent.settings.clean_url = not self.parent.settings.clean_url
-        if self.parent.settings.clean_url:
+            self.parent.settings.remove_tracking_tokens_from_url = not self.parent.settings.remove_tracking_tokens_from_url
+        if self.parent.settings.remove_tracking_tokens_from_url:
             label = " [ON]  Clean URL"
             value = True
         else:
@@ -423,8 +423,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 4:
         if toggle:
-            self.parent.settings.text_import = not self.parent.settings.text_import
-        if self.parent.settings.text_import:
+            self.parent.settings.import_urls_from_text_file = not self.parent.settings.import_urls_from_text_file
+        if self.parent.settings.import_urls_from_text_file:
             label = " [ON]  Import TXT"
             value = True
         else:
@@ -432,8 +432,8 @@ def setButtonToggle(self, btnId, toggle):
             value = False
     if btnId == 5:
         if toggle:
-            self.parent.settings.check_host = not self.parent.settings.check_host
-        if self.parent.settings.check_host:
+            self.parent.settings.refresh_folder_name_with_hostname_title = not self.parent.settings.refresh_folder_name_with_hostname_title
+        if self.parent.settings.refresh_folder_name_with_hostname_title:
             label = " [ON]  Check hostname"
             value = True
         else:

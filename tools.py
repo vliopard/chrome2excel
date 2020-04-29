@@ -1,4 +1,11 @@
+import re
+import inspect
+
 from datetime import datetime, timezone, timedelta
+
+#######################################################################################
+# TODO: LOAD SETTINGS FROM DEBUG FILE
+#######################################################################################
 
 debug_mode = False
 
@@ -38,40 +45,40 @@ class Urls:
         return str(self.__dict__)
 
 
-def display(*args):
-    argCount = len(args)
-    if argCount > 0:
+def display(*arguments):
+    argument_count = len(arguments)
+    if argument_count > 0:
         text = ""
-        for elem in args:
-            text = text + elem + " "
+        for element in arguments:
+            text = text + element + " "
         text = text.rstrip()
         print(text)
     else:
         return 0
 
 
-def debug(*args):
+def debug(*arguments):
     if debug_mode:
-        argCount = len(args)
-        if argCount > 0:
+        argument_count = len(arguments)
+        if argument_count > 0:
             text = ""
-            for elem in args:
-                text = text + elem + " "
+            for element in arguments:
+                text = text + element + " "
             text = text.rstrip()
             print(text)
         else:
             return 0
 
 
-def add(val):
-    val[0] = val[0] + 1
-    return val[0]
+def add(value):
+    value[0] = value[0] + 1
+    return value[0]
 
 
-def check_is_none(val):
-    if val is None:
+def check_is_none(value):
+    if value is None:
         return '[Empty]'
-    return str(val)
+    return str(value)
 
 
 def to_number(value):
@@ -102,8 +109,8 @@ def date_from_webkit(timestamp):
 
 def date_to_webkit(date_string):
     if date_string:
-        diff = date_string - datetime(1601, 1, 1)
+        difference = date_string - datetime(1601, 1, 1)
         seconds_in_day = 60 * 60 * 24
-        value = '{:<010d}'.format(diff.days * seconds_in_day + diff.seconds + diff.microseconds)
+        value = '{:<010d}'.format(difference.days * seconds_in_day + difference.seconds + difference.microseconds)
         return str(value)
     return ""

@@ -75,10 +75,6 @@ facebook = (
     "notif_id"
 )
 
-#######################################################################################
-# TODO: CHANGE TO OBJECT AND RETURN A DICT
-#######################################################################################
-
 
 class Header:
     def __init__(self):
@@ -135,64 +131,60 @@ class Header:
         self._ParamO = (None, add(pos))
         self._ParamP = (None, add(pos))
 
-    def setData(self, dataHeader):
-        pos = [-1]
+    def set_data(self, url_element):
+        index = [-1]
 
-        self._Folder_GUID = (dataHeader[add(pos)], pos[0])  # 00
-        self._Folder_ID = (dataHeader[add(pos)], pos[0])  # 01
-        self._Folder_Sync = (dataHeader[add(pos)], pos[0])  # 02
-        self._Folder_Type = (dataHeader[add(pos)], pos[0])  # 03
+        self._Folder_GUID = (url_element[add(index)], index[0])  # 00
+        self._Folder_ID = (url_element[add(index)], index[0])  # 01
+        self._Folder_Sync = (url_element[add(index)], index[0])  # 02
+        self._Folder_Type = (url_element[add(index)], index[0])  # 03
 
-        self._Folder_Added = (dataHeader[add(pos)], pos[0])  # 04
-        self._Folder_Modified = (dataHeader[add(pos)], pos[0])  # 05
-        self._Folder_visited = (dataHeader[add(pos)], pos[0])  # 06
+        self._Folder_Added = (url_element[add(index)], index[0])  # 04
+        self._Folder_Modified = (url_element[add(index)], index[0])  # 05
+        self._Folder_visited = (url_element[add(index)], index[0])  # 06
 
-        self._Folder_Name = (dataHeader[add(pos)], pos[0])  # 07
-        self._Folder_URL = (dataHeader[add(pos)], pos[0])  # 08
+        self._Folder_Name = (url_element[add(index)], index[0])  # 07
+        self._Folder_URL = (url_element[add(index)], index[0])  # 08
 
-        self._URL_GUID = (dataHeader[add(pos)], pos[0])  # 09
-        self._URL_ID = (dataHeader[add(pos)], pos[0])  # 10
-        self._URL_Sync = (dataHeader[add(pos)], pos[0])  # 11
-        self._URL_Type = (dataHeader[add(pos)], pos[0])  # 12
+        self._URL_GUID = (url_element[add(index)], index[0])  # 09
+        self._URL_ID = (url_element[add(index)], index[0])  # 10
+        self._URL_Sync = (url_element[add(index)], index[0])  # 11
+        self._URL_Type = (url_element[add(index)], index[0])  # 12
 
-        self._URL_Added = (dataHeader[add(pos)], pos[0])  # 13
-        self._URL_Modified = (dataHeader[add(pos)], pos[0])  # 14
-        self._URL_Visited = (dataHeader[add(pos)], pos[0])  # 15
+        self._URL_Added = (url_element[add(index)], index[0])  # 13
+        self._URL_Modified = (url_element[add(index)], index[0])  # 14
+        self._URL_Visited = (url_element[add(index)], index[0])  # 15
 
-        self._URL_Name = (dataHeader[add(pos)], pos[0])  # 16
-        self._URL_Clean = (dataHeader[add(pos)], pos[0])  # 17
-        self._URL = (dataHeader[add(pos)], pos[0])  # 18
-        self._Scheme = (dataHeader[add(pos)], pos[0])  # 19
-        self._Netloc = (dataHeader[add(pos)], pos[0])  # 20
-        self._Hostname = (dataHeader[add(pos)], pos[0])  # 21
-        self._Path = (dataHeader[add(pos)], pos[0])  # 22
-        self._Port = (dataHeader[add(pos)], pos[0])  # 23
-        self._Param = (dataHeader[add(pos)], pos[0])  # 24
-        self._Fragment = (dataHeader[add(pos)], pos[0])  # 25
-        self._Username = (dataHeader[add(pos)], pos[0])  # 26
-        self._Password = (dataHeader[add(pos)], pos[0])  # 27
+        self._URL_Name = (url_element[add(index)], index[0])  # 16
+        self._URL_Clean = (url_element[add(index)], index[0])  # 17
+        self._URL = (url_element[add(index)], index[0])  # 18
+        self._Scheme = (url_element[add(index)], index[0])  # 19
+        self._Netloc = (url_element[add(index)], index[0])  # 20
+        self._Hostname = (url_element[add(index)], index[0])  # 21
+        self._Path = (url_element[add(index)], index[0])  # 22
+        self._Port = (url_element[add(index)], index[0])  # 23
+        self._Param = (url_element[add(index)], index[0])  # 24
+        self._Fragment = (url_element[add(index)], index[0])  # 25
+        self._Username = (url_element[add(index)], index[0])  # 26
+        self._Password = (url_element[add(index)], index[0])  # 27
 
-        self._ParamA = (dataHeader[add(pos)], pos[0])  # 28
-        self._ParamB = (dataHeader[add(pos)], pos[0])  # 29
-        self._ParamC = (dataHeader[add(pos)], pos[0])  # 30
-        self._ParamD = (dataHeader[add(pos)], pos[0])  # 31
-        self._ParamE = (dataHeader[add(pos)], pos[0])  # 32
-        self._ParamF = (dataHeader[add(pos)], pos[0])  # 33
-        self._ParamG = (dataHeader[add(pos)], pos[0])  # 34
-        self._ParamH = (dataHeader[add(pos)], pos[0])  # 35
-        self._ParamI = (dataHeader[add(pos)], pos[0])  # 36
-        self._ParamJ = (dataHeader[add(pos)], pos[0])  # 37
-        self._ParamK = (dataHeader[add(pos)], pos[0])  # 38
-        self._ParamL = (dataHeader[add(pos)], pos[0])  # 39
-        self._ParamM = (dataHeader[add(pos)], pos[0])  # 40
-        self._ParamN = (dataHeader[add(pos)], pos[0])  # 41
-        self._ParamO = (dataHeader[add(pos)], pos[0])  # 42
-        self._ParamP = (dataHeader[add(pos)], pos[0])  # 43
+        self._ParamA = (url_element[add(index)], index[0])  # 28
+        self._ParamB = (url_element[add(index)], index[0])  # 29
+        self._ParamC = (url_element[add(index)], index[0])  # 30
+        self._ParamD = (url_element[add(index)], index[0])  # 31
+        self._ParamE = (url_element[add(index)], index[0])  # 32
+        self._ParamF = (url_element[add(index)], index[0])  # 33
+        self._ParamG = (url_element[add(index)], index[0])  # 34
+        self._ParamH = (url_element[add(index)], index[0])  # 35
+        self._ParamI = (url_element[add(index)], index[0])  # 36
+        self._ParamJ = (url_element[add(index)], index[0])  # 37
+        self._ParamK = (url_element[add(index)], index[0])  # 38
+        self._ParamL = (url_element[add(index)], index[0])  # 39
+        self._ParamM = (url_element[add(index)], index[0])  # 40
+        self._ParamN = (url_element[add(index)], index[0])  # 41
+        self._ParamO = (url_element[add(index)], index[0])  # 42
+        self._ParamP = (url_element[add(index)], index[0])  # 43
 
-
-#######################################################################################
-# TODO: MUST SET DATES AS DATES (INVOKE CONVERTER)
-#######################################################################################
 
     @property
     def Folder_GUID(self):
@@ -811,26 +803,26 @@ data_header = [
 ]
 
 
-def select_profile(profile_):
-    profile_ = str(profile_)
-    if profile_ == "0":
-        profile_ = "Default"
+def select_profile(profile):
+    profile = str(profile)
+    if profile == "0":
+        profile = "Default"
     else:
-        profile_ = "Profile "+profile_
-    return profile_
+        profile = "Profile " + profile
+    return profile
 
 
-def get_chrome_element(profile_, item):
+def get_chrome_element(profile, item):
     # item Preferences / Bookmarks
     computer = system()
-    profile_ = select_profile(profile_)
+    profile = select_profile(profile)
     chrome_file = ""
     if computer == "Windows":
-        chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile_ + "\\" + item)
+        chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile + "\\" + item)
     if computer == "Linux":
-        chrome_file = os.path.expanduser("~/.config/google-chrome/" + profile_ + "/" + item)
+        chrome_file = os.path.expanduser("~/.config/google-chrome/" + profile + "/" + item)
     if computer == "Darwin":
-        chrome_file = os.path.expanduser("~/Library/Application Support/Google/Chrome/" + profile_ + "/" + item)
+        chrome_file = os.path.expanduser("~/Library/Application Support/Google/Chrome/" + profile + "/" + item)
     if os.path.exists(chrome_file):
         return chrome_file
     return None

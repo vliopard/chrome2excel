@@ -12,11 +12,85 @@ from configparser import ConfigParser, DuplicateSectionError
 class Options:
     def __init__(self):
         self.export_file_type = False
-        self.reload_title = False
-        self.undupe_url = False
-        self.clean_url = False
-        self.text_import = False
-        self.check_host = False
+        self.refresh_url_title = False
+        self.remove_duplicated_urls = False
+        self.remove_tracking_tokens_from_url = False
+        self.import_urls_from_text_file = False
+        self.refresh_folder_name_with_hostname_title = False
+
+    '''
+    @property
+    def export_file_type(self):
+        return self._export_file_type
+
+    @export_file_type.setter
+    def export_file_type(self, export_file_type):
+        self._export_file_type = export_file_type
+
+    @export_file_type.getter
+    def export_file_type(self):
+        return self._export_file_type
+
+    @property
+    def refresh_url_title(self):
+        return self._refresh_url_title
+
+    @refresh_url_title.setter
+    def refresh_url_title(self, refresh_url_title):
+        self._refresh_url_title = refresh_url_title
+
+    @refresh_url_title.getter
+    def refresh_url_title(self):
+        return self._refresh_url_title
+
+    @property
+    def remove_duplicated_urls(self):
+        return self._remove_duplicated_urls
+
+    @remove_duplicated_urls.setter
+    def remove_duplicated_urls(self, remove_duplicated_urls):
+        self._remove_duplicated_urls = remove_duplicated_urls
+
+    @remove_duplicated_urls.getter
+    def remove_duplicated_urls(self):
+        return self._remove_duplicated_urls
+
+    @property
+    def remove_tracking_tokens_from_url(self):
+        return self._remove_tracking_tokens_from_url
+
+    @remove_tracking_tokens_from_url.setter
+    def remove_tracking_tokens_from_url(self, remove_tracking_tokens_from_url):
+        self._remove_tracking_tokens_from_url = remove_tracking_tokens_from_url
+
+    @remove_tracking_tokens_from_url.getter
+    def remove_tracking_tokens_from_url(self):
+        return self._remove_tracking_tokens_from_url
+
+    @property
+    def import_urls_from_text_file(self):
+        return self._import_urls_from_text_file
+
+    @import_urls_from_text_file.setter
+    def import_urls_from_text_file(self, import_urls_from_text_file):
+        self._import_urls_from_text_file = import_urls_from_text_file
+
+    @import_urls_from_text_file.getter
+    def import_urls_from_text_file(self):
+        return self._import_urls_from_text_file
+
+    @property
+    def refresh_folder_name_with_hostname_title(self):
+        return self._refresh_folder_name_with_hostname_title
+
+    @refresh_folder_name_with_hostname_title.setter
+    def refresh_folder_name_with_hostname_title(self, refresh_folder_name_with_hostname_title):
+        self._refresh_folder_name_with_hostname_title = refresh_folder_name_with_hostname_title
+
+    @refresh_folder_name_with_hostname_title.getter
+    def refresh_folder_name_with_hostname_title(self):
+        return self._refresh_folder_name_with_hostname_title
+    '''
 
     def save_settings(self):
         category = 'main'
@@ -28,12 +102,12 @@ class Options:
         except DuplicateSectionError:
             pass
 
-        config.set(category, 'export_file_type', str(self.export_file_type))
-        config.set(category, 'reload_title', str(self.reload_title))
-        config.set(category, 'remove_duplicates', str(self.undupe_url))
-        config.set(category, 'clean_url', str(self.clean_url))
-        config.set(category, 'import_txt', str(self.text_import))
-        config.set(category, 'check_host', str(self.check_host))
+        config.set(category, "export_file_type", str(self.export_file_type))
+        config.set(category, "refresh_url_title", str(self.refresh_url_title))
+        config.set(category, "remove_duplicated_urls", str(self.remove_duplicated_urls))
+        config.set(category, "remove_tracking_tokens_from_url", str(self.remove_tracking_tokens_from_url))
+        config.set(category, "import_urls_from_text_file", str(self.import_urls_from_text_file))
+        config.set(category, "refresh_folder_name_with_hostname_title", str(self.refresh_folder_name_with_hostname_title))
         with open(config_file, 'w') as f:
             config.write(f)
 
@@ -43,33 +117,33 @@ class Options:
         config = ConfigParser()
         try:
             config.read(config_file)
-            self.export_file_type = config.getboolean(category, 'export_file_type')
-            self.reload_title = config.getboolean(category, 'reload_title')
-            self.undupe_url = config.getboolean(category, 'remove_duplicates')
-            self.clean_url = config.getboolean(category, 'clean_url')
-            self.text_import = config.getboolean(category, 'import_txt')
-            self.check_host = config.getboolean(category, 'check_host')
+            self.export_file_type = config.getboolean(category, "export_file_type")
+            self.refresh_url_title = config.getboolean(category, "refresh_url_title")
+            self.remove_duplicated_urls = config.getboolean(category, "remove_duplicated_urls")
+            self.remove_tracking_tokens_from_url = config.getboolean(category, "remove_tracking_tokens_from_url")
+            self.import_urls_from_text_file = config.getboolean(category, "import_urls_from_text_file")
+            self.refresh_folder_name_with_hostname_title = config.getboolean(category, "refresh_folder_name_with_hostname_title")
         except Exception:
             self.export_file_type = False
-            self.reload_title = False
-            self.undupe_url = False
-            self.clean_url = False
-            self.text_import = False
-            self.check_host = False
+            self.refresh_url_title = False
+            self.remove_duplicated_urls = False
+            self.remove_tracking_tokens_from_url = False
+            self.import_urls_from_text_file = False
+            self.refresh_folder_name_with_hostname_title = False
 
 
 @public.add
-class nobj:
+class TemporaryObject:
     def __init__(self, element):
-        pos = [-1]
-        self.date_added = element[add(pos)]
-        self.date_modified = element[add(pos)]
-        self.date_visited = element[add(pos)]
-        self.folder_name = element[add(pos)]
-        self.url_name = element[add(pos)]
-        self.url_clean = element[add(pos)]
-        self.original_url = element[add(pos)]
-        self.url_hostname = element[add(pos)]
+        index = [-1]
+        self.date_added = element[add(index)]
+        self.date_modified = element[add(index)]
+        self.date_visited = element[add(index)]
+        self.folder_name = element[add(index)]
+        self.url_name = element[add(index)]
+        self.url_clean = element[add(index)]
+        self.original_url = element[add(index)]
+        self.url_hostname = element[add(index)]
 
     def save(self):
         pass
@@ -140,26 +214,26 @@ class Bookmarks:
         self.folders = self.attrList["folders"]
 
     def processRoots(self):
-        attrList = {"urls": [], "folders": []}
+        attribute_list = {"urls": [], "folders": []}
         for key, value in json.loads(open(self.path, encoding='utf-8').read())["roots"].items():
             if "children" in value:
-                self.processTree(attrList, value["children"])
-        return attrList
+                self.processTree(attribute_list, value["children"])
+        return attribute_list
 
-    def processTree(self, attrList, childrenList):
-        for item in childrenList:
-            self.processUrls(item, attrList, childrenList)
-            self.processFolders(item, attrList, childrenList)
+    def processTree(self, attribute_list, children_list):
+        for item in children_list:
+            self.processUrls(item, attribute_list, children_list)
+            self.processFolders(item, attribute_list, children_list)
 
-    def processUrls(self, item, attrList, childrenList):
+    def processUrls(self, item, attribute_list, children_list):
         if "type" in item and item["type"] == "url":
-            attrList["urls"].append(Item(item))
+            attribute_list["urls"].append(Item(item))
 
-    def processFolders(self, item, attrList, childrenList):
+    def processFolders(self, item, attribute_list, children_list):
         if "type" in item and item["type"] == "folder":
-            attrList["folders"].append(Item(item))
+            attribute_list["folders"].append(Item(item))
             if "children" in item:
-                self.processTree(attrList, item["children"])
+                self.processTree(attribute_list, item["children"])
 
 
 def read_content(content):
@@ -269,7 +343,7 @@ def generate_data(instance):
             elif x == 'url':
                 f_url = folder[x]
             else:
-                tools.debug('WARNING: '+str(x))
+                tools.debug('WARNING: ' + str(x))
         f_data = (
                     f_guid,
                     tools.to_number(f_id),
