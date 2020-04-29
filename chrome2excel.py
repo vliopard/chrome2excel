@@ -1,4 +1,3 @@
-import os
 import tqdm
 import tools
 import preset
@@ -19,7 +18,7 @@ def get_title_conditional(pbar, disabled, url_name, url):
     url_title = None
     if not disabled:
         pbar.update(1)
-        nro, url_title = htmlSupport.gettitle(url)
+        nro, url_title = htmlSupport.get_title(url)
         if nro != 0:
             url_title = "[ " + url_title + " " + str(nro) + " - " + url_name + " ]"
     return url_title
@@ -30,15 +29,14 @@ def import_text(txt="chrome.txt"):
     url_list = []
     with open(txt, encoding='utf-8') as bm:
         for line in bm:
-            url_list.append(line)
+            url_list.append(line.strip())
     return url_list
 
 
 def append_dataheader(data_header, url_list):
     tools.display("Appending dataheader...")
     for line in url_list:
-        url_parts = htmlSupport.parseURL(line)
-        # stub_date = tools.toDate(13231709218000000)
+        url_parts = htmlSupport.parse_url(line)
         head = preset.Header()
         head.Hostname = url_parts[2]
         #######################################################################################
@@ -64,7 +62,6 @@ def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
     tools.display("Generating html...")
 
     data_header = append_dataheader(data_header, import_text())
-
     created = set()
     visited = set()
     folders = []
@@ -105,12 +102,12 @@ def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
 
             if refresh == 'on':
 
-                nro, title = htmlSupport.gettitle(website)
+                nro, title = htmlSupport.get_title(website)
                 if nro != 0:
                     title = "[ " + title + " " + str(nro) + " - " + a[16] + " ]"
 
             if checkhost == 'on':
-                nro, hostname = htmlSupport.gettitle("http://"+host_name)
+                nro, hostname = htmlSupport.get_title("http://" + host_name)
                 if nro != 0:
                     hostname = "[ " + hostname + " " + str(nro) + " - " + host_name + " ]"
 
@@ -218,28 +215,20 @@ def generate_workbook(data_header, refresh, undupe, clean):
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
 
 
-def get_User(profile_):
+def get_profile(profile_):
     tools.display("Retrieving user...")
-    found = False
-    for f in preset.retUser(profile_):
-        if os.path.exists(f):
-            try:
-                email, full, name = chromeProfile.getUser(f)
-                found = True
-            except Exception:
-                found = False
-                pass
-    if not found:
+    element = preset.get_chrome_element(profile_, "Preferences")
+    if not element:
         tools.display("Invalid profile.")
         exit(1)
-    return email, full, name
+    return chromeProfile.get_user(element)
 
 
 def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
     tools.display("\n\n")
     tools.display("_"*(screenSupport.get_terminal_width()))
     tools.display("Starting Chrome Bookmars export.")
-    email, full, name = get_User(profile)
+    email, full, name = get_profile(profile)
     bookmarks = bookMarks.generate_bookmarks(profile)
     tools.display("_"*(screenSupport.get_terminal_width()))
     tools.display("Processing user: {", full, "} [" + email + "]")

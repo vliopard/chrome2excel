@@ -2,8 +2,8 @@ import wx
 import wx.adv
 import tools
 import bookMarks
-import chromeProfile
 import chrome2excel
+import chromeProfile
 
 from tools import add
 
@@ -126,9 +126,9 @@ class urlPanel(wx.Panel):
             #######################################################################################
             # TODO: May change from index to dict key
             #######################################################################################
-            self.list_ctrl.InsertItem(index, tools.stringDate(url[13]))  # 'URL Added',       #13
-            self.list_ctrl.SetItem(index, add(pos), tools.stringDate(url[14]))  # 'URL Modified',    #14
-            self.list_ctrl.SetItem(index, add(pos), tools.stringDate(url[15]))  # 'URL Visited',     #15
+            self.list_ctrl.InsertItem(index, tools.date_to_string(url[13]))  # 'URL Added',       #13
+            self.list_ctrl.SetItem(index, add(pos), tools.date_to_string(url[14]))  # 'URL Modified',    #14
+            self.list_ctrl.SetItem(index, add(pos), tools.date_to_string(url[15]))  # 'URL Visited',     #15
             self.list_ctrl.SetItem(index, add(pos), url[7])                    # 'Folder Name',     #07
             self.list_ctrl.SetItem(index, add(pos), url[16])                    # 'URL Name',        #16
             self.list_ctrl.SetItem(index, add(pos), url[17])                    # 'URL Clean',       #17
@@ -137,9 +137,9 @@ class urlPanel(wx.Panel):
             #######################################################################################
             # TODO: Sync list_ctrl with url_object data
             #######################################################################################
-            url_object = bookMarks.nobj([tools.stringDate(url[13]),
-                                        tools.stringDate(url[14]),
-                                        tools.stringDate(url[15]),
+            url_object = bookMarks.nobj([tools.date_to_string(url[13]),
+                                        tools.date_to_string(url[14]),
+                                        tools.date_to_string(url[15]),
                                         url[7],
                                         url[16],
                                         url[17],
@@ -159,7 +159,7 @@ class urlFrame(wx.Frame):
 
         self.settings = bookMarks.Options()
 
-        self.settings.loadSettings()
+        self.settings.load_settings()
 
         self.selected = -1
 
@@ -205,7 +205,7 @@ class urlFrame(wx.Frame):
         dlg.Destroy()
 
     def on_open_account(self, event):
-        dlg = MyDialog(self, -1)
+        dlg = ProfileChooser(self, -1)
         retval = dlg.ShowModal()
         if retval == wx.ID_OK:
             #######################################################################################
@@ -297,9 +297,9 @@ class EditDialog(wx.Dialog):
         self.Close()
 
 
-class MyDialog(wx.Dialog):
-    def __init__(self, parent, id, title="Profile Chooser", size=(600, 600)):
-        wx.Dialog.__init__(self, parent, id, title)
+class ProfileChooser(wx.Dialog):
+    def __init__(self, parent, id_, title="Profile Chooser", size=(600, 600)):
+        wx.Dialog.__init__(self, parent, id_, title)
 
         pnl = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -317,7 +317,7 @@ class MyDialog(wx.Dialog):
 
             self.Bind(wx.EVT_RADIOBUTTON, self.OnRadiogroup)
 
-            position = position + 20
+            position = position + 30
             sizer.Add(wx.Button(pnl, wx.ID_OK, " OK ", pos=(10, position)))
         else:
             sizer.Add(wx.StaticText(pnl, wx.ID_ANY, label="No account installed on Chrome", pos=(10, position)))
@@ -336,8 +336,8 @@ class MyDialog(wx.Dialog):
 
 class SettingsDialog(wx.Dialog):
 
-    def __init__(self, parent, id, title="Settings"):
-        wx.Dialog.__init__(self, parent, id, title)
+    def __init__(self, parent, id_, title="Settings"):
+        wx.Dialog.__init__(self, parent, id_, title)
 
         self.parent = parent
 
@@ -379,11 +379,12 @@ class SettingsDialog(wx.Dialog):
         label, value = setButtonToggle(self, rb.GetId(), True)
         rb.SetLabel(label)
         rb.SetValue(value)
-        self.parent.settings.saveSettings()
+        self.parent.settings.save_settings()
 
 
 def setButtonToggle(self, btnId, toggle):
     label = None
+    value = None
     if btnId == 0:
         if toggle:
             self.parent.settings.export_file_type = not self.parent.settings.export_file_type

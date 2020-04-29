@@ -1,4 +1,3 @@
-import os
 import json
 import tools
 import public
@@ -14,12 +13,12 @@ class Options:
     def __init__(self):
         self.export_file_type = False
         self.reload_title = False
-        self.remove_duplicates = False
+        self.undupe_url = False
         self.clean_url = False
-        self.import_txt = False
+        self.text_import = False
         self.check_host = False
 
-    def saveSettings(self):
+    def save_settings(self):
         category = 'main'
         config_file = 'config.ini'
         config = ConfigParser()
@@ -38,7 +37,7 @@ class Options:
         with open(config_file, 'w') as f:
             config.write(f)
 
-    def loadSettings(self):
+    def load_settings(self):
         category = 'main'
         config_file = 'config.ini'
         config = ConfigParser()
@@ -72,7 +71,7 @@ class nobj:
         self.original_url = element[add(pos)]
         self.url_hostname = element[add(pos)]
 
-    def save():
+    def save(self):
         pass
 
 
@@ -220,7 +219,7 @@ def read_content(content):
                  htmlSupport.clean_url(url),
                  url
                 )
-        part2 = htmlSupport.parseURL(url)
+        part2 = htmlSupport.parse_url(url)
         part3 = part1 + part2
         data.append(part3)
     return data
@@ -228,9 +227,10 @@ def read_content(content):
 
 def generate_bookmarks(profile_):
     tools.display("Generating bookmarks...")
-    for f in preset.retPath(profile_):
-        if os.path.exists(f):
-            return Bookmarks(f)
+    bookmarks_file = preset.get_chrome_element(profile_, "Bookmarks")
+    if bookmarks_file:
+        return Bookmarks(bookmarks_file)
+    return None
 
 
 def generate_data(instance):

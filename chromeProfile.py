@@ -1,46 +1,27 @@
-import os
 import json
 import tools
+import preset
 
 from argparse import ArgumentParser
 
 
-def getUser(userpath):
+def get_user(userpath):
     username = json.loads(open(userpath, encoding='utf-8').read())["account_info"][0]
     return username['email'], username['full_name'], username['given_name']
 
 
 def retrieve_profile(profile_):
-    if profile_ == "0":
-        profile_ = "Default"
-    else:
-        profile_ = "Profile "+profile_
-
-    user = [
-        os.path.expanduser("~/.config/google-chrome/"+profile_+"/Preferences"),
-        os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Preferences"),
-        os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Preferences")
-    ]
-
-    found = False
-    for f in user:
-        if os.path.exists(f):
-            try:
-                email, full, name = getUser(f)
-                found = True
-            except Exception:
-                found = False
-                pass
-    if not found:
+    user = preset.get_chrome_element(profile_, "Preferences")
+    if not user:
         raise Exception("Invalid profile.")
-    return email, full, name
+    return get_user(user)
 
 
 def profile_list():
     user_list = []
     for x in range(0, 100):
         try:
-            email, full, name = retrieve_profile(str(x))
+            email, full, name = retrieve_profile(x)
             user_list.append([x, full + " - " + email])
         except Exception:
             pass
@@ -51,7 +32,7 @@ def get_profile(profile):
     if profile == "all":
         for x in range(0, 100):
             try:
-                email, full, name = retrieve_profile(str(x))
+                email, full, name = retrieve_profile(x)
                 if len(full) < 20:
                     tab = "\t"
                 else:

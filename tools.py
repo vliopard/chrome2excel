@@ -90,10 +90,10 @@ def to_date(value):
     return None
 
 
-def stringDate(value):
-    if not value:
+def date_to_string(date_value):
+    if not date_value:
         return "None"
-    return value.strftime("%Y/%m/%d, %H:%M:%S")
+    return date_value.strftime("%Y/%m/%d, %H:%M:%S")
 
 
 def date_from_webkit(timestamp):

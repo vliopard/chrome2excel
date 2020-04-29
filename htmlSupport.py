@@ -29,7 +29,7 @@ class Parser(HTMLParser):
             self._in_title_tag = False
 
 
-def parseURL(value):
+def parse_url(value):
     parsed = urlparse(value)
     dt = dict(parse.parse_qsl(parse.urlsplit(value).query))
 
@@ -81,7 +81,7 @@ def clean_url(url):
     return newurl
 
 
-def gettitle(url):
+def get_title(url):
     #######################################################################################
     # TODO: If not enabled, returns current name or url
     #######################################################################################
@@ -123,12 +123,9 @@ def gettitle(url):
 
 '''
 import lxml.html
-
 from http import HTTPStatus
 from http.client import RemoteDisconnected
 from urllib.request import urlopen, Request
-
-
 def get_title(url):
     ret = None
     try:
@@ -156,22 +153,7 @@ def get_title(url):
 '''
 
 '''
-from mechanize import Browser
-
-def _get_title(url):
-    response = ""
-    try:
-        br = Browser()
-        br.open(url)
-        response = br.title()
-    except Exception as e:
-        response = "request disallowed by robots: " + str(e)
-    return (response)
-'''
-
-'''
 from bs4 import BeautifulSoup
-
 def url_title(url):
     soup = BeautifulSoup(urlopen("https://www.google.com"))
     return soup.title.string

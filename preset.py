@@ -1,4 +1,5 @@
 import os
+from platform import system
 from tools import add, to_date
 
 
@@ -104,12 +105,12 @@ class Header:
         self._URL_Modified = (stub_date, add(pos))
         self._URL_Visited = (stub_date, add(pos))
 
-        self._URL_Name = ("", add(pos))
-        self._URL_Clean = ("", add(pos))
-        self._URL = ("", add(pos))
+        self._URL_Name = ("[no site name]", add(pos))
+        self._URL_Clean = ("[no clean URL]", add(pos))
+        self._URL = ("[no URL address]", add(pos))
         self._Scheme = (None, add(pos))
         self._Netloc = (None, add(pos))
-        self._Hostname = ("", add(pos))
+        self._Hostname = ("[no hostname]", add(pos))
         self._Path = (None, add(pos))
         self._Port = (None, add(pos))
         self._Param = (None, add(pos))
@@ -730,18 +731,25 @@ class Header:
         return item['_'+name][0]
 
     def toDict(self):
-        return self.__dict__
+        dc = self.__dict__
+        dic = {}
+        for x in dc:
+            dic.update({x: dc[x][0]})
+        return dic
 
     def toTuple(self):
         dc = self.__dict__
         tp = []
         for x in dc:
             tp.append(dc[x])
-        tp.sort(key=lambda x: x[1])
+        tp.sort(key=lambda k: k[1])
         tpl = []
         for x in tp:
             tpl.append(x[0])
         return tuple(tpl)
+
+    def toDictIdx(self):
+        return self.__dict__
 
     def __repr__(self):
         return str(self.__dict__)
@@ -803,7 +811,7 @@ data_header = [
 ]
 
 
-def getProfile(profile_):
+def select_profile(profile_):
     profile_ = str(profile_)
     if profile_ == "0":
         profile_ = "Default"
@@ -812,46 +820,17 @@ def getProfile(profile_):
     return profile_
 
 
-def retUser(profile_):
-    profile_ = getProfile(profile_)
-    return [
-            os.path.expanduser("~/.config/google-chrome/"+profile_+"/Preferences"),
-            os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Preferences"),
-            os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Preferences")
-           ]
-
-
-def retPath(profile_):
-    profile_ = getProfile(profile_)
-    return [
-            os.path.expanduser("~/.config/google-chrome/"+profile_+"/Bookmarks"),
-            os.path.expanduser("~/Library/Application Support/Google/Chrome/"+profile_+"/Bookmarks"),
-            os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\"+profile_+"\\Bookmarks")
-           ]
-
-#######################################################################################
-# TODO: Evaluate to change from tuple to Pandas DataFrame
-#######################################################################################
-
-
-'''
-
-import pandas as pd
-
-# df = pd.DataFrame([[1, 2, 3]], columns=["A", "B", "C"])
-
-data = pd.read_pickle('data.pickle')
-
-df = pd.DataFrame(data)
-
-df1 = pd.DataFrame([[4, 5, 6],[7, 8, 9]], columns=["A", "B", "C"])
-
-df = pd.concat([df, df1], ignore_index=True)
-
-df2 = pd.DataFrame([['a', 'b', 'c'], ['d', 'e', 'f']], columns=["A", "B", "C"])
-
-df = pd.concat([df, df2], ignore_index=True)
-
-df.to_pickle('data.pickle')
-
-'''
+def get_chrome_element(profile_, item):
+    # item Preferences / Bookmarks
+    computer = system()
+    profile_ = select_profile(profile_)
+    chrome_file = ""
+    if computer == "Windows":
+        chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile_ + "\\" + item)
+    if computer == "Linux":
+        chrome_file = os.path.expanduser("~/.config/google-chrome/" + profile_ + "/" + item)
+    if computer == "Darwin":
+        chrome_file = os.path.expanduser("~/Library/Application Support/Google/Chrome/" + profile_ + "/" + item)
+    if os.path.exists(chrome_file):
+        return chrome_file
+    return None
