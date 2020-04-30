@@ -14,220 +14,216 @@ from openpyxl.styles import Font
 from argparse import ArgumentParser
 
 
-def get_title_conditional(pbar, disabled, url_name, url):
-    url_title = None
-    if not disabled:
-        pbar.update(1)
-        nro, url_title = htmlSupport.get_title(url)
-        if nro != 0:
-            url_title = "[ " + url_title + " " + str(nro) + " - " + url_name + " ]"
-    return url_title
+def get_title_conditional(progress_bar, get_title_disabled, url_name, url_address):
+    if not get_title_disabled:
+        progress_bar.update(1)
+        status_number, url_title = htmlSupport.get_title(url_address)
+        if status_number != 0:
+            url_title = "[ " + url_title + " " + str(status_number) + " - " + url_name + " ]"
+        return url_title
+    return url_name
 
 
-def import_text(txt="chrome.txt"):
+def import_text_file(text_file="chrome.txt"):
     tools.display("Importing text file...")
     url_list = []
-    with open(txt, encoding='utf-8') as bm:
-        for line in bm:
-            url_list.append(line.strip())
+    with open(text_file, encoding='utf-8') as text_file:
+        for url_item in text_file:
+            url_list.append(url_item.strip())
     return url_list
 
 
-def append_dataheader(data_header, url_list):
-    tools.display("Appending dataheader...")
-    for line in url_list:
-        url_parts = htmlSupport.parse_url(line)
+def append_data_table(data_table, url_list):
+    tools.display("Appending data table...")
+    for url_item in url_list:
         head = preset.Header()
-        head.Hostname = url_parts[2]
+        head.Hostname = htmlSupport.parse_url(url_item)[2]
         #######################################################################################
         # TODO: If not enabled, returns current name or url
         #######################################################################################
-        head.URL_Clean = htmlSupport.clean_url(line)
-        head.URL = line
-        element = head.toTuple()
-        data_header.append(element)
-    return data_header
+        head.URL_Clean = htmlSupport.clean_url(url_item)
+        head.URL = url_item
+        data_table.append(head.to_tuple())
+    return data_table
 
 
 def generate_from_txt(url_list):
     tools.display("Generating from TXT...")
     txt_header = []
-    return append_dataheader(txt_header, url_list)
+    return append_data_table(txt_header, url_list)
 
 
-def generate_html(data_header, refresh, undupe, clean, import_txt, checkhost):
+def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, import_txt, get_hostname_title):
     #######################################################################################
     # TODO: SETTINGS MUST BE AVAILABLE BY SETTINGS LOAD FUNCTION
     #######################################################################################
     tools.display("Generating html...")
 
-    data_header = append_dataheader(data_header, import_text())
-    created = set()
-    visited = set()
-    folders = []
-    data_header_undupe = []
-    if undupe == 'on':
+    data_table = append_data_table(data_table, import_text_file())
+    visited_hostname_title = set()
+    visited_url_address = set()
+    folder_list = []
+    data_table_without_duplicates = []
+    if remove_duplicated_urls == preset.on:
         tools.display("_"*(screenSupport.get_terminal_width()))
         tools.display("Removing duplicates...")
         tools.display("\u203e"*(screenSupport.get_terminal_width()))
-        with tqdm.tqdm(total=len(data_header)) as pbar:
-            for a in data_header:
-                pbar.update(1)
-                if clean == 'on':
-                    website = a[17]
+        with tqdm.tqdm(total=len(data_table)) as progress_bar:
+            for data_row in data_table:
+                progress_bar.update(1)
+                if remove_tracking_from_url == preset.on:
+                    url_address = data_row[17]
                 else:
-                    website = a[18]
-                if website not in visited:
-                    visited.add(website)
-                    data_header_undupe.append(a)
+                    url_address = data_row[18]
+                if url_address not in visited_url_address:
+                    visited_url_address.add(url_address)
+                    data_table_without_duplicates.append(data_row)
     else:
-        data_header_undupe = data_header
+        data_table_without_duplicates = data_table
 
     tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Writting html...")
+    tools.display("Writing html...")
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
-    with tqdm.tqdm(total=len(data_header_undupe[1:])) as pbar:
-        for a in data_header_undupe[1:]:
-            pbar.update(1)
+    with tqdm.tqdm(total=len(data_table_without_duplicates[1:])) as progress_bar:
+        for data_row in data_table_without_duplicates[1:]:
+            progress_bar.update(1)
 
-            title = a[16]
+            url_title = data_row[16]
 
-            if clean == 'on':
-                website = a[17]
+            if remove_tracking_from_url == preset.on:
+                url_address = data_row[17]
             else:
-                website = a[18]
+                url_address = data_row[18]
 
-            hostname = a[21]
-            host_name = a[21]
+            hostname_title = data_row[21]
+            original_hostname = data_row[21]
 
-            if refresh == 'on':
+            if reload_url_title == preset.on:
+                status_number, url_title = htmlSupport.get_title(url_address)
+                if status_number != 0:
+                    url_title = "[ " + url_title + " " + str(status_number) + " - " + data_row[16] + " ]"
 
-                nro, title = htmlSupport.get_title(website)
-                if nro != 0:
-                    title = "[ " + title + " " + str(nro) + " - " + a[16] + " ]"
+            if get_hostname_title == preset.on:
+                status_number, hostname_title = htmlSupport.get_title("http://" + original_hostname)
+                if status_number != 0:
+                    hostname_title = "[ " + hostname_title + " " + str(status_number) + " - " + original_hostname + " ]"
 
-            if checkhost == 'on':
-                nro, hostname = htmlSupport.get_title("http://" + host_name)
-                if nro != 0:
-                    hostname = "[ " + hostname + " " + str(nro) + " - " + host_name + " ]"
-
-            if hostname not in created:
-                url = tools.Urls(website, a[13], title)
-                fold = tools.Folder(a[4], a[5], hostname, [url])
-                created.add(hostname)
-                folders.append(fold)
+            if hostname_title not in visited_hostname_title:
+                url_data = tools.Urls(url_address, data_row[13], url_title)
+                visited_hostname_title.add(hostname_title)
+                folder_list.append(tools.Folder(data_row[4], data_row[5], hostname_title, [url_data]))
             else:
-                url = tools.Urls(website, a[13], title)
-                for x in folders:
-                    if x.folder_name == hostname:
-                        x.add_url(url)
+                url_data = tools.Urls(url_address, data_row[13], url_title)
+                for folder in folder_list:
+                    if folder.folder_name == hostname_title:
+                        folder.add_url(url_data)
 
     tools.display("_"*(screenSupport.get_terminal_width()))
     tools.display("Saving HTML file...")
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
-    htmlExport.write_html(folders)
+    htmlExport.write_html(folder_list)
     tools.display("Done.")
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
 
 
-def generate_workbook(data_header, refresh, undupe, clean):
+def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url):
     tools.display("Generating workbook...")
-    book = Workbook()
-    sheet = book.active
-    sheet.title = "Chrome URLs"
+    excel_workbook = Workbook()
+    excel_worksheet = excel_workbook.active
+    excel_worksheet.title = "Chrome URLs"
 
-    visited = set()
-    data_header_undupe = []
+    visited_url_address = set()
+    data_table_without_duplicates = []
     tools.display("Find duplicate lines...")
-    if refresh != "off":
+    if reload_url_title != preset.off:
         tools.display("_"*(screenSupport.get_terminal_width()))
         tools.display("Getting URL Status...")
         tools.display("\u203e"*(screenSupport.get_terminal_width()))
 
-    disabled = True
-    if refresh != "off":
-        disabled = False
+    reload_url_title_disabled = True
+    if reload_url_title != preset.off:
+        reload_url_title_disabled = False
 
-    with tqdm.tqdm(total=len(data_header), disable=disabled) as pbar:
-        for a in data_header:
-            if clean == 'on':
-                website = a[17]
+    with tqdm.tqdm(total=len(data_table), disable=reload_url_title_disabled) as progress_bar:
+        for data_row in data_table:
+            if remove_tracking_from_url == preset.on:
+                url_address = data_row[17]
             else:
-                website = a[18]
-            if website not in visited:
-                visited.add(website)
-                data_header_undupe.append(("MAIN", get_title_conditional(pbar, disabled, a[16], website)) + a)
-            elif undupe == "off":
-                data_header_undupe.append(("DUPE", get_title_conditional(pbar, disabled, a[16], website)) + a)
+                url_address = data_row[18]
+            if url_address not in visited_url_address:
+                visited_url_address.add(url_address)
+                data_table_without_duplicates.append(("MAIN", get_title_conditional(progress_bar, reload_url_title_disabled, data_row[16], url_address)) + data_row)
+            elif remove_duplicated_urls == preset.off:
+                data_table_without_duplicates.append(("DUPE", get_title_conditional(progress_bar, reload_url_title_disabled, data_row[16], url_address)) + data_row)
 
     tools.display("Writting spreadsheet...")
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
-    with tqdm.tqdm(total=len(data_header_undupe)) as pbar:
-        for row in data_header_undupe:
-            pbar.update(1)
-            sheet.append(row)
+    with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
+        for data_row in data_table_without_duplicates:
+            progress_bar.update(1)
+            excel_worksheet.append(data_row)
 
-    sheet.freeze_panes = "A2"
-    sheet.auto_filter.ref = "A1:AT30000"
+    excel_worksheet.freeze_panes = "A2"
+    excel_worksheet.auto_filter.ref = "A1:AT30000"
 
     tools.display("_"*(screenSupport.get_terminal_width()))
     tools.display("Formating columns...")
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
-    courier = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
                'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
                'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS']
-    with tqdm.tqdm(total=(len(courier)*len(sheet['T']))) as pbar:
-        for l in courier:
-            for col_cell in sheet[l]:
-                pbar.update(1)
-                col_cell.font = Font(size=10, name='Courier New')
+    with tqdm.tqdm(total=(len(font_columns)*len(excel_worksheet['T']))) as progress_bar:
+        for font_column in font_columns:
+            for worksheet_column in excel_worksheet[font_column]:
+                progress_bar.update(1)
+                worksheet_column.font = Font(size=10, name='Courier New')
 
     tools.display("_"*(screenSupport.get_terminal_width()))
     tools.display("Formating dates...")
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
-    dates = ['G', 'H', 'I', 'P', 'Q', 'R']
-    with tqdm.tqdm(total=(len(dates)*len(sheet['G']))) as pbar:
-        for d in dates:
-            sheet.column_dimensions[d].width = 18
-            for col_cell in sheet[d]:
-                pbar.update(1)
-                col_cell.number_format = "YYYY/MM/DD hh:mm:ss"
+    date_columns = ['G', 'H', 'I', 'P', 'Q', 'R']
+    with tqdm.tqdm(total=(len(date_columns)*len(excel_worksheet['G']))) as progress_bar:
+        for date_column in date_columns:
+            excel_worksheet.column_dimensions[date_column].width = 18
+            for worksheet_column in excel_worksheet[date_column]:
+                progress_bar.update(1)
+                worksheet_column.number_format = "YYYY/MM/DD hh:mm:ss"
 
     tools.display("_"*(screenSupport.get_terminal_width()))
     tools.display("Hiding columns...")
-    hidden = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Z', 'AA', 'AB', 'AC']
-    for h in hidden:
-        sheet.column_dimensions[h].width = 9
-        sheet.column_dimensions[h].hidden = True
+    hidden_columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Z', 'AA', 'AB', 'AC']
+    for h in hidden_columns:
+        excel_worksheet.column_dimensions[h].width = 9
+        excel_worksheet.column_dimensions[h].hidden = True
 
     tools.display("Formating header...")
-    for cell in sheet["1:1"]:
+    for cell in excel_worksheet["1:1"]:
         cell.font = Font(bold=True)
 
     tools.display("Sizing columns...")
-    sheet.column_dimensions['S'].width = 30
-    sheet.column_dimensions['T'].width = 85
+    excel_worksheet.column_dimensions['S'].width = 30
+    excel_worksheet.column_dimensions['T'].width = 85
 
     tools.display("Saving workbook...")
-    book.save("chrome.xlsx")
+    excel_workbook.save("chrome.xlsx")
     tools.display("Done.")
     tools.display("\u203e"*(screenSupport.get_terminal_width()))
 
 
-def get_profile(profile_):
+def get_profile(profile):
     tools.display("Retrieving user...")
-    element = preset.get_chrome_element(profile_, "Preferences")
-    if not element:
+    user_data = preset.get_chrome_element(profile, "Preferences")
+    if not user_data:
         tools.display("Invalid profile.")
         exit(1)
-    return chromeProfile.get_user(element)
+    return chromeProfile.get_user(user_data)
 
 
 def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
     tools.display("\n\n")
     tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Starting Chrome Bookmars export.")
+    tools.display("Starting Chrome Bookmarks export.")
     email, full, name = get_profile(profile)
     bookmarks = bookMarks.generate_bookmarks(profile)
     tools.display("_"*(screenSupport.get_terminal_width()))
@@ -260,31 +256,31 @@ if __name__ == "__main__":
         "--refresh",
         "-r",
         help="Refresh URL Title [on, off]: off Default.",
-        default="off"
+        default=preset.off
     )
     parser.add_argument(
         "--undupe",
         "-u",
         help="Remove duplicated URL [on, off]: off Default.",
-        default="off"
+        default=preset.off
     )
     parser.add_argument(
         "--clean",
         "-c",
         help="Remove trackers from URL [on, off]: off Default.",
-        default="off"
+        default=preset.off
     )
     parser.add_argument(
         "--import_txt",
         "-i",
         help="Import TXT file [on, off]: off Default.",
-        default="off"
+        default=preset.off
     )
     parser.add_argument(
         "--get_hostname",
         "-g",
         help="Get hostname [on, off]: off Default.",
-        default="off"
+        default=preset.off
     )
 
     args = vars(parser.parse_args())

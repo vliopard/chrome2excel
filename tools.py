@@ -1,10 +1,7 @@
-import re
-import inspect
-
 from datetime import datetime, timezone, timedelta
 
 #######################################################################################
-# TODO: LOAD SETTINGS FROM DEBUG FILE
+# TODO: LOAD DEBUG SETTINGS FROM DEBUG FILE
 #######################################################################################
 
 debug_mode = False
@@ -103,13 +100,13 @@ def date_to_string(date_value):
     return date_value.strftime("%Y/%m/%d, %H:%M:%S")
 
 
-def date_from_webkit(timestamp):
-    return (datetime(1601, 1, 1) + timedelta(microseconds=int(timestamp))).replace(tzinfo=timezone.utc).astimezone()
+def epoch_to_date(epoch_value):
+    return (datetime(1601, 1, 1) + timedelta(microseconds=int(epoch_value))).replace(tzinfo=timezone.utc).astimezone()
 
 
-def date_to_webkit(date_string):
-    if date_string:
-        difference = date_string - datetime(1601, 1, 1)
+def date_to_epoch(date_value):
+    if date_value:
+        difference = date_value - datetime(1601, 1, 1)
         seconds_in_day = 60 * 60 * 24
         value = '{:<010d}'.format(difference.days * seconds_in_day + difference.seconds + difference.microseconds)
         return str(value)

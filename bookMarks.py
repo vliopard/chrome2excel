@@ -1,10 +1,11 @@
 import json
-import tools
 import public
 import preset
 import htmlSupport
 
+import tools
 from tools import add
+
 from configparser import ConfigParser, DuplicateSectionError
 
 
@@ -17,6 +18,9 @@ class Options:
         self.remove_tracking_tokens_from_url = False
         self.import_urls_from_text_file = False
         self.refresh_folder_name_with_hostname_title = False
+        self.configuration_category = preset.main_section
+        self.configuration_parser = ConfigParser()
+        self.configuration_parser.read(preset.configuration_filename)
 
     '''
     @property
@@ -93,36 +97,28 @@ class Options:
     '''
 
     def save_settings(self):
-        category = 'main'
-        config_file = 'config.ini'
-        config = ConfigParser()
-        config.read(config_file)
         try:
-            config.add_section(category)
+            self.configuration_parser.add_section(self.configuration_category)
         except DuplicateSectionError:
             pass
 
-        config.set(category, "export_file_type", str(self.export_file_type))
-        config.set(category, "refresh_url_title", str(self.refresh_url_title))
-        config.set(category, "remove_duplicated_urls", str(self.remove_duplicated_urls))
-        config.set(category, "remove_tracking_tokens_from_url", str(self.remove_tracking_tokens_from_url))
-        config.set(category, "import_urls_from_text_file", str(self.import_urls_from_text_file))
-        config.set(category, "refresh_folder_name_with_hostname_title", str(self.refresh_folder_name_with_hostname_title))
-        with open(config_file, 'w') as f:
-            config.write(f)
+        self.configuration_parser.set(self.configuration_category, preset.export_file_type, str(self.export_file_type))
+        self.configuration_parser.set(self.configuration_category, preset.refresh_url_title, str(self.refresh_url_title))
+        self.configuration_parser.set(self.configuration_category, preset.remove_duplicated_urls, str(self.remove_duplicated_urls))
+        self.configuration_parser.set(self.configuration_category, preset.remove_tracking_tokens_from_url, str(self.remove_tracking_tokens_from_url))
+        self.configuration_parser.set(self.configuration_category, preset.import_urls_from_text_file, str(self.import_urls_from_text_file))
+        self.configuration_parser.set(self.configuration_category, preset.refresh_folder_name_with_hostname_title, str(self.refresh_folder_name_with_hostname_title))
+        with open(preset.configuration_filename, 'w') as configuration_file:
+            self.configuration_parser.write(configuration_file)
 
     def load_settings(self):
-        category = 'main'
-        config_file = 'config.ini'
-        config = ConfigParser()
         try:
-            config.read(config_file)
-            self.export_file_type = config.getboolean(category, "export_file_type")
-            self.refresh_url_title = config.getboolean(category, "refresh_url_title")
-            self.remove_duplicated_urls = config.getboolean(category, "remove_duplicated_urls")
-            self.remove_tracking_tokens_from_url = config.getboolean(category, "remove_tracking_tokens_from_url")
-            self.import_urls_from_text_file = config.getboolean(category, "import_urls_from_text_file")
-            self.refresh_folder_name_with_hostname_title = config.getboolean(category, "refresh_folder_name_with_hostname_title")
+            self.export_file_type = self.configuration_parser.getboolean(self.configuration_category, preset.export_file_type)
+            self.refresh_url_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_url_title)
+            self.remove_duplicated_urls = self.configuration_parser.getboolean(self.configuration_category, preset.remove_duplicated_urls)
+            self.remove_tracking_tokens_from_url = self.configuration_parser.getboolean(self.configuration_category, preset.remove_tracking_tokens_from_url)
+            self.import_urls_from_text_file = self.configuration_parser.getboolean(self.configuration_category, preset.import_urls_from_text_file)
+            self.refresh_folder_name_with_hostname_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_folder_name_with_hostname_title)
         except Exception:
             self.export_file_type = False
             self.refresh_url_title = False
@@ -178,12 +174,12 @@ class Item(dict):
 
     @property
     def added(self):
-        return tools.date_from_webkit(self["date_added"])
+        return tools.epoch_to_date(self["date_added"])
 
     @property
     def modified(self):
         if "date_modified" in self:
-            return tools.date_from_webkit(self["date_modified"])
+            return tools.epoch_to_date(self["date_modified"])
 
     @property
     def folders(self):
@@ -236,72 +232,71 @@ class Bookmarks:
                 self.processTree(attribute_list, item["children"])
 
 
-def read_content(content):
-    data = []
-    for chrome_url in content:
-        date_added = '[Empty]'
-        date_modified = '[Empty]'
-        guid = '[Empty]'
-        item_id = '[Empty]'
-        last_visited = '[Empty]'
-        name = '[Empty]'
-        sync_transaction_version = '[Empty]'
-        item_type = '[Empty]'
-        url = '[Empty]'
-        icon = '[Empty]'
-        for x in chrome_url:
-            if x == 'children':
-                read_content(chrome_url[x])
-            elif x == 'meta_info':
-                for y in chrome_url[x]:
-                    if y == 'last_visited':
-                        last_visited = chrome_url[x][y]
-            elif x == 'date_added':
-                date_added = chrome_url[x]
-            elif x == 'date_modified':
-                date_modified = chrome_url[x]
-            elif x == 'guid':
-                guid = chrome_url[x]
-            elif x == 'icon':
+def read_content(folder_items):
+    url_list = []
+    for folder_item in folder_items:
+        url_date_added = preset.empty
+        url_date_modified = preset.empty
+        url_guid = preset.empty
+        url_item_id = preset.empty
+        url_last_visited = preset.empty
+        url_name = preset.empty
+        url_sync_transaction_version = preset.empty
+        url_item_type = preset.empty
+        url_address = preset.empty
+        url_icon = preset.empty
+        for item in folder_item:
+            if item == preset.children:
+                read_content(folder_item[item])
+            elif item == preset.meta_info:
+                for element in folder_item[item]:
+                    if element == preset.last_visited:
+                        url_last_visited = folder_item[item][element]
+            elif item == preset.date_added:
+                url_date_added = folder_item[item]
+            elif item == preset.date_modified:
+                url_date_modified = folder_item[item]
+            elif item == preset.guid:
+                url_guid = folder_item[item]
+            elif item == preset.icon:
                 #######################################################################################
                 # TODO: Add icon to the spreadsheet
                 #######################################################################################
-                icon = chrome_url[x]
-            elif x == 'id':
-                item_id = chrome_url[x]
-            elif x == 'name':
-                name = chrome_url[x]
-            elif x == 'sync_transaction_version':
-                sync_transaction_version = chrome_url[x]
-            elif x == 'type':
-                item_type = chrome_url[x]
-            elif x == 'url':
-                url = chrome_url[x]
+                url_icon = folder_item[item]
+            elif item == preset.item_id:
+                url_item_id = folder_item[item]
+            elif item == preset.item_name:
+                url_name = folder_item[item]
+            elif item == preset.sync_transaction_version:
+                url_sync_transaction_version = folder_item[item]
+            elif item == preset.item_type:
+                url_item_type = folder_item[item]
+            elif item == preset.url:
+                url_address = folder_item[item]
             else:
-                tools.debug('WARNING: '+str(x))
-        part1 = (
-                 guid,
-                 tools.to_number(item_id),
-                 tools.to_number(sync_transaction_version),
-                 item_type,
+                tools.debug('WARNING: ' + str(item))
+        url_data = (
+                url_guid,
+                tools.to_number(url_item_id),
+                tools.to_number(url_sync_transaction_version),
+                url_item_type,
 
-                 tools.to_date(date_added),
-                 tools.to_date(date_modified),
-                 tools.to_date(last_visited),
+                tools.to_date(url_date_added),
+                tools.to_date(url_date_modified),
+                tools.to_date(url_last_visited),
 
-                 name,
-                 htmlSupport.clean_url(url),
-                 url
-                )
-        part2 = htmlSupport.parse_url(url)
-        part3 = part1 + part2
-        data.append(part3)
-    return data
+                url_name,
+                htmlSupport.clean_url(url_address),
+                url_address
+        )
+        parsed_url = htmlSupport.parse_url(url_address)
+        url_list.append(url_data + parsed_url)
+    return url_list
 
 
-def generate_bookmarks(profile_):
+def generate_bookmarks(profile):
     tools.display("Generating bookmarks...")
-    bookmarks_file = preset.get_chrome_element(profile_, "Bookmarks")
+    bookmarks_file = preset.get_chrome_element(profile, "Bookmarks")
     if bookmarks_file:
         return Bookmarks(bookmarks_file)
     return None
@@ -309,56 +304,55 @@ def generate_bookmarks(profile_):
 
 def generate_data(instance):
     for folder in instance.folders:
-        data = None
-        f_date_added = '[Empty]'
-        f_date_modified = '[Empty]'
-        f_guid = '[Empty]'
-        f_id = '[Empty]'
-        f_last_visited = '[Empty]'
-        f_name = '[Empty]'
-        f_sync_transaction_version = '[Empty]'
-        f_type = '[Empty]'
-        f_url = '[Empty]'
-        for x in folder:
-            if x == 'children':
-                data = read_content(folder[x])
-            elif x == 'meta_info':
-                for y in folder[x]:
-                    if y == 'last_visited':
-                        f_last_visited = folder[x][y]
-            elif x == 'date_added':
-                f_date_added = folder[x]
-            elif x == 'date_modified':
-                f_date_modified = folder[x]
-            elif x == 'guid':
-                f_guid = folder[x]
-            elif x == 'id':
-                f_id = folder[x]
-            elif x == 'name':
-                f_name = folder[x]
-            elif x == 'sync_transaction_version':
-                f_sync_transaction_version = folder[x]
-            elif x == 'type':
-                f_type = folder[x]
-            elif x == 'url':
-                f_url = folder[x]
+        folder_item = None
+        folder_date_added = preset.empty
+        folder_date_modified = preset.empty
+        folder_guid = preset.empty
+        folder_id = preset.empty
+        folder_last_visited = preset.empty
+        folder_name = preset.empty
+        folder_sync_transaction_version = preset.empty
+        folder_type = preset.empty
+        folder_url = preset.empty
+        for item in folder:
+            if item == preset.children:
+                folder_item = read_content(folder[item])
+            elif item == preset.meta_info:
+                for element in folder[item]:
+                    if element == preset.last_visited:
+                        folder_last_visited = folder[item][element]
+            elif item == preset.date_added:
+                folder_date_added = folder[item]
+            elif item == preset.date_modified:
+                folder_date_modified = folder[item]
+            elif item == preset.guid:
+                folder_guid = folder[item]
+            elif item == preset.item_id:
+                folder_id = folder[item]
+            elif item == preset.item_name:
+                folder_name = folder[item]
+            elif item == preset.sync_transaction_version:
+                folder_sync_transaction_version = folder[item]
+            elif item == preset.item_type:
+                folder_type = folder[item]
+            elif item == preset.url:
+                folder_url = folder[item]
             else:
-                tools.debug('WARNING: ' + str(x))
-        f_data = (
-                    f_guid,
-                    tools.to_number(f_id),
-                    tools.to_number(f_sync_transaction_version),
-                    f_type,
+                tools.debug('WARNING: ' + str(item))
+        folder_data = (
+                folder_guid,
+                tools.to_number(folder_id),
+                tools.to_number(folder_sync_transaction_version),
+                folder_type,
 
-                    tools.to_date(f_date_added),
-                    tools.to_date(f_date_modified),
-                    tools.to_date(f_last_visited),
+                tools.to_date(folder_date_added),
+                tools.to_date(folder_date_modified),
+                tools.to_date(folder_last_visited),
 
-                    f_name,
-                    f_url
-                 )
+                folder_name,
+                folder_url
+        )
 
-        for d in data:
-            new_data = f_data + d
-            preset.data_header.append(new_data)
+        for item in folder_item:
+            preset.data_header.append(folder_data + item)
     return preset.data_header

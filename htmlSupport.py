@@ -29,59 +29,58 @@ class Parser(HTMLParser):
             self._in_title_tag = False
 
 
-def parse_url(value):
-    parsed = urlparse(value)
-    dictionary = dict(parse.parse_qsl(parse.urlsplit(value).query))
+def parse_url(url_value):
+    parsed_url = urlparse(url_value)
+    dictionary = dict(parse.parse_qsl(parse.urlsplit(url_value).query))
 
-    additional0 = (
-                    tools.check_is_none(parsed.scheme),
-                    tools.check_is_none(parsed.netloc),
-                    tools.check_is_none(parsed.hostname),
-                    tools.check_is_none(parsed.path),
-                    tools.check_is_none(parsed.port),
-                    tools.check_is_none(parsed.params),
-                    tools.check_is_none(parsed.fragment),
-                    tools.check_is_none(parsed.username),
-                    tools.check_is_none(parsed.password)
+    url_parameters = (
+                    tools.check_is_none(parsed_url.scheme),
+                    tools.check_is_none(parsed_url.netloc),
+                    tools.check_is_none(parsed_url.hostname),
+                    tools.check_is_none(parsed_url.path),
+                    tools.check_is_none(parsed_url.port),
+                    tools.check_is_none(parsed_url.params),
+                    tools.check_is_none(parsed_url.fragment),
+                    tools.check_is_none(parsed_url.username),
+                    tools.check_is_none(parsed_url.password)
                   )
 
-    additional1 = ()
+    qsl_parameters = ()
     for element in dictionary:
-        additional1 = additional1 + (element + "<=>" + dictionary[element], )
+        qsl_parameters = qsl_parameters + (element + "<=>" + dictionary[element], )
 
-    return additional0 + additional1
+    return url_parameters + qsl_parameters
 
 
-def clean_url(url):
-    parsed = urlparse(url)
-    qsl_parsed = parse_qsl(parsed.query, keep_blank_values=True)
-    filtered = {}
-    if parsed.hostname:
-        host_name = parsed.hostname
+def clean_url(url_address):
+    url_parsed = urlparse(url_address)
+    qsl_parsed = parse_qsl(url_parsed.query, keep_blank_values=True)
+    filtered_parameters = {}
+    if url_parsed.hostname:
+        host_name = url_parsed.hostname
     else:
-        host_name = parsed.netloc
+        host_name = url_parsed.netloc
     for key, value in qsl_parsed:
         if "youtube.com" in host_name or "youtu.be" in host_name:
-            if not key.startswith(preset.youtube) and not key.startswith(preset.words):
-                filtered.update([(key, value)])
+            if not key.startswith(preset.youtube_parameters) and not key.startswith(preset.general_tracking_tokens):
+                filtered_parameters.update([(key, value)])
         elif "facebook.com" in host_name:
-            if not key.startswith(preset.facebook) and not key.startswith(preset.words):
-                filtered.update([(key, value)])
-        elif not key.startswith(preset.words):
-            filtered.update([(key, value)])
+            if not key.startswith(preset.facebook_tracking_tokens) and not key.startswith(preset.general_tracking_tokens):
+                filtered_parameters.update([(key, value)])
+        elif not key.startswith(preset.general_tracking_tokens):
+            filtered_parameters.update([(key, value)])
 
-    new_url = urlunparse([
-        parsed.scheme,
-        parsed.netloc,
-        parsed.path,
-        parsed.params,
-        urlencode(filtered, doseq=True),
-        parsed.fragment
+    return urlunparse([
+        url_parsed.scheme,
+        url_parsed.netloc,
+        url_parsed.path,
+        url_parsed.params,
+        urlencode(filtered_parameters, doseq=True),
+        url_parsed.fragment
     ])
-    return new_url
 
 
-def get_title(url):
+def get_title(url_address):
     #######################################################################################
     # TODO: If not enabled, returns current name or url
     #######################################################################################
@@ -89,36 +88,36 @@ def get_title(url):
         #######################################################################################
         # TODO: Place timeout in a settings file
         #######################################################################################
-        with urlopen(url, timeout=120) as stream:
-            data = stream.read()
+        with urlopen(url_address, timeout=120) as stream:
+            url_data = stream.read()
     except HTTPError as error:
-        err = str(error)
-        err = err.replace("<", "[").replace(">", "]")
-        return -2, "HTTPError - " + err
+        error_message = str(error)
+        error_message = error_message.replace("<", "[").replace(">", "]")
+        return -2, "HTTPError - " + error_message
     except URLError as error:
-        err = str(error)
-        err = err.replace("<", "[").replace(">", "]")
-        return -2, "URLError - " + err
+        error_message = str(error)
+        error_message = error_message.replace("<", "[").replace(">", "]")
+        return -2, "URLError - " + error_message
     except timeout as error:
-        err = str(error)
-        err = err.replace("<", "[").replace(">", "]")
-        return -2, "Timeout - " + err
-    except Exception as e:
-        return -1, "Unknown Exception: " + str(e)
+        error_message = str(error)
+        error_message = error_message.replace("<", "[").replace(">", "]")
+        return -2, "Timeout - " + error_message
+    except Exception as error:
+        return -1, "Unknown Exception: " + str(error)
 
     try:
-        parser = Parser()
-        decoded = data.decode('utf-8', errors='ignore')
-        parser.feed(decoded)
-        value = parser.title.replace('\n', '[n').replace('\t', '[t').strip()
-        if len(value) > 0:
-            return 0, value
+        url_parser = Parser()
+        url_decoded = url_data.decode('utf-8', errors='ignore')
+        url_parser.feed(url_decoded)
+        url_value = url_parser.title.replace('\n', '[n').replace('\t', '[t').strip()
+        if len(url_value) > 0:
+            return 0, url_value
         else:
-            return -2, "NONAME - " + value
-    except NotImplementedError as e:
-        return -2, str(e) + " - " + url
-    except Exception as e:
-        return -1, "Unknown Exception: " + str(e)
+            return -2, "NONAME - " + url_value
+    except NotImplementedError as error:
+        return -2, str(error) + " - " + url_address
+    except Exception as error:
+        return -1, "Unknown Exception: " + str(error)
 
 
 '''

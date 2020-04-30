@@ -1,135 +1,135 @@
 import os
 from platform import system
+
 from tools import add, to_date
 
-
-words = (
-    "__twitter_impression",
-    "bffb",
-    "client_id",
-    "cmpid",
-    "comment_id",
-    "fb_action_ids",
-    "fb_action_types",
-    "fb_comment_id",
-    "fbclid",
-    "fbid",
-    "notif_id",
-    "notif_t",
-    "reply_comment_id",
-    "story_fbid",
-    "total_comments",
-    "campaign",
-    "campanha",
-    "gws_rd",
-    "mkt_tok",
-    "offset",
-    "sc_campaign",
-    "sc_category",
-    "sc_channel",
-    "sc_content",
-    "sc_country",
-    "sc_funnel",
-    "sc_medium",
-    "sc_publisher",
-    "sc_segment",
-    "utm_",
-    "utm_campaign",
-    "utm_content",
-    "utm_medium",
-    "utm_source",
-    "utm_term"
+general_tracking_tokens = (
+        "__twitter_impression",
+        "bffb",
+        "client_id",
+        "cmpid",
+        "comment_id",
+        "fb_action_ids",
+        "fb_action_types",
+        "fb_comment_id",
+        "fbclid",
+        "fbid",
+        "notif_id",
+        "notif_t",
+        "reply_comment_id",
+        "story_fbid",
+        "total_comments",
+        "campaign",
+        "campanha",
+        "gws_rd",
+        "mkt_tok",
+        "offset",
+        "sc_campaign",
+        "sc_category",
+        "sc_channel",
+        "sc_content",
+        "sc_country",
+        "sc_funnel",
+        "sc_medium",
+        "sc_publisher",
+        "sc_segment",
+        "utm_",
+        "utm_campaign",
+        "utm_content",
+        "utm_medium",
+        "utm_source",
+        "utm_term"
 )
 
-youtube = (
-    "sm",
-    "time_continue",
-    "feature",
-    "app",
-    "bpctr",
-    "1c"
+youtube_parameters = (
+        "sm",
+        "time_continue",
+        "feature",
+        "app",
+        "bpctr",
+        "1c"
 )
 
-facebook = (
-    "_rdc",
-    "_rdr",
-    "rc",
-    "comment_tracking",
-    "__tn__",
-    "__xts__[0]",
-    "__xts__",
-    "sns",
-    "hc_location",
-    "pnref",
-    "entry_point",
-    "tab",
-    "source_ref",
-    "hc_ref",
-    "__mref",
-    "ref",
-    "eid",
-    "fref",
-    "lst",
-    "__nodl",
-    "permPage",
-    "notif_id"
+facebook_tracking_tokens = (
+        "_rdc",
+        "_rdr",
+        "rc",
+        "comment_tracking",
+        "__tn__",
+        "__xts__[0]",
+        "__xts__",
+        "sns",
+        "hc_location",
+        "pnref",
+        "entry_point",
+        "tab",
+        "source_ref",
+        "hc_ref",
+        "__mref",
+        "ref",
+        "eid",
+        "fref",
+        "lst",
+        "__nodl",
+        "permPage",
+        "notif_id"
 )
 
 
 class Header:
     def __init__(self):
-        pos = [-1]
+        index = [-1]
         stub_date = to_date(13231709218000000)
-        self._Folder_GUID = (None, add(pos))
-        self._Folder_ID = (None, add(pos))
-        self._Folder_Sync = (None, add(pos))
-        self._Folder_Type = (None, add(pos))
+        self._Folder_GUID = (None, add(index))
+        self._Folder_ID = (None, add(index))
+        self._Folder_Sync = (None, add(index))
+        self._Folder_Type = (None, add(index))
 
-        self._Folder_Added = (stub_date, add(pos))
-        self._Folder_Modified = (stub_date, add(pos))
-        self._Folder_visited = (stub_date, add(pos))
+        self._Folder_Added = (stub_date, add(index))
+        self._Folder_Modified = (stub_date, add(index))
+        self._Folder_visited = (stub_date, add(index))
 
-        self._Folder_Name = ("", add(pos))
-        self._Folder_URL = ("", add(pos))
+        self._Folder_Name = ("", add(index))
+        self._Folder_URL = ("", add(index))
 
-        self._URL_GUID = (None, add(pos))
-        self._URL_ID = (None, add(pos))
-        self._URL_Sync = (None, add(pos))
-        self._URL_Type = (None, add(pos))
+        self._URL_GUID = (None, add(index))
+        self._URL_ID = (None, add(index))
+        self._URL_Sync = (None, add(index))
+        self._URL_Type = (None, add(index))
 
-        self._URL_Added = (stub_date, add(pos))
-        self._URL_Modified = (stub_date, add(pos))
-        self._URL_Visited = (stub_date, add(pos))
+        self._URL_Added = (stub_date, add(index))
+        self._URL_Modified = (stub_date, add(index))
+        self._URL_Visited = (stub_date, add(index))
 
-        self._URL_Name = ("[no site name]", add(pos))
-        self._URL_Clean = ("[no clean URL]", add(pos))
-        self._URL = ("[no URL address]", add(pos))
-        self._Scheme = (None, add(pos))
-        self._Netloc = (None, add(pos))
-        self._Hostname = ("[no hostname]", add(pos))
-        self._Path = (None, add(pos))
-        self._Port = (None, add(pos))
-        self._Param = (None, add(pos))
-        self._Fragment = (None, add(pos))
-        self._Username = ("", add(pos))
-        self._Password = ("", add(pos))
+        self._URL_Name = ("[no site name]", add(index))
+        self._URL_Clean = ("[no clean URL]", add(index))
+        self._URL = ("[no URL address]", add(index))
+        self._Scheme = (None, add(index))
+        self._Netloc = (None, add(index))
+        self._Hostname = ("[no hostname]", add(index))
+        self._Path = (None, add(index))
+        self._Port = (None, add(index))
+        self._Param = (None, add(index))
+        self._Fragment = (None, add(index))
+        self._Username = ("", add(index))
+        self._Password = ("", add(index))
 
-        self._ParamA = (None, add(pos))
-        self._ParamB = (None, add(pos))
-        self._ParamC = (None, add(pos))
-        self._ParamD = (None, add(pos))
-        self._ParamE = (None, add(pos))
-        self._ParamF = (None, add(pos))
-        self._ParamG = (None, add(pos))
-        self._ParamH = (None, add(pos))
-        self._ParamI = (None, add(pos))
-        self._ParamJ = (None, add(pos))
-        self._ParamK = (None, add(pos))
-        self._ParamL = (None, add(pos))
-        self._ParamM = (None, add(pos))
-        self._ParamN = (None, add(pos))
-        self._ParamO = (None, add(pos))
-        self._ParamP = (None, add(pos))
+        self._ParamA = (None, add(index))
+        self._ParamB = (None, add(index))
+        self._ParamC = (None, add(index))
+        self._ParamD = (None, add(index))
+        self._ParamE = (None, add(index))
+        self._ParamF = (None, add(index))
+        self._ParamG = (None, add(index))
+        self._ParamH = (None, add(index))
+        self._ParamI = (None, add(index))
+        self._ParamJ = (None, add(index))
+        self._ParamK = (None, add(index))
+        self._ParamL = (None, add(index))
+        self._ParamM = (None, add(index))
+        self._ParamN = (None, add(index))
+        self._ParamO = (None, add(index))
+        self._ParamP = (None, add(index))
 
     def set_data(self, url_element):
         index = [-1]
@@ -184,7 +184,6 @@ class Header:
         self._ParamN = (url_element[add(index)], index[0])  # 41
         self._ParamO = (url_element[add(index)], index[0])  # 42
         self._ParamP = (url_element[add(index)], index[0])  # 43
-
 
     @property
     def Folder_GUID(self):
@@ -714,93 +713,37 @@ class Header:
     def ParamP(self):
         return self._ParamP[0]
 
-    def getPos(self, position):
-        item = self.toTuple()
+    def get_position(self, position):
+        item = self.to_tuple()
         return item[position][0]
 
-    def getName(self, name):
-        item = self.toDict()
-        return item['_'+name][0]
+    def get_name(self, name):
+        item = self.to_dict()
+        return item['_' + name][0]
 
-    def toDict(self):
-        dc = self.__dict__
-        dic = {}
-        for x in dc:
-            dic.update({x: dc[x][0]})
-        return dic
+    def to_dict(self):
+        indexed_dictionary = self.__dict__
+        dictionary = {}
+        for element in indexed_dictionary:
+            dictionary.update({element: indexed_dictionary[element][0]})
+        return dictionary
 
-    def toTuple(self):
-        dc = self.__dict__
-        tp = []
-        for x in dc:
-            tp.append(dc[x])
-        tp.sort(key=lambda k: k[1])
-        tpl = []
-        for x in tp:
-            tpl.append(x[0])
-        return tuple(tpl)
+    def to_tuple(self):
+        dictionary = self.__dict__
+        item_list = []
+        for item in dictionary:
+            item_list.append(dictionary[item])
+        item_list.sort(key=lambda element: element[1])
+        tuple_list = []
+        for item in item_list:
+            tuple_list.append(item[0])
+        return tuple(tuple_list)
 
-    def toDictIdx(self):
+    def to_dict_index(self):
         return self.__dict__
 
     def __repr__(self):
         return str(self.__dict__)
-
-
-data_header = [
-    (
-        'Folder GUID',      # 00
-        'Folder ID',        # 01
-        'Folder Sync',      # 02
-        'Type',             # 03
-
-        'Folder Added',     # 04
-        'Folder Modified',  # 05
-        'Folder visited',   # 06
-
-        'Folder Name',      # 07
-        'Folder URL',       # 08
-
-        'URL GUID',         # 09
-        'URL ID',           # 10
-        'URL Sync',         # 11
-        'Type',             # 12
-
-        'URL Added',        # 13
-        'URL Modified',     # 14
-        'URL Visited',      # 15
-
-        'URL Name',         # 16
-        'URL Clean',        # 17
-        'URL',              # 18
-        'Scheme',           # 19
-        'Netloc',           # 20
-        'Hostname',         # 21
-        'Path',             # 22
-        'Port',             # 23
-        'Param',            # 24
-        'Fragment',         # 25
-        'Username',         # 26
-        'Password',         # 27
-
-        'ParamA',           # 28
-        'ParamB',           # 29
-        'ParamC',           # 30
-        'ParamD',           # 31
-        'ParamE',           # 32
-        'ParamF',           # 33
-        'ParamG',           # 34
-        'ParamH',           # 35
-        'ParamI',           # 36
-        'ParamJ',           # 37
-        'ParamK',           # 38
-        'ParamL',           # 39
-        'ParamM',           # 40
-        'ParamN',           # 41
-        'ParamO',           # 42
-        'ParamP'            # 43
-    )
-]
 
 
 def select_profile(profile):
@@ -826,3 +769,86 @@ def get_chrome_element(profile, item):
     if os.path.exists(chrome_file):
         return chrome_file
     return None
+
+
+data_header = [
+        (
+                'Folder GUID',  # 00
+                'Folder ID',  # 01
+                'Folder Sync',  # 02
+                'Type',  # 03
+
+                'Folder Added',  # 04
+                'Folder Modified',  # 05
+                'Folder visited',  # 06
+
+                'Folder Name',  # 07
+                'Folder URL',  # 08
+
+                'URL GUID',  # 09
+                'URL ID',  # 10
+                'URL Sync',  # 11
+                'Type',  # 12
+
+                'URL Added',  # 13
+                'URL Modified',  # 14
+                'URL Visited',  # 15
+
+                'URL Name',  # 16
+                'URL Clean',  # 17
+                'URL',  # 18
+                'Scheme',  # 19
+                'Netloc',  # 20
+                'Hostname',  # 21
+                'Path',  # 22
+                'Port',  # 23
+                'Param',  # 24
+                'Fragment',  # 25
+                'Username',  # 26
+                'Password',  # 27
+
+                'ParamA',  # 28
+                'ParamB',  # 29
+                'ParamC',  # 30
+                'ParamD',  # 31
+                'ParamE',  # 32
+                'ParamF',  # 33
+                'ParamG',  # 34
+                'ParamH',  # 35
+                'ParamI',  # 36
+                'ParamJ',  # 37
+                'ParamK',  # 38
+                'ParamL',  # 39
+                'ParamM',  # 40
+                'ParamN',  # 41
+                'ParamO',  # 42
+                'ParamP'  # 43
+        )
+]
+
+on = 'on'
+off = 'off'
+
+main_section = 'main'
+configuration_filename = "config.ini"
+
+children = 'children'
+meta_info = 'meta_info'
+last_visited = 'last_visited'
+date_added = 'date_added'
+date_modified = 'date_modified'
+guid = 'guid'
+icon = 'icon'
+item_id = 'id'
+item_name = 'name'
+sync_transaction_version = 'sync_transaction_version'
+item_type = 'type'
+url = 'url'
+
+empty = '[Empty]'
+export_file_type = "export_file_type"
+refresh_url_title = "refresh_url_title"
+remove_duplicated_urls = "remove_duplicated_urls"
+remove_tracking_tokens_from_url = "remove_tracking_tokens_from_url"
+import_urls_from_text_file = "import_urls_from_text_file"
+refresh_folder_name_with_hostname_title = "refresh_folder_name_with_hostname_title"
