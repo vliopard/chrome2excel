@@ -1,5 +1,6 @@
+import utils
 import tools
-
+import preset
 
 header = """<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <!-- This is an automatically generated file.
@@ -16,10 +17,10 @@ level = 1
 
 def open_folder(add_date, modified_date, folder_name):
     global level
-    return_value = new_line() + new_tab() + \
-        '<DT><H3 ADD_DATE="' + tools.date_to_epoch(add_date) + \
-        '" LAST_MODIFIED="' + tools.date_to_epoch(modified_date) + \
-        '">' + folder_name + '</H3>' + new_line() + new_tab() + '<DL><p>'
+    return_value = "" + preset.new_line + new_tab() + \
+        '<DT><H3 ADD_DATE="' + utils.date_to_epoch(add_date) + \
+        '" LAST_MODIFIED="' + utils.date_to_epoch(modified_date) + \
+        '">' + folder_name + '</H3>' + preset.new_line + new_tab() + '<DL><p>'
     level = level + 1
     return return_value
 
@@ -27,23 +28,17 @@ def open_folder(add_date, modified_date, folder_name):
 def close_folder():
     global level
     level = level - 1
-    return new_line() + new_tab() + '</DL><p>'
+    return "" + preset.new_line + new_tab() + '</DL><p>'
 
 
 def add_url(url, add_date, url_title):
-    return new_line() + new_tab() + \
-        '<DT><A HREF="' + str(url).strip() + \
-        '" ADD_DATE="' + tools.date_to_epoch(add_date) + \
-        '">' + str(url_title) + '</A>'
-
-
-def new_line():
-    return "\n"
+    return "" + preset.new_line + new_tab() + '<DT><A HREF="' + str(url).strip() + \
+        '" ADD_DATE="' + utils.date_to_epoch(add_date) + '">' + str(url_title) + '</A>'
 
 
 def new_tab():
     global level
-    return "\t"*level
+    return preset.tab*level
 
 
 def write_html(folder):
@@ -51,7 +46,7 @@ def write_html(folder):
     # TODO: MAY CHANGE CHROME.HTML TO OTHER FILENAME
     #######################################################################################
 
-    with open('chrome.html', 'w', encoding='utf-8') as html_file:
+    with open(preset.html_filename, 'w', encoding='utf-8') as html_file:
         html_file.write(header)
 
         for item in folder:
@@ -61,7 +56,7 @@ def write_html(folder):
                     if isinstance(url, tools.Urls):
                         html_file.write(add_url(url.url, url.add_date, url.title))
                     elif isinstance(url, tools.Folder):
-                        tools.display("New Folder")
+                        tools.display(preset.message["new_folder"])
                 html_file.write(close_folder())
 
         html_file.write(tail)

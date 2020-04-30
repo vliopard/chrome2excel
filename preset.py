@@ -1,7 +1,87 @@
-import os
-from platform import system
+from json import load
+from pathlib import Path
 
-from tools import add, to_date
+from utils import add, to_date
+
+#######################################################################################
+# TODO: DEBUG FUNCTION NOT WORKING
+#######################################################################################
+debug_mode = False
+
+language = 'en-us'
+message = load(Path("translation.json").open())[language]
+
+on = 'on'
+off = 'off'
+empty = ""
+blank = " "
+all_profiles = "all"
+
+protocol = "http://"
+
+preferences = "Preferences"
+bookmarks = "Bookmarks"
+
+tab = "\t"
+new_line = "\n"
+
+underline = "_"
+overline = "\u203e"
+
+main_section = 'main'
+configuration_filename = "config.ini"
+
+nohostname = "[no hostname]"
+nositename = "[no site name]"
+nocleanurl = "[no clean URL]"
+nourladdress = "[no URL address]"
+
+text_filename = "chrome.txt"
+html_filename = "chrome.html"
+xlsx_filename = "chrome.xlsx"
+
+label_date_added = "Date Added"
+label_date_modified = "Date Modified"
+label_date_visited = "Date Visited"
+label_url_name = "URL Name"
+label_url_clean = "URL Clean"
+label_original_url = "URL Address"
+label_url_hostname = "Hostname"
+label_folder_name = "Folder"
+
+children = 'children'
+meta_info = 'meta_info'
+last_visited = 'last_visited'
+date_added = 'date_added'
+date_modified = 'date_modified'
+guid = 'guid'
+icon = 'icon'
+item_id = 'id'
+item_name = 'name'
+sync_transaction_version = 'sync_transaction_version'
+item_type = 'type'
+url = 'url'
+
+no_date = "No Date"
+empty_string = '[Empty]'
+date_format = "%Y/%m/%d, %H:%M:%S"
+number_format = "YYYY/MM/DD hh:mm:ss"
+
+'''
+setattr(options, preset.export_file_type, False)
+setattr(options, preset.refresh_url_title, False)
+setattr(options, preset.remove_duplicated_urls, False)
+setattr(options, preset.remove_tracking_tokens_from_url, False)
+setattr(options, preset.import_urls_from_text_file, False)
+setattr(options, preset.refresh_folder_name_with_hostname_title, False)
+'''
+
+export_file_type = "export_file_type"
+refresh_url_title = "refresh_url_title"
+remove_duplicated_urls = "remove_duplicated_urls"
+remove_tracking_tokens_from_url = "remove_tracking_tokens_from_url"
+import_urls_from_text_file = "import_urls_from_text_file"
+refresh_folder_name_with_hostname_title = "refresh_folder_name_with_hostname_title"
 
 general_tracking_tokens = (
         "__twitter_impression",
@@ -89,8 +169,8 @@ class Header:
         self._Folder_Modified = (stub_date, add(index))
         self._Folder_visited = (stub_date, add(index))
 
-        self._Folder_Name = ("", add(index))
-        self._Folder_URL = ("", add(index))
+        self._Folder_Name = (empty, add(index))
+        self._Folder_URL = (empty, add(index))
 
         self._URL_GUID = (None, add(index))
         self._URL_ID = (None, add(index))
@@ -101,18 +181,18 @@ class Header:
         self._URL_Modified = (stub_date, add(index))
         self._URL_Visited = (stub_date, add(index))
 
-        self._URL_Name = ("[no site name]", add(index))
-        self._URL_Clean = ("[no clean URL]", add(index))
-        self._URL = ("[no URL address]", add(index))
+        self._URL_Name = (nositename, add(index))
+        self._URL_Clean = (nocleanurl, add(index))
+        self._URL = (nourladdress, add(index))
         self._Scheme = (None, add(index))
         self._Netloc = (None, add(index))
-        self._Hostname = ("[no hostname]", add(index))
+        self._Hostname = (nohostname, add(index))
         self._Path = (None, add(index))
         self._Port = (None, add(index))
         self._Param = (None, add(index))
         self._Fragment = (None, add(index))
-        self._Username = ("", add(index))
-        self._Password = ("", add(index))
+        self._Username = (empty, add(index))
+        self._Password = (empty, add(index))
 
         self._ParamA = (None, add(index))
         self._ParamB = (None, add(index))
@@ -135,38 +215,38 @@ class Header:
         index = [-1]
 
         self._Folder_GUID = (url_element[add(index)], index[0])  # 00
-        self._Folder_ID = (url_element[add(index)], index[0])  # 01
+        self._Folder_ID = (url_element[add(index)], index[0])    # 01
         self._Folder_Sync = (url_element[add(index)], index[0])  # 02
         self._Folder_Type = (url_element[add(index)], index[0])  # 03
 
-        self._Folder_Added = (url_element[add(index)], index[0])  # 04
+        self._Folder_Added = (url_element[add(index)], index[0])     # 04
         self._Folder_Modified = (url_element[add(index)], index[0])  # 05
-        self._Folder_visited = (url_element[add(index)], index[0])  # 06
+        self._Folder_visited = (url_element[add(index)], index[0])   # 06
 
         self._Folder_Name = (url_element[add(index)], index[0])  # 07
-        self._Folder_URL = (url_element[add(index)], index[0])  # 08
+        self._Folder_URL = (url_element[add(index)], index[0])   # 08
 
         self._URL_GUID = (url_element[add(index)], index[0])  # 09
-        self._URL_ID = (url_element[add(index)], index[0])  # 10
+        self._URL_ID = (url_element[add(index)], index[0])    # 10
         self._URL_Sync = (url_element[add(index)], index[0])  # 11
         self._URL_Type = (url_element[add(index)], index[0])  # 12
 
-        self._URL_Added = (url_element[add(index)], index[0])  # 13
+        self._URL_Added = (url_element[add(index)], index[0])     # 13
         self._URL_Modified = (url_element[add(index)], index[0])  # 14
-        self._URL_Visited = (url_element[add(index)], index[0])  # 15
+        self._URL_Visited = (url_element[add(index)], index[0])   # 15
 
-        self._URL_Name = (url_element[add(index)], index[0])  # 16
+        self._URL_Name = (url_element[add(index)], index[0])   # 16
         self._URL_Clean = (url_element[add(index)], index[0])  # 17
-        self._URL = (url_element[add(index)], index[0])  # 18
-        self._Scheme = (url_element[add(index)], index[0])  # 19
-        self._Netloc = (url_element[add(index)], index[0])  # 20
-        self._Hostname = (url_element[add(index)], index[0])  # 21
-        self._Path = (url_element[add(index)], index[0])  # 22
-        self._Port = (url_element[add(index)], index[0])  # 23
-        self._Param = (url_element[add(index)], index[0])  # 24
-        self._Fragment = (url_element[add(index)], index[0])  # 25
-        self._Username = (url_element[add(index)], index[0])  # 26
-        self._Password = (url_element[add(index)], index[0])  # 27
+        self._URL = (url_element[add(index)], index[0])        # 18
+        self._Scheme = (url_element[add(index)], index[0])     # 19
+        self._Netloc = (url_element[add(index)], index[0])     # 20
+        self._Hostname = (url_element[add(index)], index[0])   # 21
+        self._Path = (url_element[add(index)], index[0])       # 22
+        self._Port = (url_element[add(index)], index[0])       # 23
+        self._Param = (url_element[add(index)], index[0])      # 24
+        self._Fragment = (url_element[add(index)], index[0])   # 25
+        self._Username = (url_element[add(index)], index[0])   # 26
+        self._Password = (url_element[add(index)], index[0])   # 27
 
         self._ParamA = (url_element[add(index)], index[0])  # 28
         self._ParamB = (url_element[add(index)], index[0])  # 29
@@ -184,6 +264,38 @@ class Header:
         self._ParamN = (url_element[add(index)], index[0])  # 41
         self._ParamO = (url_element[add(index)], index[0])  # 42
         self._ParamP = (url_element[add(index)], index[0])  # 43
+
+    def get_position(self, position):
+        item = self.to_tuple()
+        return item[position][0]
+
+    def get_name(self, name):
+        item = self.to_dict()
+        return item[underline + name][0]
+
+    def to_dict(self):
+        indexed_dictionary = self.__dict__
+        dictionary = {}
+        for element in indexed_dictionary:
+            dictionary.update({element: indexed_dictionary[element][0]})
+        return dictionary
+
+    def to_tuple(self):
+        dictionary = self.__dict__
+        item_list = []
+        for item in dictionary:
+            item_list.append(dictionary[item])
+        item_list.sort(key=lambda element: element[1])
+        tuple_list = []
+        for item in item_list:
+            tuple_list.append(item[0])
+        return tuple(tuple_list)
+
+    def to_dict_index(self):
+        return self.__dict__
+
+    def __repr__(self):
+        return str(self.__dict__)
 
     @property
     def Folder_GUID(self):
@@ -713,96 +825,39 @@ class Header:
     def ParamP(self):
         return self._ParamP[0]
 
-    def get_position(self, position):
-        item = self.to_tuple()
-        return item[position][0]
-
-    def get_name(self, name):
-        item = self.to_dict()
-        return item['_' + name][0]
-
-    def to_dict(self):
-        indexed_dictionary = self.__dict__
-        dictionary = {}
-        for element in indexed_dictionary:
-            dictionary.update({element: indexed_dictionary[element][0]})
-        return dictionary
-
-    def to_tuple(self):
-        dictionary = self.__dict__
-        item_list = []
-        for item in dictionary:
-            item_list.append(dictionary[item])
-        item_list.sort(key=lambda element: element[1])
-        tuple_list = []
-        for item in item_list:
-            tuple_list.append(item[0])
-        return tuple(tuple_list)
-
-    def to_dict_index(self):
-        return self.__dict__
-
-    def __repr__(self):
-        return str(self.__dict__)
-
-
-def select_profile(profile):
-    profile = str(profile)
-    if profile == "0":
-        profile = "Default"
-    else:
-        profile = "Profile " + profile
-    return profile
-
-
-def get_chrome_element(profile, item):
-    # item Preferences / Bookmarks
-    computer = system()
-    profile = select_profile(profile)
-    chrome_file = ""
-    if computer == "Windows":
-        chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile + "\\" + item)
-    if computer == "Linux":
-        chrome_file = os.path.expanduser("~/.config/google-chrome/" + profile + "/" + item)
-    if computer == "Darwin":
-        chrome_file = os.path.expanduser("~/Library/Application Support/Google/Chrome/" + profile + "/" + item)
-    if os.path.exists(chrome_file):
-        return chrome_file
-    return None
-
 
 data_header = [
         (
                 'Folder GUID',  # 00
-                'Folder ID',  # 01
+                'Folder ID',    # 01
                 'Folder Sync',  # 02
-                'Type',  # 03
+                'Type',         # 03
 
-                'Folder Added',  # 04
+                'Folder Added',     # 04
                 'Folder Modified',  # 05
-                'Folder visited',  # 06
+                'Folder visited',   # 06
 
                 'Folder Name',  # 07
-                'Folder URL',  # 08
+                'Folder URL',   # 08
 
                 'URL GUID',  # 09
-                'URL ID',  # 10
+                'URL ID',    # 10
                 'URL Sync',  # 11
-                'Type',  # 12
+                'Type',      # 12
 
-                'URL Added',  # 13
+                'URL Added',     # 13
                 'URL Modified',  # 14
-                'URL Visited',  # 15
+                'URL Visited',   # 15
 
                 'URL Name',  # 16
                 'URL Clean',  # 17
-                'URL',  # 18
-                'Scheme',  # 19
-                'Netloc',  # 20
+                'URL',       # 18
+                'Scheme',    # 19
+                'Netloc',    # 20
                 'Hostname',  # 21
-                'Path',  # 22
-                'Port',  # 23
-                'Param',  # 24
+                'Path',      # 22
+                'Port',      # 23
+                'Param',     # 24
                 'Fragment',  # 25
                 'Username',  # 26
                 'Password',  # 27
@@ -822,33 +877,6 @@ data_header = [
                 'ParamM',  # 40
                 'ParamN',  # 41
                 'ParamO',  # 42
-                'ParamP'  # 43
+                'ParamP'   # 43
         )
 ]
-
-on = 'on'
-off = 'off'
-
-main_section = 'main'
-configuration_filename = "config.ini"
-
-children = 'children'
-meta_info = 'meta_info'
-last_visited = 'last_visited'
-date_added = 'date_added'
-date_modified = 'date_modified'
-guid = 'guid'
-icon = 'icon'
-item_id = 'id'
-item_name = 'name'
-sync_transaction_version = 'sync_transaction_version'
-item_type = 'type'
-url = 'url'
-
-empty = '[Empty]'
-export_file_type = "export_file_type"
-refresh_url_title = "refresh_url_title"
-remove_duplicated_urls = "remove_duplicated_urls"
-remove_tracking_tokens_from_url = "remove_tracking_tokens_from_url"
-import_urls_from_text_file = "import_urls_from_text_file"
-refresh_folder_name_with_hostname_title = "refresh_folder_name_with_hostname_title"

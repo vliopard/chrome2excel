@@ -11,9 +11,9 @@ def get_user(user_path):
 
 
 def retrieve_profile(profile):
-    user_data = preset.get_chrome_element(profile, "Preferences")
+    user_data = tools.get_chrome_element(profile, preset.preferences)
     if not user_data:
-        raise Exception("Invalid profile.")
+        raise Exception(preset.message["invalid_profile"])
     return get_user(user_data)
 
 
@@ -29,35 +29,35 @@ def profile_list():
 
 
 def get_profile(profile):
-    if profile == "all":
+    if profile == preset.all_profiles:
         for number in range(0, 100):
             try:
                 email, full_name, display_name = retrieve_profile(number)
                 if len(full_name) < 20:
-                    tab = "\t"
+                    tab = preset.tab
                 else:
-                    tab = ""
-                tools.display("User[" + str(number) + "]: {", full_name, "}\t" + tab + " [", email, "]")
+                    tab = preset.empty
+                tools.display(preset.message["user"] + "[" + str(number) + "]: {", full_name, "}" + preset.tab + tab + " [", email, "]")
             except Exception:
                 pass
     else:
         try:
             email, full_name, display_name = retrieve_profile(profile)
-            tools.display("User: {", full_name, "} [" + email + "]")
-        except Exception as e:
-            tools.display(e)
+            tools.display(preset.message["user"] + ": {", full_name, "} [" + email + "]")
+        except Exception as error:
+            tools.display(error)
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(
-        description="Script to list users from Google Chrome."
+    argument_parser = ArgumentParser(
+        description=preset.message["profile_description"]
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--profile",
         "-p",
-        help="Profile number to extract: 'all' is Default.",
-        default="all"
+        help=preset.message["profile_help"],
+        default=preset.all_profiles
     )
 
-    args = vars(parser.parse_args())
-    get_profile(**args)
+    arguments = vars(argument_parser.parse_args())
+    get_profile(**arguments)

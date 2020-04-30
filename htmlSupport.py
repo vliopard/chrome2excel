@@ -1,4 +1,5 @@
 import tools
+import utils
 import preset
 
 from socket import timeout
@@ -34,15 +35,15 @@ def parse_url(url_value):
     dictionary = dict(parse.parse_qsl(parse.urlsplit(url_value).query))
 
     url_parameters = (
-                    tools.check_is_none(parsed_url.scheme),
-                    tools.check_is_none(parsed_url.netloc),
-                    tools.check_is_none(parsed_url.hostname),
-                    tools.check_is_none(parsed_url.path),
-                    tools.check_is_none(parsed_url.port),
-                    tools.check_is_none(parsed_url.params),
-                    tools.check_is_none(parsed_url.fragment),
-                    tools.check_is_none(parsed_url.username),
-                    tools.check_is_none(parsed_url.password)
+                    utils.check_is_none(parsed_url.scheme),
+                    utils.check_is_none(parsed_url.netloc),
+                    utils.check_is_none(parsed_url.hostname),
+                    utils.check_is_none(parsed_url.path),
+                    utils.check_is_none(parsed_url.port),
+                    utils.check_is_none(parsed_url.params),
+                    utils.check_is_none(parsed_url.fragment),
+                    utils.check_is_none(parsed_url.username),
+                    utils.check_is_none(parsed_url.password)
                   )
 
     qsl_parameters = ()
@@ -103,13 +104,13 @@ def get_title(url_address):
         error_message = error_message.replace("<", "[").replace(">", "]")
         return -2, "Timeout - " + error_message
     except Exception as error:
-        return -1, "Unknown Exception: " + str(error)
+        return -1, preset.message["unknown_exception"] + str(error)
 
     try:
         url_parser = Parser()
         url_decoded = url_data.decode('utf-8', errors='ignore')
         url_parser.feed(url_decoded)
-        url_value = url_parser.title.replace('\n', '[n').replace('\t', '[t').strip()
+        url_value = url_parser.title.replace('\n', '¬').replace('\t', '§').strip()
         if len(url_value) > 0:
             return 0, url_value
         else:
@@ -117,7 +118,7 @@ def get_title(url_address):
     except NotImplementedError as error:
         return -2, str(error) + " - " + url_address
     except Exception as error:
-        return -1, "Unknown Exception: " + str(error)
+        return -1, preset.message["unknown_exception"] + str(error)
 
 
 '''

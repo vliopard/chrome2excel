@@ -1,21 +1,14 @@
 import wx
 import wx.adv
 
+import tools
+import utils
+import preset
 import bookMarks
 import chrome2excel
 import chromeProfile
 
-import tools
-from tools import add
-
-date_added = "Date Added"
-date_modified = "Date Modified"
-date_visited = "Date Visited"
-url_name = "URL Name"
-url_clean = "URL Clean"
-original_url = "URL Address"
-url_hostname = "Hostname"
-folder_name = "Folder"
+from utils import add
 
 
 class MainUrlPanel(wx.Panel):
@@ -34,23 +27,23 @@ class MainUrlPanel(wx.Panel):
         #######################################################################################
         index = [-1]
 
-        self.list_ctrl.InsertColumn(add(index), date_added, width=200)
-        self.list_ctrl.InsertColumn(add(index), date_modified, width=200)
-        self.list_ctrl.InsertColumn(add(index), date_visited, width=200)
-        self.list_ctrl.InsertColumn(add(index), folder_name, width=200)
-        self.list_ctrl.InsertColumn(add(index), url_name, width=200)
-        self.list_ctrl.InsertColumn(add(index), url_clean, width=200)
-        self.list_ctrl.InsertColumn(add(index), original_url, width=200)
-        self.list_ctrl.InsertColumn(add(index), url_hostname, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_modified, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_visited, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_folder_name, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_url_name, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_url_clean, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_original_url, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=200)
 
         main_box_sizer.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 5)
         main_box_sizer.AddStretchSpacer()
 
-        edit_button = wx.Button(self, label='Edit')
+        edit_button = wx.Button(self, label=preset.message["edit"])
         edit_button.Bind(wx.EVT_BUTTON, self.on_edit)
-        html_button = wx.Button(self, label='Export to HTML')
+        html_button = wx.Button(self, label=preset.message["export_html"])
         html_button.Bind(wx.EVT_BUTTON, self.on_html)
-        xlsx_button = wx.Button(self, label='Export to XLSX')
+        xlsx_button = wx.Button(self, label=preset.message["export_xlsx"])
         xlsx_button.Bind(wx.EVT_BUTTON, self.on_xlsx)
 
         #######################################################################################
@@ -106,14 +99,14 @@ class MainUrlPanel(wx.Panel):
         self.current_folder_path = folder_path
         self.list_ctrl.ClearAll()
         index = [-1]
-        self.list_ctrl.InsertColumn(add(index), date_added, width=115)
-        self.list_ctrl.InsertColumn(add(index), date_modified, width=118)
-        self.list_ctrl.InsertColumn(add(index), date_visited, width=120)
-        self.list_ctrl.InsertColumn(add(index), folder_name, width=150)
-        self.list_ctrl.InsertColumn(add(index), url_name, width=150)
-        self.list_ctrl.InsertColumn(add(index), url_clean, width=150)
-        self.list_ctrl.InsertColumn(add(index), original_url, width=150)
-        self.list_ctrl.InsertColumn(add(index), url_hostname, width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=115)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_modified, width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_visited, width=120)
+        self.list_ctrl.InsertColumn(add(index), preset.label_folder_name, width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.label_url_name, width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.label_url_clean, width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.label_original_url, width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=150)
 
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_text_file(folder_path))
         self.update_list(url_list)
@@ -129,9 +122,9 @@ class MainUrlPanel(wx.Panel):
             #######################################################################################
             # TODO: May change from index to dict key
             #######################################################################################
-            self.list_ctrl.InsertItem(index, tools.date_to_string(url[13]))  # 'URL Added',       #13
-            self.list_ctrl.SetItem(index, add(position), tools.date_to_string(url[14]))  # 'URL Modified',    #14
-            self.list_ctrl.SetItem(index, add(position), tools.date_to_string(url[15]))  # 'URL Visited',     #15
+            self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))  # 'URL Added',       #13
+            self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified',    #14
+            self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',     #15
             self.list_ctrl.SetItem(index, add(position), url[7])  # 'Folder Name',     #07
             self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
             self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
@@ -140,9 +133,9 @@ class MainUrlPanel(wx.Panel):
             #######################################################################################
             # TODO: Sync list_ctrl with url_object data
             #######################################################################################
-            url_object = bookMarks.TemporaryObject([tools.date_to_string(url[13]),
-                                                    tools.date_to_string(url[14]),
-                                                    tools.date_to_string(url[15]),
+            url_object = bookMarks.TemporaryObject([utils.date_to_string(url[13]),
+                                                    utils.date_to_string(url[14]),
+                                                    utils.date_to_string(url[15]),
                                                     url[7],
                                                     url[16],
                                                     url[17],
@@ -157,7 +150,7 @@ class MainFrame(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self,
                           parent=None,
-                          title='Bookmarks Editor',
+                          title=preset.message["bookmarks_editor"],
                           size=(1200, 600))
         self.settings = bookMarks.Options()
         self.settings.load_settings()
@@ -173,12 +166,12 @@ class MainFrame(wx.Frame):
         menu_bar = wx.MenuBar()
         options_menu = wx.Menu()
 
-        open_account_menu_item = options_menu.Append(wx.ID_ANY, 'Import &Account', 'Import Account from Chrome')
-        open_folder_menu_item = options_menu.Append(wx.ID_ANY, 'Open &File', 'Open a text file with URLs')
-        open_settings_menu_item = options_menu.Append(wx.ID_ANY, '&Settings', 'Set options on/off')
-        open_exit_menu_item = options_menu.Append(wx.ID_ANY, '&Exit', 'Set options on/off')
+        open_account_menu_item = options_menu.Append(wx.ID_ANY, preset.message["import_account_menu"], preset.message["import_account_description"])
+        open_folder_menu_item = options_menu.Append(wx.ID_ANY, preset.message["open_file_menu"], preset.message["open_file_description"])
+        open_settings_menu_item = options_menu.Append(wx.ID_ANY, preset.message["settings_menu"], preset.message["settings_description"])
+        open_exit_menu_item = options_menu.Append(wx.ID_ANY, preset.message["exit_menu"], preset.message["exit_description"])
 
-        menu_bar.Append(options_menu, '&Options')
+        menu_bar.Append(options_menu, preset.message["options_menu"])
 
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_account, source=open_account_menu_item)
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_folder, source=open_folder_menu_item)
@@ -186,18 +179,17 @@ class MainFrame(wx.Frame):
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_exit, source=open_exit_menu_item)
 
         about_menu = wx.Menu()
-        open_about_menu_item = about_menu.Append(wx.ID_ANY, '&About', 'About software')
-        menu_bar.Append(about_menu, '&About')
+        open_about_menu_item = about_menu.Append(wx.ID_ANY, preset.message["about_menu"], preset.message["about_description"])
+        menu_bar.Append(about_menu, preset.message["about_menu"])
         self.Bind(event=wx.EVT_MENU, handler=self.on_about, source=open_about_menu_item)
 
         self.SetMenuBar(menu_bar)
 
     def on_open_folder(self, event):
-        wildcard = "Text file (*.txt)|*.txt"
         open_folder_dialog = wx.FileDialog(self,
-                                           message="Choose a file:",
-                                           defaultFile="chrome.txt",
-                                           wildcard=wildcard,
+                                           message=preset.message["choose_file"],
+                                           defaultFile=preset.text_filename,
+                                           wildcard=preset.message["text_file_filter"],
                                            style=wx.DD_DEFAULT_STYLE)
         if open_folder_dialog.ShowModal() == wx.ID_OK:
             self.panel.update_url_listing(open_folder_dialog.GetPath())
@@ -210,7 +202,7 @@ class MainFrame(wx.Frame):
             #######################################################################################
             # TODO: Load bookmars from Chrome profile
             #######################################################################################
-            tools.display("Loading Bookmarks...")
+            tools.display(preset.message["loading_bookmarks"])
             data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
             self.panel.update_list(data_table)
             self.panel.Update()
@@ -219,6 +211,9 @@ class MainFrame(wx.Frame):
         profile_chooser_dialog.Destroy()
 
     def on_open_settings(self, event):
+        #######################################################################################
+        # TODO: LOAD LANGUAGE FROM SETTINGS (COMBOBOX)
+        #######################################################################################
         settings_dialog = SettingsDialog(self, 0)
         settings_dialog.ShowModal()
         settings_dialog.Destroy()
@@ -231,8 +226,8 @@ class MainFrame(wx.Frame):
         # TODO: EXIT CONFIRMATION SHOW NEXT TICKER
         #######################################################################################
         exit_dialog = wx.MessageDialog(self,
-                                       "Want to exit?",
-                                       "Exit",
+                                       preset.message["exit_question"],
+                                       preset.message["exit_title"],
                                        wx.YES_NO | wx.ICON_QUESTION)
         if exit_dialog.ShowModal() == wx.ID_YES:
             self.Destroy()
@@ -247,16 +242,16 @@ class AboutDialog(wx.Dialog):
         about_application.Name = "Chrome Exporter"
         about_application.Version = "1.0"
         about_application.Copyright = "OTDS H Co."
-        about_application.Description = "This Python Application helps you to convert your Google Bookmarks to" \
-                                        " a Microsoft Excel Spreadsheet." \
-                                        "\n\nHow it works:\n\nThis software access your Google Chrome Bookmarks " \
-                                        "and dump database to Excel Spreadsheet format." \
+        #######################################################################################
+        # TODO: TRANSLATE
+        #######################################################################################
+        about_application.Description = "This Python Application helps you to convert your Google Bookmarks to a Microsoft Excel Spreadsheet." \
+                                        "\n\nHow it works:\n\nThis software access your Google Chrome Bookmarks and dump database to Excel Spreadsheet format." \
                                         "\nIt also has features regarding to clean URLs, stripping tracking tokens."
         about_application.WebSite = ("https://github.com/vliopard/chrome2excel",
                                      "Chrome Bookmarks to Microsoft Excel")
         about_application.Developers = ["Vincent Liopard."]
-        about_application.License = "This is an Open Source Project that uses other General Public License (GPL) " \
-                                    "sources from the web."
+        about_application.License = "This is an Open Source Project that uses other General Public License (GPL) sources from the web."
         about_application.SetTranslators = ["Vincent Liopard."]
 
         wx.adv.AboutBox(about_application)
@@ -264,18 +259,18 @@ class AboutDialog(wx.Dialog):
 
 class EditDialog(wx.Dialog):
     def __init__(self, edit_url):
-        date_visited_title = f'Editing "{edit_url.date_visited}"'
+        date_visited_title = preset.message["edit_title"] + edit_url.object_date_visited
         super().__init__(parent=None, title=date_visited_title)
         self.url = edit_url
         self.main_box_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.date_added = wx.TextCtrl(self, value=self.url.date_added)
-        self.add_widgets(date_added, self.date_added)
-        self.date_modified = wx.TextCtrl(self, value=self.url.date_modified)
-        self.add_widgets(date_modified, self.date_modified)
-        self.date_visited = wx.TextCtrl(self, value=self.url.date_visited)
+        self.date_added = wx.TextCtrl(self, value=self.url.object_date_added)
+        self.add_widgets(preset.label_date_added, self.date_added)
+        self.date_modified = wx.TextCtrl(self, value=self.url.object_date_modified)
+        self.add_widgets(preset.label_date_modified, self.date_modified)
+        self.date_visited = wx.TextCtrl(self, value=self.url.object_date_visited)
         self.add_widgets(date_visited_title, self.date_visited)
         button_box_sizer = wx.BoxSizer()
-        save_button = wx.Button(self, label='Save')
+        save_button = wx.Button(self, label=preset.message["edit_save"])
         save_button.Bind(wx.EVT_BUTTON, self.on_save)
         button_box_sizer.Add(save_button, 0, wx.ALL, 5)
         button_box_sizer.Add(wx.Button(self, id=wx.ID_CANCEL), 0, wx.ALL, 5)
@@ -290,15 +285,18 @@ class EditDialog(wx.Dialog):
         self.main_box_sizer.Add(box_sizer_horizontal, 0, wx.EXPAND)
 
     def on_save(self, event):
-        self.url.date_added = self.date_added.GetValue()
-        self.url.date_modified = self.date_modified.GetValue()
-        self.url.date_visited = self.date_visited.GetValue()
+        #######################################################################################
+        # TODO: MUST INCLUDE OTHER ELEMENTS IN THE TEMPORARY OBJECT
+        #######################################################################################
+        self.url.object_date_added = self.date_added.GetValue()
+        self.url.object_date_modified = self.date_modified.GetValue()
+        self.url.object_date_visited = self.date_visited.GetValue()
         self.url.save()
         self.Close()
 
 
 class ProfileChooser(wx.Dialog):
-    def __init__(self, parent, id_, title="Profile Chooser", size=(600, 600)):
+    def __init__(self, parent, id_, title=preset.message["profile_chooser"], size=(600, 600)):
         wx.Dialog.__init__(self, parent, id_, title)
 
         profile_chooser_panel = wx.Panel(self)
@@ -318,12 +316,12 @@ class ProfileChooser(wx.Dialog):
             self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_group)
 
             position = position + 30
-            vertical_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_OK, " OK ", pos=(10, position)))
+            vertical_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_OK, preset.message["ok_button"], pos=(10, position)))
         else:
-            vertical_box_sizer.Add(wx.StaticText(profile_chooser_panel, wx.ID_ANY, label="No account installed on Chrome", pos=(10, position)))
+            vertical_box_sizer.Add(wx.StaticText(profile_chooser_panel, wx.ID_ANY, label=preset.message["no_account"], pos=(10, position)))
             position = position + 30
 
-        vertical_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_CANCEL, " Cancel ", pos=(130, position)))
+        vertical_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_CANCEL, preset.message["cancel_button"], pos=(130, position)))
 
         self.Centre()
         self.Show(True)
@@ -334,7 +332,7 @@ class ProfileChooser(wx.Dialog):
 
 
 class SettingsDialog(wx.Dialog):
-    def __init__(self, parent, id_, title="Settings"):
+    def __init__(self, parent, id_, title=preset.message["settings_title"]):
         wx.Dialog.__init__(self, parent, id_, title)
 
         self.parent = parent
@@ -368,7 +366,7 @@ class SettingsDialog(wx.Dialog):
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.on_radio_group)
 
-        self.ok_button = wx.Button(self, wx.ID_OK, " OK ", size=button_size, pos=(70, 120))
+        self.ok_button = wx.Button(self, wx.ID_OK, preset.message["ok_button"], size=button_size, pos=(70, 120))
         self.Centre()
         self.Show(True)
 
@@ -387,55 +385,55 @@ def set_button_toggle(self, button_id, toggle_button):
         if toggle_button:
             self.parent.settings.export_file_type = not self.parent.settings.export_file_type
         if self.parent.settings.export_file_type:
-            settings_button_label = " [html]  Output type"
+            settings_button_label = preset.message["output_off"] + preset.message["output_type"]
             settings_button_value = True
         else:
-            settings_button_label = " [xlsx] Output type"
+            settings_button_label = preset.message["output_on"] + preset.message["output_type"]
             settings_button_value = False
     if button_id == 1:
         if toggle_button:
             self.parent.settings.refresh_url_title = not self.parent.settings.refresh_url_title
         if self.parent.settings.refresh_url_title:
-            settings_button_label = " [ON]  Refresh URL"
+            settings_button_label = preset.message["on_label"] + preset.message["refresh_url_title"]
             settings_button_value = True
         else:
-            settings_button_label = " [off] Refresh URL"
+            settings_button_label = preset.message["off_label"] + preset.message["refresh_url_title"]
             settings_button_value = False
     if button_id == 2:
         if toggle_button:
             self.parent.settings.remove_duplicated_urls = not self.parent.settings.remove_duplicated_urls
         if self.parent.settings.remove_duplicated_urls:
-            settings_button_label = " [ON]  Undupe URLs"
+            settings_button_label = preset.message["on_label"] + preset.message["undupe_urls"]
             settings_button_value = True
         else:
-            settings_button_label = " [off] Undupe URLs"
+            settings_button_label = preset.message["off_label"] + preset.message["undupe_urls"]
             settings_button_value = False
     if button_id == 3:
         if toggle_button:
             self.parent.settings.remove_tracking_tokens_from_url = not self.parent.settings.remove_tracking_tokens_from_url
         if self.parent.settings.remove_tracking_tokens_from_url:
-            settings_button_label = " [ON]  Clean URL"
+            settings_button_label = preset.message["on_label"] + preset.message["clean_url"]
             settings_button_value = True
         else:
-            settings_button_label = " [off] Clean URL"
+            settings_button_label = preset.message["off_label"] + preset.message["clean_url"]
             settings_button_value = False
     if button_id == 4:
         if toggle_button:
             self.parent.settings.import_urls_from_text_file = not self.parent.settings.import_urls_from_text_file
         if self.parent.settings.import_urls_from_text_file:
-            settings_button_label = " [ON]  Import TXT"
+            settings_button_label = preset.message["on_label"] + preset.message["import_txt"]
             settings_button_value = True
         else:
-            settings_button_label = " [off] Import TXT"
+            settings_button_label = preset.message["off_label"] + preset.message["import_txt"]
             settings_button_value = False
     if button_id == 5:
         if toggle_button:
             self.parent.settings.refresh_folder_name_with_hostname_title = not self.parent.settings.refresh_folder_name_with_hostname_title
         if self.parent.settings.refresh_folder_name_with_hostname_title:
-            settings_button_label = " [ON]  Check hostname"
+            settings_button_label = preset.message["on_label"] + preset.message["check_hostname"]
             settings_button_value = True
         else:
-            settings_button_label = " [off] Check hostname"
+            settings_button_label = preset.message["off_label"] + preset.message["check_hostname"]
             settings_button_value = False
     return settings_button_label, settings_button_value
 

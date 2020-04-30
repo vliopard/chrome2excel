@@ -1,10 +1,11 @@
 import json
+import tools
+import utils
 import public
 import preset
 import htmlSupport
 
-import tools
-from tools import add
+from utils import add
 
 from configparser import ConfigParser, DuplicateSectionError
 
@@ -18,83 +19,10 @@ class Options:
         self.remove_tracking_tokens_from_url = False
         self.import_urls_from_text_file = False
         self.refresh_folder_name_with_hostname_title = False
+
         self.configuration_category = preset.main_section
         self.configuration_parser = ConfigParser()
         self.configuration_parser.read(preset.configuration_filename)
-
-    '''
-    @property
-    def export_file_type(self):
-        return self._export_file_type
-
-    @export_file_type.setter
-    def export_file_type(self, export_file_type):
-        self._export_file_type = export_file_type
-
-    @export_file_type.getter
-    def export_file_type(self):
-        return self._export_file_type
-
-    @property
-    def refresh_url_title(self):
-        return self._refresh_url_title
-
-    @refresh_url_title.setter
-    def refresh_url_title(self, refresh_url_title):
-        self._refresh_url_title = refresh_url_title
-
-    @refresh_url_title.getter
-    def refresh_url_title(self):
-        return self._refresh_url_title
-
-    @property
-    def remove_duplicated_urls(self):
-        return self._remove_duplicated_urls
-
-    @remove_duplicated_urls.setter
-    def remove_duplicated_urls(self, remove_duplicated_urls):
-        self._remove_duplicated_urls = remove_duplicated_urls
-
-    @remove_duplicated_urls.getter
-    def remove_duplicated_urls(self):
-        return self._remove_duplicated_urls
-
-    @property
-    def remove_tracking_tokens_from_url(self):
-        return self._remove_tracking_tokens_from_url
-
-    @remove_tracking_tokens_from_url.setter
-    def remove_tracking_tokens_from_url(self, remove_tracking_tokens_from_url):
-        self._remove_tracking_tokens_from_url = remove_tracking_tokens_from_url
-
-    @remove_tracking_tokens_from_url.getter
-    def remove_tracking_tokens_from_url(self):
-        return self._remove_tracking_tokens_from_url
-
-    @property
-    def import_urls_from_text_file(self):
-        return self._import_urls_from_text_file
-
-    @import_urls_from_text_file.setter
-    def import_urls_from_text_file(self, import_urls_from_text_file):
-        self._import_urls_from_text_file = import_urls_from_text_file
-
-    @import_urls_from_text_file.getter
-    def import_urls_from_text_file(self):
-        return self._import_urls_from_text_file
-
-    @property
-    def refresh_folder_name_with_hostname_title(self):
-        return self._refresh_folder_name_with_hostname_title
-
-    @refresh_folder_name_with_hostname_title.setter
-    def refresh_folder_name_with_hostname_title(self, refresh_folder_name_with_hostname_title):
-        self._refresh_folder_name_with_hostname_title = refresh_folder_name_with_hostname_title
-
-    @refresh_folder_name_with_hostname_title.getter
-    def refresh_folder_name_with_hostname_title(self):
-        return self._refresh_folder_name_with_hostname_title
-    '''
 
     def save_settings(self):
         try:
@@ -174,12 +102,12 @@ class Item(dict):
 
     @property
     def added(self):
-        return tools.epoch_to_date(self["date_added"])
+        return utils.epoch_to_date(self["date_added"])
 
     @property
     def modified(self):
         if "date_modified" in self:
-            return tools.epoch_to_date(self["date_modified"])
+            return utils.epoch_to_date(self["date_modified"])
 
     @property
     def folders(self):
@@ -235,16 +163,16 @@ class Bookmarks:
 def read_content(folder_items):
     url_list = []
     for folder_item in folder_items:
-        url_date_added = preset.empty
-        url_date_modified = preset.empty
-        url_guid = preset.empty
-        url_item_id = preset.empty
-        url_last_visited = preset.empty
-        url_name = preset.empty
-        url_sync_transaction_version = preset.empty
-        url_item_type = preset.empty
-        url_address = preset.empty
-        url_icon = preset.empty
+        url_date_added = preset.empty_string
+        url_date_modified = preset.empty_string
+        url_guid = preset.empty_string
+        url_item_id = preset.empty_string
+        url_last_visited = preset.empty_string
+        url_name = preset.empty_string
+        url_sync_transaction_version = preset.empty_string
+        url_item_type = preset.empty_string
+        url_address = preset.empty_string
+        url_icon = preset.empty_string
         for item in folder_item:
             if item == preset.children:
                 read_content(folder_item[item])
@@ -274,16 +202,16 @@ def read_content(folder_items):
             elif item == preset.url:
                 url_address = folder_item[item]
             else:
-                tools.debug('WARNING: ' + str(item))
+                tools.debug(preset.message["warning"] + str(item))
         url_data = (
                 url_guid,
-                tools.to_number(url_item_id),
-                tools.to_number(url_sync_transaction_version),
+                utils.to_number(url_item_id),
+                utils.to_number(url_sync_transaction_version),
                 url_item_type,
 
-                tools.to_date(url_date_added),
-                tools.to_date(url_date_modified),
-                tools.to_date(url_last_visited),
+                utils.to_date(url_date_added),
+                utils.to_date(url_date_modified),
+                utils.to_date(url_last_visited),
 
                 url_name,
                 htmlSupport.clean_url(url_address),
@@ -295,8 +223,8 @@ def read_content(folder_items):
 
 
 def generate_bookmarks(profile):
-    tools.display("Generating bookmarks...")
-    bookmarks_file = preset.get_chrome_element(profile, "Bookmarks")
+    tools.display(preset.message["generating_bookmarks"])
+    bookmarks_file = tools.get_chrome_element(profile, preset.bookmarks)
     if bookmarks_file:
         return Bookmarks(bookmarks_file)
     return None
@@ -305,15 +233,15 @@ def generate_bookmarks(profile):
 def generate_data(instance):
     for folder in instance.folders:
         folder_item = None
-        folder_date_added = preset.empty
-        folder_date_modified = preset.empty
-        folder_guid = preset.empty
-        folder_id = preset.empty
-        folder_last_visited = preset.empty
-        folder_name = preset.empty
-        folder_sync_transaction_version = preset.empty
-        folder_type = preset.empty
-        folder_url = preset.empty
+        folder_date_added = preset.empty_string
+        folder_date_modified = preset.empty_string
+        folder_guid = preset.empty_string
+        folder_id = preset.empty_string
+        folder_last_visited = preset.empty_string
+        folder_name = preset.empty_string
+        folder_sync_transaction_version = preset.empty_string
+        folder_type = preset.empty_string
+        folder_url = preset.empty_string
         for item in folder:
             if item == preset.children:
                 folder_item = read_content(folder[item])
@@ -338,16 +266,16 @@ def generate_data(instance):
             elif item == preset.url:
                 folder_url = folder[item]
             else:
-                tools.debug('WARNING: ' + str(item))
+                tools.debug(preset.message["warning"] + str(item))
         folder_data = (
                 folder_guid,
-                tools.to_number(folder_id),
-                tools.to_number(folder_sync_transaction_version),
+                utils.to_number(folder_id),
+                utils.to_number(folder_sync_transaction_version),
                 folder_type,
 
-                tools.to_date(folder_date_added),
-                tools.to_date(folder_date_modified),
-                tools.to_date(folder_last_visited),
+                utils.to_date(folder_date_added),
+                utils.to_date(folder_date_modified),
+                utils.to_date(folder_last_visited),
 
                 folder_name,
                 folder_url

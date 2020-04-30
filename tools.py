@@ -1,10 +1,11 @@
-from datetime import datetime, timezone, timedelta
+import os
+import preset
+
+from platform import system
 
 #######################################################################################
 # TODO: LOAD DEBUG SETTINGS FROM DEBUG FILE
 #######################################################################################
-
-debug_mode = False
 
 
 class Folder:
@@ -42,72 +43,55 @@ class Urls:
         return str(self.__dict__)
 
 
-def display(*arguments):
-    argument_count = len(arguments)
-    if argument_count > 0:
-        text = ""
-        for element in arguments:
-            text = text + element + " "
-        text = text.rstrip()
-        print(text)
-    else:
-        return 0
-
-
 def debug(*arguments):
-    if debug_mode:
+    if preset.debug_mode:
         argument_count = len(arguments)
         if argument_count > 0:
-            text = ""
+            text = preset.empty
             for element in arguments:
-                text = text + element + " "
+                text = text + element + preset.blank
             text = text.rstrip()
             print(text)
         else:
             return 0
 
 
-def add(value):
-    value[0] = value[0] + 1
-    return value[0]
+def display(*arguments):
+    argument_count = len(arguments)
+    if argument_count > 0:
+        text = preset.empty
+        for element in arguments:
+            text = text + element + preset.blank
+        text = text.rstrip()
+        print(text)
+    else:
+        return 0
 
 
-def check_is_none(value):
-    if value is None:
-        return '[Empty]'
-    return str(value)
+def select_profile(profile):
+    profile = str(profile)
+    if profile == "0":
+        profile = "Default"
+    else:
+        profile = "Profile " + profile
+    return profile
 
 
-def to_number(value):
-    if value != '[Empty]':
-        return int(value)
+def get_chrome_element(profile_number, item):
+    computer = system()
+    profile_name = select_profile(profile_number)
+    debug("GET_CHROME_ELEMENT profile_number[", profile_number,
+          "profile_name[", profile_name,
+          "item[", item, "]")
+    chrome_file = preset.empty
+    if computer == "Windows":
+        chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile_name + "\\" + item)
+    if computer == "Linux":
+        chrome_file = os.path.expanduser("~/.config/google-chrome/" + profile_name + "/" + item)
+    if computer == "Darwin":
+        chrome_file = os.path.expanduser("~/Library/Application Support/Google/Chrome/" + profile_name + "/" + item)
+    if os.path.exists(chrome_file):
+        debug("GET_CHROME_ELEMENT chrome_file[", chrome_file, "]")
+        return chrome_file
+    debug("GET_CHROME_ELEMENT chrome_file[None]")
     return None
-
-
-def to_date(value):
-    date_value = to_number(value)
-    if date_value:
-        microseconds = int(hex(int(date_value)*10)[2:17], 16) / 10
-        seconds, microseconds = divmod(microseconds, 1000000)
-        days, seconds = divmod(seconds, 86400)
-        return datetime(1601, 1, 1) + timedelta(days, seconds, microseconds)
-    return None
-
-
-def date_to_string(date_value):
-    if not date_value:
-        return "None"
-    return date_value.strftime("%Y/%m/%d, %H:%M:%S")
-
-
-def epoch_to_date(epoch_value):
-    return (datetime(1601, 1, 1) + timedelta(microseconds=int(epoch_value))).replace(tzinfo=timezone.utc).astimezone()
-
-
-def date_to_epoch(date_value):
-    if date_value:
-        difference = date_value - datetime(1601, 1, 1)
-        seconds_in_day = 60 * 60 * 24
-        value = '{:<010d}'.format(difference.days * seconds_in_day + difference.seconds + difference.microseconds)
-        return str(value)
-    return ""

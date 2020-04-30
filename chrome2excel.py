@@ -1,5 +1,6 @@
 import tqdm
 import tools
+import utils
 import preset
 import bookMarks
 
@@ -24,8 +25,8 @@ def get_title_conditional(progress_bar, get_title_disabled, url_name, url_addres
     return url_name
 
 
-def import_text_file(text_file="chrome.txt"):
-    tools.display("Importing text file...")
+def import_text_file(text_file=preset.text_filename):
+    tools.display(preset.message["import_text_file"])
     url_list = []
     with open(text_file, encoding='utf-8') as text_file:
         for url_item in text_file:
@@ -34,7 +35,7 @@ def import_text_file(text_file="chrome.txt"):
 
 
 def append_data_table(data_table, url_list):
-    tools.display("Appending data table...")
+    tools.display(preset.message["appending_data_table"])
     for url_item in url_list:
         head = preset.Header()
         head.Hostname = htmlSupport.parse_url(url_item)[2]
@@ -48,7 +49,7 @@ def append_data_table(data_table, url_list):
 
 
 def generate_from_txt(url_list):
-    tools.display("Generating from TXT...")
+    tools.display(preset.message["generating_from_text"])
     txt_header = []
     return append_data_table(txt_header, url_list)
 
@@ -57,7 +58,7 @@ def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_t
     #######################################################################################
     # TODO: SETTINGS MUST BE AVAILABLE BY SETTINGS LOAD FUNCTION
     #######################################################################################
-    tools.display("Generating html...")
+    tools.display(preset.message["generating_html"])
 
     data_table = append_data_table(data_table, import_text_file())
     visited_hostname_title = set()
@@ -65,9 +66,9 @@ def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_t
     folder_list = []
     data_table_without_duplicates = []
     if remove_duplicated_urls == preset.on:
-        tools.display("_"*(screenSupport.get_terminal_width()))
-        tools.display("Removing duplicates...")
-        tools.display("\u203e"*(screenSupport.get_terminal_width()))
+        tools.display(preset.underline*(screenSupport.get_terminal_width()))
+        tools.display(preset.message["removing_duplicates"])
+        tools.display(preset.overline*(screenSupport.get_terminal_width()))
         with tqdm.tqdm(total=len(data_table)) as progress_bar:
             for data_row in data_table:
                 progress_bar.update(1)
@@ -81,9 +82,9 @@ def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_t
     else:
         data_table_without_duplicates = data_table
 
-    tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Writing html...")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["writing_html"])
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
     with tqdm.tqdm(total=len(data_table_without_duplicates[1:])) as progress_bar:
         for data_row in data_table_without_duplicates[1:]:
             progress_bar.update(1)
@@ -104,7 +105,7 @@ def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_t
                     url_title = "[ " + url_title + " " + str(status_number) + " - " + data_row[16] + " ]"
 
             if get_hostname_title == preset.on:
-                status_number, hostname_title = htmlSupport.get_title("http://" + original_hostname)
+                status_number, hostname_title = htmlSupport.get_title(preset.protocol + original_hostname)
                 if status_number != 0:
                     hostname_title = "[ " + hostname_title + " " + str(status_number) + " - " + original_hostname + " ]"
 
@@ -118,27 +119,27 @@ def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_t
                     if folder.folder_name == hostname_title:
                         folder.add_url(url_data)
 
-    tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Saving HTML file...")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["saving_html"])
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
     htmlExport.write_html(folder_list)
-    tools.display("Done.")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["done"])
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
 
 
 def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url):
-    tools.display("Generating workbook...")
+    tools.display(preset.message["generating_workbook"])
     excel_workbook = Workbook()
     excel_worksheet = excel_workbook.active
-    excel_worksheet.title = "Chrome URLs"
+    excel_worksheet.title = preset.message["chrome_urls"]
 
     visited_url_address = set()
     data_table_without_duplicates = []
-    tools.display("Find duplicate lines...")
+    tools.display(preset.message["find_duplicated_lines"])
     if reload_url_title != preset.off:
-        tools.display("_"*(screenSupport.get_terminal_width()))
-        tools.display("Getting URL Status...")
-        tools.display("\u203e"*(screenSupport.get_terminal_width()))
+        tools.display(preset.underline*(screenSupport.get_terminal_width()))
+        tools.display(preset.message["get_url_status"])
+        tools.display(preset.overline*(screenSupport.get_terminal_width()))
 
     reload_url_title_disabled = True
     if reload_url_title != preset.off:
@@ -156,8 +157,8 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
             elif remove_duplicated_urls == preset.off:
                 data_table_without_duplicates.append(("DUPE", get_title_conditional(progress_bar, reload_url_title_disabled, data_row[16], url_address)) + data_row)
 
-    tools.display("Writting spreadsheet...")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["writing_spreadsheet"])
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
     with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
         for data_row in data_table_without_duplicates:
             progress_bar.update(1)
@@ -166,9 +167,9 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
     excel_worksheet.freeze_panes = "A2"
     excel_worksheet.auto_filter.ref = "A1:AT30000"
 
-    tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Formating columns...")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["format_columns"])
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
     font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
                'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
@@ -179,56 +180,67 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
                 progress_bar.update(1)
                 worksheet_column.font = Font(size=10, name='Courier New')
 
-    tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Formating dates...")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["format_dates"])
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
     date_columns = ['G', 'H', 'I', 'P', 'Q', 'R']
     with tqdm.tqdm(total=(len(date_columns)*len(excel_worksheet['G']))) as progress_bar:
         for date_column in date_columns:
             excel_worksheet.column_dimensions[date_column].width = 18
             for worksheet_column in excel_worksheet[date_column]:
                 progress_bar.update(1)
-                worksheet_column.number_format = "YYYY/MM/DD hh:mm:ss"
+                worksheet_column.number_format = preset.number_format
 
-    tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Hiding columns...")
+    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["hide_columns"])
     hidden_columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Z', 'AA', 'AB', 'AC']
     for h in hidden_columns:
         excel_worksheet.column_dimensions[h].width = 9
         excel_worksheet.column_dimensions[h].hidden = True
 
-    tools.display("Formating header...")
+    tools.display(preset.message["format_header"])
     for cell in excel_worksheet["1:1"]:
         cell.font = Font(bold=True)
 
-    tools.display("Sizing columns...")
+    tools.display(preset.message["sizing_columns"])
     excel_worksheet.column_dimensions['S'].width = 30
     excel_worksheet.column_dimensions['T'].width = 85
 
-    tools.display("Saving workbook...")
-    excel_workbook.save("chrome.xlsx")
-    tools.display("Done.")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["saving_bookmarks"])
+    excel_workbook.save(preset.xlsx_filename)
+    tools.display(preset.message["done"])
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
 
 
 def get_profile(profile):
-    tools.display("Retrieving user...")
-    user_data = preset.get_chrome_element(profile, "Preferences")
+    tools.display(preset.message["retrieve_user"])
+    user_data = tools.get_chrome_element(profile, preset.preferences)
+    tools.debug("GET_PROFILE: user_data[" + user_data + "]")
     if not user_data:
-        tools.display("Invalid profile.")
+        tools.display(preset.message["invalid_profile"])
         exit(1)
     return chromeProfile.get_user(user_data)
 
 
 def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
-    tools.display("\n\n")
-    tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Starting Chrome Bookmarks export.")
+    tools.debug("RUN_CHROME: profile[", profile,
+                "] refresh[", refresh,
+                "] undupe[", undupe,
+                "] output[", output,
+                "] clean[", clean,
+                "] import[", import_txt,
+                "] hostname[", get_hostname)
+    tools.display(preset.new_line+preset.new_line)
+    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["starting_export"])
     email, full, name = get_profile(profile)
+    tools.debug("GET_PROFILE: email[", email,
+                "] full[", full,
+                "] name[", name)
     bookmarks = bookMarks.generate_bookmarks(profile)
-    tools.display("_"*(screenSupport.get_terminal_width()))
-    tools.display("Processing user: {", full, "} [" + email + "]")
-    tools.display("\u203e"*(screenSupport.get_terminal_width()))
+    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")
+    tools.display(preset.overline*(screenSupport.get_terminal_width()))
     bookmarks_data = bookMarks.generate_data(bookmarks)
     if output == "xlsx":
         generate_workbook(bookmarks_data, refresh, undupe, clean)
@@ -237,51 +249,51 @@ def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(
-        description="Script to extract bookmarks from Google Chrome to Microsoft Excel Spreadsheet."
+    argument_parser = ArgumentParser(
+        description=preset.message["main_description"]
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--profile",
         "-p",
-        help="Profile number to extract: 0 Default.",
+        help=preset.message["main_profile_help"],
         default="0"
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--output",
         "-o",
-        help="Output file type [html, xlsx]: xlsx Default.",
+        help=preset.message["main_output_help"],
         default="xlsx"
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--refresh",
         "-r",
-        help="Refresh URL Title [on, off]: off Default.",
+        help=preset.message["main_refresh_help"],
         default=preset.off
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--undupe",
         "-u",
-        help="Remove duplicated URL [on, off]: off Default.",
+        help=preset.message["main_undupe_help"],
         default=preset.off
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--clean",
         "-c",
-        help="Remove trackers from URL [on, off]: off Default.",
+        help=preset.message["main_clean_help"],
         default=preset.off
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--import_txt",
         "-i",
-        help="Import TXT file [on, off]: off Default.",
+        help=preset.message["main_import_help"],
         default=preset.off
     )
-    parser.add_argument(
+    argument_parser.add_argument(
         "--get_hostname",
         "-g",
-        help="Get hostname [on, off]: off Default.",
+        help=preset.message["main_hostname_help"],
         default=preset.off
     )
 
-    args = vars(parser.parse_args())
-    run_chrome(**args)
+    arguments = vars(argument_parser.parse_args())
+    run_chrome(**arguments)
