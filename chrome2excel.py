@@ -170,9 +170,9 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
     tools.display(preset.message["format_columns"])
     tools.display(preset.overline*(screenSupport.get_terminal_width()))
     font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-               'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
-               'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
-               'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS']
+                    'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
+                    'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
+                    'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS']
     with tqdm.tqdm(total=(len(font_columns)*len(excel_worksheet['T']))) as progress_bar:
         for font_column in font_columns:
             for worksheet_column in excel_worksheet[font_column]:
@@ -205,7 +205,7 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
     excel_worksheet.column_dimensions['S'].width = 30
     excel_worksheet.column_dimensions['T'].width = 85
 
-    tools.display(preset.message["saving_bookmarks"])
+    tools.display(preset.message["saving_workbook"])
     excel_workbook.save(preset.xlsx_filename)
     tools.display(preset.message["done"])
     tools.display(preset.overline*(screenSupport.get_terminal_width()))

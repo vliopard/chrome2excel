@@ -56,6 +56,7 @@ class Options:
             self.refresh_folder_name_with_hostname_title = False
 
 
+'''
 @public.add
 class TemporaryObject:
     def __init__(self, element):
@@ -71,6 +72,7 @@ class TemporaryObject:
 
     def save(self):
         pass
+'''
 
 
 @public.add

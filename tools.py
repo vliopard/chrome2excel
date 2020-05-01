@@ -45,15 +45,7 @@ class Urls:
 
 def debug(*arguments):
     if preset.debug_mode:
-        argument_count = len(arguments)
-        if argument_count > 0:
-            text = preset.empty
-            for element in arguments:
-                text = text + element + preset.blank
-            text = text.rstrip()
-            print(text)
-        else:
-            return 0
+        display(*arguments)
 
 
 def display(*arguments):
@@ -80,9 +72,6 @@ def select_profile(profile):
 def get_chrome_element(profile_number, item):
     computer = system()
     profile_name = select_profile(profile_number)
-    debug("GET_CHROME_ELEMENT profile_number[", profile_number,
-          "profile_name[", profile_name,
-          "item[", item, "]")
     chrome_file = preset.empty
     if computer == "Windows":
         chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile_name + "\\" + item)
@@ -91,7 +80,5 @@ def get_chrome_element(profile_number, item):
     if computer == "Darwin":
         chrome_file = os.path.expanduser("~/Library/Application Support/Google/Chrome/" + profile_name + "/" + item)
     if os.path.exists(chrome_file):
-        debug("GET_CHROME_ELEMENT chrome_file[", chrome_file, "]")
         return chrome_file
-    debug("GET_CHROME_ELEMENT chrome_file[None]")
     return None

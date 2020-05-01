@@ -214,56 +214,56 @@ class Header:
     def set_data(self, url_element):
         index = [-1]
 
-        self._Folder_GUID = (url_element[add(index)], index[0])  # 00
-        self._Folder_ID = (url_element[add(index)], index[0])    # 01
-        self._Folder_Sync = (url_element[add(index)], index[0])  # 02
-        self._Folder_Type = (url_element[add(index)], index[0])  # 03
+        self._Folder_GUID = (url_element[add(index)], index[0])
+        self._Folder_ID = (url_element[add(index)], index[0])
+        self._Folder_Sync = (url_element[add(index)], index[0])
+        self._Folder_Type = (url_element[add(index)], index[0])
 
-        self._Folder_Added = (url_element[add(index)], index[0])     # 04
-        self._Folder_Modified = (url_element[add(index)], index[0])  # 05
-        self._Folder_visited = (url_element[add(index)], index[0])   # 06
+        self._Folder_Added = (url_element[add(index)], index[0])
+        self._Folder_Modified = (url_element[add(index)], index[0])
+        self._Folder_visited = (url_element[add(index)], index[0])
 
-        self._Folder_Name = (url_element[add(index)], index[0])  # 07
-        self._Folder_URL = (url_element[add(index)], index[0])   # 08
+        self._Folder_Name = (url_element[add(index)], index[0])
+        self._Folder_URL = (url_element[add(index)], index[0])
 
-        self._URL_GUID = (url_element[add(index)], index[0])  # 09
-        self._URL_ID = (url_element[add(index)], index[0])    # 10
-        self._URL_Sync = (url_element[add(index)], index[0])  # 11
-        self._URL_Type = (url_element[add(index)], index[0])  # 12
+        self._URL_GUID = (url_element[add(index)], index[0])
+        self._URL_ID = (url_element[add(index)], index[0])
+        self._URL_Sync = (url_element[add(index)], index[0])
+        self._URL_Type = (url_element[add(index)], index[0])
 
-        self._URL_Added = (url_element[add(index)], index[0])     # 13
-        self._URL_Modified = (url_element[add(index)], index[0])  # 14
-        self._URL_Visited = (url_element[add(index)], index[0])   # 15
+        self._URL_Added = (url_element[add(index)], index[0])
+        self._URL_Modified = (url_element[add(index)], index[0])
+        self._URL_Visited = (url_element[add(index)], index[0])
 
-        self._URL_Name = (url_element[add(index)], index[0])   # 16
-        self._URL_Clean = (url_element[add(index)], index[0])  # 17
-        self._URL = (url_element[add(index)], index[0])        # 18
-        self._Scheme = (url_element[add(index)], index[0])     # 19
-        self._Netloc = (url_element[add(index)], index[0])     # 20
-        self._Hostname = (url_element[add(index)], index[0])   # 21
-        self._Path = (url_element[add(index)], index[0])       # 22
-        self._Port = (url_element[add(index)], index[0])       # 23
-        self._Param = (url_element[add(index)], index[0])      # 24
-        self._Fragment = (url_element[add(index)], index[0])   # 25
-        self._Username = (url_element[add(index)], index[0])   # 26
-        self._Password = (url_element[add(index)], index[0])   # 27
+        self._URL_Name = (url_element[add(index)], index[0])
+        self._URL_Clean = (url_element[add(index)], index[0])
+        self._URL = (url_element[add(index)], index[0])
+        self._Scheme = (url_element[add(index)], index[0])
+        self._Netloc = (url_element[add(index)], index[0])
+        self._Hostname = (url_element[add(index)], index[0])
+        self._Path = (url_element[add(index)], index[0])
+        self._Port = (url_element[add(index)], index[0])
+        self._Param = (url_element[add(index)], index[0])
+        self._Fragment = (url_element[add(index)], index[0])
+        self._Username = (url_element[add(index)], index[0])
+        self._Password = (url_element[add(index)], index[0])
 
-        self._ParamA = (url_element[add(index)], index[0])  # 28
-        self._ParamB = (url_element[add(index)], index[0])  # 29
-        self._ParamC = (url_element[add(index)], index[0])  # 30
-        self._ParamD = (url_element[add(index)], index[0])  # 31
-        self._ParamE = (url_element[add(index)], index[0])  # 32
-        self._ParamF = (url_element[add(index)], index[0])  # 33
-        self._ParamG = (url_element[add(index)], index[0])  # 34
-        self._ParamH = (url_element[add(index)], index[0])  # 35
-        self._ParamI = (url_element[add(index)], index[0])  # 36
-        self._ParamJ = (url_element[add(index)], index[0])  # 37
-        self._ParamK = (url_element[add(index)], index[0])  # 38
-        self._ParamL = (url_element[add(index)], index[0])  # 39
-        self._ParamM = (url_element[add(index)], index[0])  # 40
-        self._ParamN = (url_element[add(index)], index[0])  # 41
-        self._ParamO = (url_element[add(index)], index[0])  # 42
-        self._ParamP = (url_element[add(index)], index[0])  # 43
+        self._ParamA = (url_element[add(index)], index[0])
+        self._ParamB = (url_element[add(index)], index[0])
+        self._ParamC = (url_element[add(index)], index[0])
+        self._ParamD = (url_element[add(index)], index[0])
+        self._ParamE = (url_element[add(index)], index[0])
+        self._ParamF = (url_element[add(index)], index[0])
+        self._ParamG = (url_element[add(index)], index[0])
+        self._ParamH = (url_element[add(index)], index[0])
+        self._ParamI = (url_element[add(index)], index[0])
+        self._ParamJ = (url_element[add(index)], index[0])
+        self._ParamK = (url_element[add(index)], index[0])
+        self._ParamL = (url_element[add(index)], index[0])
+        self._ParamM = (url_element[add(index)], index[0])
+        self._ParamN = (url_element[add(index)], index[0])
+        self._ParamO = (url_element[add(index)], index[0])
+        self._ParamP = (url_element[add(index)], index[0])
 
     def get_position(self, position):
         item = self.to_tuple()
@@ -272,6 +272,17 @@ class Header:
     def get_name(self, name):
         item = self.to_dict()
         return item[underline + name][0]
+
+    def to_list(self):
+        dictionary = self.__dict__
+        item_list = []
+        for item in dictionary:
+            item_list.append(dictionary[item])
+        item_list.sort(key=lambda element: element[1])
+        element_list = []
+        for item in item_list:
+            element_list.append(item[0])
+        return element_list
 
     def to_dict(self):
         indexed_dictionary = self.__dict__
@@ -290,6 +301,9 @@ class Header:
         for item in item_list:
             tuple_list.append(item[0])
         return tuple(tuple_list)
+
+    def get_label(index):
+        return label_dictionary[index]
 
     def to_dict_index(self):
         return self.__dict__
@@ -826,57 +840,111 @@ class Header:
         return self._ParamP[0]
 
 
+label_dictionary = {
+                    "0": "Folder GUID",
+                    "1": "Folder ID",
+                    "2": "Folder Sync",
+                    "3": "Type",
+
+                    "4": "Folder Added",
+                    "5": "Folder Modified",
+                    "6": "Folder visited",
+
+                    "7": "Folder Name",
+                    "8": "Folder URL",
+
+                    "9": "URL GUID",
+                    "10": "URL ID",
+                    "11": "URL Sync",
+                    "12": "Type",
+
+                    "13": "URL Added",
+                    "14": "URL Modified",
+                    "15": "URL Visited",
+
+                    "16": "URL Name",
+                    "17": "URL Clean",
+                    "18": "URL",
+                    "19": "Scheme",
+                    "20": "Netloc",
+                    "21": "Hostname",
+                    "22": "Path",
+                    "23": "Port",
+                    "24": "Param",
+                    "25": "Fragment",
+                    "26": "Username",
+                    "27": "Password",
+
+                    "28": "ParamA",
+                    "29": "ParamB",
+                    "30": "ParamC",
+                    "31": "ParamD",
+                    "32": "ParamE",
+                    "33": "ParamF",
+                    "34": "ParamG",
+                    "35": "ParamH",
+                    "36": "ParamI",
+                    "37": "ParamJ",
+                    "38": "ParamK",
+                    "39": "ParamL",
+                    "40": "ParamM",
+                    "41": "ParamN",
+                    "42": "ParamO",
+                    "43": "ParamP"
+
+    }
+
 data_header = [
         (
-                'Folder GUID',  # 00
-                'Folder ID',    # 01
-                'Folder Sync',  # 02
-                'Type',         # 03
+                'Folder GUID',
+                'Folder ID',
+                'Folder Sync',
+                'Type',
 
-                'Folder Added',     # 04
-                'Folder Modified',  # 05
-                'Folder visited',   # 06
+                'Folder Added',
+                'Folder Modified',
+                'Folder visited',
 
-                'Folder Name',  # 07
-                'Folder URL',   # 08
+                'Folder Name',
+                'Folder URL',
 
-                'URL GUID',  # 09
-                'URL ID',    # 10
-                'URL Sync',  # 11
-                'Type',      # 12
+                'URL GUID',
+                'URL ID',
+                'URL Sync',
+                'Type',
 
-                'URL Added',     # 13
-                'URL Modified',  # 14
-                'URL Visited',   # 15
+                'URL Added',
+                'URL Modified',
+                'URL Visited',
 
-                'URL Name',  # 16
-                'URL Clean',  # 17
-                'URL',       # 18
-                'Scheme',    # 19
-                'Netloc',    # 20
-                'Hostname',  # 21
-                'Path',      # 22
-                'Port',      # 23
-                'Param',     # 24
-                'Fragment',  # 25
-                'Username',  # 26
-                'Password',  # 27
+                'URL Name',
+                'URL Clean',
+                'URL',
+                'Scheme',
+                'Netloc',
+                'Hostname',
+                'Path',
+                'Port',
+                'Param',
+                'Fragment',
+                'Username',
+                'Password',
 
-                'ParamA',  # 28
-                'ParamB',  # 29
-                'ParamC',  # 30
-                'ParamD',  # 31
-                'ParamE',  # 32
-                'ParamF',  # 33
-                'ParamG',  # 34
-                'ParamH',  # 35
-                'ParamI',  # 36
-                'ParamJ',  # 37
-                'ParamK',  # 38
-                'ParamL',  # 39
-                'ParamM',  # 40
-                'ParamN',  # 41
-                'ParamO',  # 42
-                'ParamP'   # 43
+                'ParamA',
+                'ParamB',
+                'ParamC',
+                'ParamD',
+                'ParamE',
+                'ParamF',
+                'ParamG',
+                'ParamH',
+                'ParamI',
+                'ParamJ',
+                'ParamK',
+                'ParamL',
+                'ParamM',
+                'ParamN',
+                'ParamO',
+                'ParamP'
         )
 ]

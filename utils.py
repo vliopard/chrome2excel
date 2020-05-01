@@ -46,5 +46,3 @@ def date_to_epoch(date_value):
         value = '{:<010d}'.format(difference.days * seconds_in_day + difference.seconds + difference.microseconds)
         return str(value)
     return preset.empty
-
-
