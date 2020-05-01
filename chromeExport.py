@@ -10,6 +10,10 @@ import chromeProfile
 
 from utils import add
 
+#######################################################################################
+# TODO: LOAD IS REMOVING FIRST LINE - THERE IS NO MORE HEADER
+#######################################################################################
+
 
 class MainUrlPanel(wx.Panel):
     def __init__(self, parent):

@@ -60,9 +60,9 @@ class Options:
 class TemporaryObject:
     def __init__(self, element):
         index = [-1]
-        self.date_added = element[add(index)]
-        self.date_modified = element[add(index)]
-        self.date_visited = element[add(index)]
+        self.object_date_added = element[add(index)]
+        self.object_date_modified = element[add(index)]
+        self.object_date_visited = element[add(index)]
         self.folder_name = element[add(index)]
         self.url_name = element[add(index)]
         self.url_clean = element[add(index)]
