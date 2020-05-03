@@ -3,10 +3,6 @@ import preset
 
 from platform import system
 
-#######################################################################################
-# TODO: LOAD DEBUG SETTINGS FROM DEBUG FILE
-#######################################################################################
-
 
 class Folder:
     def __init__(

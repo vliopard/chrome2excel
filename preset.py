@@ -3,13 +3,21 @@ from pathlib import Path
 
 from utils import add, to_date
 
-#######################################################################################
-# TODO: DEBUG FUNCTION NOT WORKING
-#######################################################################################
-debug_mode = False
 
-language = 'en-us'
-message = load(Path("translation.json").open())[language]
+def load_translation_file():
+    return load(Path("translation.json").open(encoding="utf-8"))
+
+
+configuration_filename = "config.ini"
+main_section = 'main'
+
+debug_mode = False
+text_filename = "chrome.txt"
+html_filename = "chrome.html"
+xlsx_filename = "chrome.xlsx"
+
+english = 'en-us'
+message = load_translation_file()[english]
 
 on = 'on'
 off = 'off'
@@ -28,17 +36,10 @@ new_line = "\n"
 underline = "_"
 overline = "\u203e"
 
-main_section = 'main'
-configuration_filename = "config.ini"
-
-nohostname = "[no hostname]"
-nositename = "[no site name]"
-nocleanurl = "[no clean URL]"
-nourladdress = "[no URL address]"
-
-text_filename = "chrome.txt"
-html_filename = "chrome.html"
-xlsx_filename = "chrome.xlsx"
+no_host_name = "[no hostname]"
+no_site_name = "[no site name]"
+no_clean_url = "[no clean URL]"
+no_url_address = "[no URL address]"
 
 label_date_added = "Date Added"
 label_date_modified = "Date Modified"
@@ -64,18 +65,10 @@ url = 'url'
 
 no_date = "No Date"
 empty_string = '[Empty]'
-date_format = "%Y/%m/%d, %H:%M:%S"
+date_format = "%Y/%m/%d %H:%M:%S"
 number_format = "YYYY/MM/DD hh:mm:ss"
 
-'''
-setattr(options, preset.export_file_type, False)
-setattr(options, preset.refresh_url_title, False)
-setattr(options, preset.remove_duplicated_urls, False)
-setattr(options, preset.remove_tracking_tokens_from_url, False)
-setattr(options, preset.import_urls_from_text_file, False)
-setattr(options, preset.refresh_folder_name_with_hostname_title, False)
-'''
-
+system_language = "system_language"
 export_file_type = "export_file_type"
 refresh_url_title = "refresh_url_title"
 remove_duplicated_urls = "remove_duplicated_urls"
@@ -156,6 +149,20 @@ facebook_tracking_tokens = (
 )
 
 
+
+
+def set_language(selected_language):
+    global message
+    message = load_translation_file()[selected_language]
+
+
+def get_languages():
+    language_list = []
+    for language_item in load_translation_file():
+        language_list.append(language_item)
+    return language_list
+
+
 class Header:
     def __init__(self):
         index = [-1]
@@ -181,12 +188,12 @@ class Header:
         self._URL_Modified = (stub_date, add(index))
         self._URL_Visited = (stub_date, add(index))
 
-        self._URL_Name = (nositename, add(index))
-        self._URL_Clean = (nocleanurl, add(index))
-        self._URL = (nourladdress, add(index))
+        self._URL_Name = (no_site_name, add(index))
+        self._URL_Clean = (no_clean_url, add(index))
+        self._URL = (no_url_address, add(index))
         self._Scheme = (empty, add(index))
         self._Netloc = (empty, add(index))
-        self._Hostname = (nohostname, add(index))
+        self._Hostname = (no_host_name, add(index))
         self._Path = (empty, add(index))
         self._Port = (empty, add(index))
         self._Param = (empty, add(index))

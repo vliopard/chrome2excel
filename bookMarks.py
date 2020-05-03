@@ -11,6 +11,7 @@ from configparser import ConfigParser, DuplicateSectionError
 @public.add
 class Options:
     def __init__(self):
+        self.system_language = preset.english
         self.export_file_type = False
         self.refresh_url_title = False
         self.remove_duplicated_urls = False
@@ -28,6 +29,7 @@ class Options:
         except DuplicateSectionError:
             pass
 
+        self.configuration_parser.set(self.configuration_category, preset.system_language, str(self.system_language))
         self.configuration_parser.set(self.configuration_category, preset.export_file_type, str(self.export_file_type))
         self.configuration_parser.set(self.configuration_category, preset.refresh_url_title, str(self.refresh_url_title))
         self.configuration_parser.set(self.configuration_category, preset.remove_duplicated_urls, str(self.remove_duplicated_urls))
@@ -39,19 +41,22 @@ class Options:
 
     def load_settings(self):
         try:
+            self.system_language = self.configuration_parser.get(self.configuration_category, preset.system_language)
             self.export_file_type = self.configuration_parser.getboolean(self.configuration_category, preset.export_file_type)
             self.refresh_url_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_url_title)
             self.remove_duplicated_urls = self.configuration_parser.getboolean(self.configuration_category, preset.remove_duplicated_urls)
             self.remove_tracking_tokens_from_url = self.configuration_parser.getboolean(self.configuration_category, preset.remove_tracking_tokens_from_url)
             self.import_urls_from_text_file = self.configuration_parser.getboolean(self.configuration_category, preset.import_urls_from_text_file)
             self.refresh_folder_name_with_hostname_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_folder_name_with_hostname_title)
-        except Exception:
+        except Exception as error:
+            self.system_language = preset.english
             self.export_file_type = False
             self.refresh_url_title = False
             self.remove_duplicated_urls = False
             self.remove_tracking_tokens_from_url = False
             self.import_urls_from_text_file = False
             self.refresh_folder_name_with_hostname_title = False
+        preset.set_language(self.system_language)
 
 
 @public.add

@@ -214,7 +214,6 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
 def get_profile(profile):
     tools.display(preset.message["retrieve_user"])
     user_data = tools.get_chrome_element(profile, preset.preferences)
-    tools.debug("GET_PROFILE: user_data[" + user_data + "]")
     if not user_data:
         tools.display(preset.message["invalid_profile"])
         exit(1)
@@ -222,20 +221,13 @@ def get_profile(profile):
 
 
 def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
-    tools.debug("RUN_CHROME: profile[", profile,
-                "] refresh[", refresh,
-                "] undupe[", undupe,
-                "] output[", output,
-                "] clean[", clean,
-                "] import[", import_txt,
-                "] hostname[", get_hostname)
+    settings = bookMarks.Options()
+    settings.load_settings()
+
     tools.display(preset.new_line+preset.new_line)
     tools.display(preset.underline*(screenSupport.get_terminal_width()))
     tools.display(preset.message["starting_export"])
     email, full, name = get_profile(profile)
-    tools.debug("GET_PROFILE: email[", email,
-                "] full[", full,
-                "] name[", name)
     bookmarks = bookMarks.generate_bookmarks(profile)
     tools.display(preset.underline*(screenSupport.get_terminal_width()))
     tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")

@@ -351,7 +351,7 @@ class SettingsDialog(wx.Dialog):
 
         self.parent = parent
 
-        self.SetSize((320, 190))
+        self.SetSize((320, 210))
         button_size = (135, 25)
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
@@ -378,9 +378,12 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button06 = wx.ToggleButton(self, id=5, label=settings_button_label, size=button_size, pos=(150, 70), style=wx.BU_LEFT)
         self.toggle_button06.SetValue(settings_button_value)
 
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_radio_group)
+        self.language_combo_box = wx.ComboBox(self, id=6, value=parent.settings.system_language, pos=(10, 100), size=(135, 25), choices=preset.get_languages(), style=0, name="Select Language")
 
-        self.ok_button = wx.Button(self, wx.ID_OK, preset.message["ok_button"], size=button_size, pos=(70, 120))
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_radio_group)
+        self.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combo_box)
+
+        self.ok_button = wx.Button(self, wx.ID_OK, preset.message["ok_button"], size=button_size, pos=(70, 140))
         self.Centre()
         self.Show(True)
 
@@ -389,6 +392,11 @@ class SettingsDialog(wx.Dialog):
         label, value = set_button_toggle(self, event_object.GetId(), True)
         event_object.SetLabel(label)
         event_object.SetValue(value)
+        self.parent.settings.save_settings()
+
+    def on_combo_box(self, event):
+        event_object = event.GetEventObject()
+        self.parent.settings.system_language = event_object.GetValue()
         self.parent.settings.save_settings()
 
 

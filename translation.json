@@ -135,7 +135,7 @@
     "profile_chooser": "Seleção de Perfil",
     "profile_description": "Comando para listar usuários do Google Chrome.",
     "profile_help": "Número do perfil para extrair: \"all\" Default.",
-    "refresh_url": "Atualizar URL",
+    "refresh_url_title": "Atualizar URL",
     "removing_duplicates": "Removendo duplicatas...",
     "retrieve_user": "Extraindo usuário...",
     "saving_html": "Salvando arquivo HTML...",
