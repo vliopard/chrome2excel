@@ -254,32 +254,31 @@ class EditDialog(wx.Dialog):
 
         self.main_box_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.horizontal_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.left_box_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_box_sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.attribute_list = []
-        for idx, item in enumerate(edit_url.to_list()):
-            item_value = None
-            element_value = edit_url.get_position(idx)
+        for index, item in enumerate(edit_url.to_list()):
+            element_value = edit_url.get_position(index)
             if isinstance(element_value, datetime.datetime):
                 item_value = utils.date_to_string(element_value)
             else:
                 item_value = str(element_value)
             self.attribute_list.append(wx.TextCtrl(self, value=item_value))
             dialog_place = "left"
-            if idx > 21:
+            if index > 21:
                 dialog_place = "right"
-            self.add_widgets(edit_url.get_label(str(idx)), self.attribute_list[idx], dialog_place)
+            self.add_widgets(edit_url.get_label(str(index)), self.attribute_list[index], dialog_place)
 
         #######################################################################################
         # TODO: MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
         #######################################################################################
-        self.box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
-        self.box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
+        self.horizontal_box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
+        self.horizontal_box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
 
-        self.main_box_sizer.Add(self.box_sizer, 1, wx.EXPAND, 1)
+        self.main_box_sizer.Add(self.horizontal_box_sizer, 1, wx.EXPAND, 1)
 
         button_box_sizer = wx.BoxSizer()
         save_button = wx.Button(self, label=preset.message["edit_save"])
