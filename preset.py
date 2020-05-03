@@ -894,57 +894,23 @@ label_dictionary = {
 
     }
 
-data_header = [
-        (
-                'Folder GUID',
-                'Folder ID',
-                'Folder Sync',
-                'Type',
+data_header = []
 
-                'Folder Added',
-                'Folder Modified',
-                'Folder visited',
-
-                'Folder Name',
-                'Folder URL',
-
-                'URL GUID',
-                'URL ID',
-                'URL Sync',
-                'Type',
-
-                'URL Added',
-                'URL Modified',
-                'URL Visited',
-
-                'URL Name',
-                'URL Clean',
-                'URL',
-                'Scheme',
-                'Netloc',
-                'Hostname',
-                'Path',
-                'Port',
-                'Param',
-                'Fragment',
-                'Username',
-                'Password',
-
-                'ParamA',
-                'ParamB',
-                'ParamC',
-                'ParamD',
-                'ParamE',
-                'ParamF',
-                'ParamG',
-                'ParamH',
-                'ParamI',
-                'ParamJ',
-                'ParamK',
-                'ParamL',
-                'ParamM',
-                'ParamN',
-                'ParamO',
-                'ParamP'
+trail = (
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank,
+            blank
         )
-]

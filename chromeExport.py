@@ -11,10 +11,6 @@ import chromeProfile
 
 from utils import add
 
-#######################################################################################
-# TODO: LOAD IS REMOVING FIRST LINE - THERE IS NO MORE HEADER
-#######################################################################################
-
 
 class MainUrlPanel(wx.Panel):
     def __init__(self, parent):
@@ -25,6 +21,9 @@ class MainUrlPanel(wx.Panel):
         self.header = preset.Header()
         self.list_ctrl = wx.ListCtrl(self, size=(10, 500), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
         #######################################################################################
+        # TODO: SET APPLICATION ICON
+        #######################################################################################
+        #######################################################################################
         # TODO: SAVE COLUMNS WIDTH
         #######################################################################################
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
@@ -33,14 +32,14 @@ class MainUrlPanel(wx.Panel):
         #######################################################################################
         index = [-1]
 
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_modified, width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_visited, width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.label_folder_name, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_modified, width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.label_date_visited, width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.label_folder_name, width=150)
         self.list_ctrl.InsertColumn(add(index), preset.label_url_name, width=200)
         self.list_ctrl.InsertColumn(add(index), preset.label_url_clean, width=200)
         self.list_ctrl.InsertColumn(add(index), preset.label_original_url, width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=150)
 
         main_box_sizer.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 5)
         main_box_sizer.AddStretchSpacer()
@@ -120,9 +119,6 @@ class MainUrlPanel(wx.Panel):
     def update_list(self, url_list):
         index = 0
         url_objects = []
-        #######################################################################################
-        # TODO: Using Class Header no need of strip url_list[header:]
-        #######################################################################################
         for url in url_list:
             position = [0]
             #######################################################################################
@@ -136,21 +132,8 @@ class MainUrlPanel(wx.Panel):
             self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
             self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
             self.list_ctrl.SetItem(index, add(position), url[21])  # 'Hostname',        #21
-            #######################################################################################
-            # TODO: Sync list_ctrl with url_object data
-            #######################################################################################
             url_object = preset.Header()
             url_object.set_data(url)
-            '''
-            url_object = bookMarks.TemporaryObject([utils.date_to_string(url[13]),
-                                                    utils.date_to_string(url[14]),
-                                                    utils.date_to_string(url[15]),
-                                                    url[7],
-                                                    url[16],
-                                                    url[17],
-                                                    url[18],
-                                                    url[21]])
-            '''
             url_objects.append(url_object.to_list())
             self.row_obj_dict[index] = url_object
             index += 1
@@ -209,9 +192,6 @@ class MainFrame(wx.Frame):
         profile_chooser_dialog = ProfileChooser(self, -1)
         button_pressed = profile_chooser_dialog.ShowModal()
         if button_pressed == wx.ID_OK:
-            #######################################################################################
-            # TODO: Load bookmars from Chrome profile
-            #######################################################################################
             tools.display(preset.message["loading_bookmarks"])
             data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
             self.panel.update_list(data_table)

@@ -14,7 +14,7 @@ def check_is_none(value):
 
 
 def to_number(value):
-    if value != preset.empty_string:
+    if value != preset.empty_string and value != preset.empty and value != preset.blank:
         return int(value)
     return None
 

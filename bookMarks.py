@@ -5,8 +5,6 @@ import public
 import preset
 import htmlSupport
 
-from utils import add
-
 from configparser import ConfigParser, DuplicateSectionError
 
 
@@ -54,25 +52,6 @@ class Options:
             self.remove_tracking_tokens_from_url = False
             self.import_urls_from_text_file = False
             self.refresh_folder_name_with_hostname_title = False
-
-
-'''
-@public.add
-class TemporaryObject:
-    def __init__(self, element):
-        index = [-1]
-        self.object_date_added = element[add(index)]
-        self.object_date_modified = element[add(index)]
-        self.object_date_visited = element[add(index)]
-        self.folder_name = element[add(index)]
-        self.url_name = element[add(index)]
-        self.url_clean = element[add(index)]
-        self.original_url = element[add(index)]
-        self.url_hostname = element[add(index)]
-
-    def save(self):
-        pass
-'''
 
 
 @public.add
@@ -165,16 +144,16 @@ class Bookmarks:
 def read_content(folder_items):
     url_list = []
     for folder_item in folder_items:
-        url_date_added = preset.empty_string
-        url_date_modified = preset.empty_string
-        url_guid = preset.empty_string
-        url_item_id = preset.empty_string
-        url_last_visited = preset.empty_string
-        url_name = preset.empty_string
-        url_sync_transaction_version = preset.empty_string
-        url_item_type = preset.empty_string
-        url_address = preset.empty_string
-        url_icon = preset.empty_string
+        url_date_added = preset.empty
+        url_date_modified = preset.empty
+        url_guid = preset.empty
+        url_item_id = preset.empty
+        url_last_visited = preset.empty
+        url_name = preset.empty
+        url_sync_transaction_version = preset.empty
+        url_item_type = preset.empty
+        url_address = preset.empty
+        url_icon = preset.empty
         for item in folder_item:
             if item == preset.children:
                 read_content(folder_item[item])
@@ -235,15 +214,15 @@ def generate_bookmarks(profile):
 def generate_data(instance):
     for folder in instance.folders:
         folder_item = None
-        folder_date_added = preset.empty_string
-        folder_date_modified = preset.empty_string
-        folder_guid = preset.empty_string
-        folder_id = preset.empty_string
-        folder_last_visited = preset.empty_string
-        folder_name = preset.empty_string
-        folder_sync_transaction_version = preset.empty_string
-        folder_type = preset.empty_string
-        folder_url = preset.empty_string
+        folder_date_added = preset.empty
+        folder_date_modified = preset.empty
+        folder_guid = preset.empty
+        folder_id = preset.empty
+        folder_last_visited = preset.empty
+        folder_name = preset.empty
+        folder_sync_transaction_version = preset.empty
+        folder_type = preset.empty
+        folder_url = preset.empty
         for item in folder:
             if item == preset.children:
                 folder_item = read_content(folder[item])
@@ -284,5 +263,5 @@ def generate_data(instance):
         )
 
         for item in folder_item:
-            preset.data_header.append(folder_data + item)
+            preset.data_header.append(folder_data + item + preset.trail)
     return preset.data_header
