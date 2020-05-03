@@ -160,10 +160,10 @@ class Header:
     def __init__(self):
         index = [-1]
         stub_date = to_date(13231709218000000)
-        self._Folder_GUID = (None, add(index))
-        self._Folder_ID = (None, add(index))
-        self._Folder_Sync = (None, add(index))
-        self._Folder_Type = (None, add(index))
+        self._Folder_GUID = (empty, add(index))
+        self._Folder_ID = (empty, add(index))
+        self._Folder_Sync = (empty, add(index))
+        self._Folder_Type = (empty, add(index))
 
         self._Folder_Added = (stub_date, add(index))
         self._Folder_Modified = (stub_date, add(index))
@@ -172,10 +172,10 @@ class Header:
         self._Folder_Name = (empty, add(index))
         self._Folder_URL = (empty, add(index))
 
-        self._URL_GUID = (None, add(index))
-        self._URL_ID = (None, add(index))
-        self._URL_Sync = (None, add(index))
-        self._URL_Type = (None, add(index))
+        self._URL_GUID = (empty, add(index))
+        self._URL_ID = (empty, add(index))
+        self._URL_Sync = (empty, add(index))
+        self._URL_Type = (empty, add(index))
 
         self._URL_Added = (stub_date, add(index))
         self._URL_Modified = (stub_date, add(index))
@@ -184,32 +184,32 @@ class Header:
         self._URL_Name = (nositename, add(index))
         self._URL_Clean = (nocleanurl, add(index))
         self._URL = (nourladdress, add(index))
-        self._Scheme = (None, add(index))
-        self._Netloc = (None, add(index))
+        self._Scheme = (empty, add(index))
+        self._Netloc = (empty, add(index))
         self._Hostname = (nohostname, add(index))
-        self._Path = (None, add(index))
-        self._Port = (None, add(index))
-        self._Param = (None, add(index))
-        self._Fragment = (None, add(index))
+        self._Path = (empty, add(index))
+        self._Port = (empty, add(index))
+        self._Param = (empty, add(index))
+        self._Fragment = (empty, add(index))
         self._Username = (empty, add(index))
         self._Password = (empty, add(index))
 
-        self._ParamA = (None, add(index))
-        self._ParamB = (None, add(index))
-        self._ParamC = (None, add(index))
-        self._ParamD = (None, add(index))
-        self._ParamE = (None, add(index))
-        self._ParamF = (None, add(index))
-        self._ParamG = (None, add(index))
-        self._ParamH = (None, add(index))
-        self._ParamI = (None, add(index))
-        self._ParamJ = (None, add(index))
-        self._ParamK = (None, add(index))
-        self._ParamL = (None, add(index))
-        self._ParamM = (None, add(index))
-        self._ParamN = (None, add(index))
-        self._ParamO = (None, add(index))
-        self._ParamP = (None, add(index))
+        self._ParamA = (empty, add(index))
+        self._ParamB = (empty, add(index))
+        self._ParamC = (empty, add(index))
+        self._ParamD = (empty, add(index))
+        self._ParamE = (empty, add(index))
+        self._ParamF = (empty, add(index))
+        self._ParamG = (empty, add(index))
+        self._ParamH = (empty, add(index))
+        self._ParamI = (empty, add(index))
+        self._ParamJ = (empty, add(index))
+        self._ParamK = (empty, add(index))
+        self._ParamL = (empty, add(index))
+        self._ParamM = (empty, add(index))
+        self._ParamN = (empty, add(index))
+        self._ParamO = (empty, add(index))
+        self._ParamP = (empty, add(index))
 
     def set_data(self, url_element):
         index = [-1]
@@ -267,7 +267,7 @@ class Header:
 
     def get_position(self, position):
         item = self.to_tuple()
-        return item[position][0]
+        return item[position]
 
     def get_name(self, name):
         item = self.to_dict()
@@ -302,7 +302,7 @@ class Header:
             tuple_list.append(item[0])
         return tuple(tuple_list)
 
-    def get_label(index):
+    def get_label(self, index):
         return label_dictionary[index]
 
     def to_dict_index(self):

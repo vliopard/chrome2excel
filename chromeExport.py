@@ -4,6 +4,7 @@ import wx.adv
 import tools
 import utils
 import preset
+import datetime
 import bookMarks
 import chrome2excel
 import chromeProfile
@@ -21,6 +22,7 @@ class MainUrlPanel(wx.Panel):
         self.parent = parent
         main_box_sizer = wx.BoxSizer(wx.VERTICAL)
         self.row_obj_dict = {}
+        self.header = preset.Header()
         self.list_ctrl = wx.ListCtrl(self, size=(10, 500), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
         #######################################################################################
         # TODO: SAVE COLUMNS WIDTH
@@ -137,7 +139,8 @@ class MainUrlPanel(wx.Panel):
             #######################################################################################
             # TODO: Sync list_ctrl with url_object data
             #######################################################################################
-            url_object = preset.Header(url)
+            url_object = preset.Header()
+            url_object.set_data(url)
             '''
             url_object = bookMarks.TemporaryObject([utils.date_to_string(url[13]),
                                                     utils.date_to_string(url[14]),
@@ -266,48 +269,65 @@ class AboutDialog(wx.Dialog):
 
 class EditDialog(wx.Dialog):
     def __init__(self, edit_url):
-        edit_dialog_title = preset.message["edit_title"] + edit_url.URL_Name
-        super().__init__(parent=None, title=edit_dialog_title)
+        super().__init__(parent=None, title=preset.message["edit_title"] + edit_url.URL_Name, size=(700, 590))
         self.url = edit_url
 
         self.main_box_sizer = wx.BoxSizer(wx.VERTICAL)
-        #####################################################################
-        # TODO: MUST GET_LABEL AND ATTRIBUTE FROM HEADER CLASS IN A LOOP
-        #####################################################################
-        self.date_added = wx.TextCtrl(self, value=self.url.object_date_added)
-        self.add_widgets(preset.label_date_added, self.date_added)
 
-        self.date_modified = wx.TextCtrl(self, value=self.url.object_date_modified)
-        self.add_widgets(preset.label_date_modified, self.date_modified)
+        self.box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.date_visited = wx.TextCtrl(self, value=self.url.object_date_visited)
-        self.add_widgets(preset.label_date_visited, self.date_visited)
+        self.left_box_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.right_box_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.attribute_list = []
+        for idx, item in enumerate(edit_url.to_list()):
+            item_value = None
+            element_value = edit_url.get_position(idx)
+            if isinstance(element_value, datetime.datetime):
+                item_value = utils.date_to_string(element_value)
+            else:
+                item_value = str(element_value)
+            self.attribute_list.append(wx.TextCtrl(self, value=item_value))
+            dialog_place = "left"
+            if idx > 21:
+                dialog_place = "right"
+            self.add_widgets(edit_url.get_label(str(idx)), self.attribute_list[idx], dialog_place)
+
+        #######################################################################################
+        # TODO: MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
+        #######################################################################################
+        self.box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
+        self.box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
+
+        self.main_box_sizer.Add(self.box_sizer, 1, wx.EXPAND, 1)
 
         button_box_sizer = wx.BoxSizer()
-
         save_button = wx.Button(self, label=preset.message["edit_save"])
         save_button.Bind(wx.EVT_BUTTON, self.on_save)
-        button_box_sizer.Add(save_button, 0, wx.ALL, 5)
-
-        button_box_sizer.Add(wx.Button(self, id=wx.ID_CANCEL), 0, wx.ALL, 5)
+        button_box_sizer.Add(save_button, 0, wx.ALL, 1)
+        button_box_sizer.Add(wx.Button(self, id=wx.ID_CANCEL), 0, wx.ALL, 1)
 
         self.main_box_sizer.Add(button_box_sizer, 0, wx.CENTER)
         self.SetSizer(self.main_box_sizer)
 
-    def add_widgets(self, text_label, text_ctrl):
+    def add_widgets(self, text_label, text_ctrl, dialog_place):
         box_sizer_horizontal = wx.BoxSizer(wx.HORIZONTAL)
-        label = wx.StaticText(self, label=text_label, size=(50, -1))
-        box_sizer_horizontal.Add(label, 0, wx.ALL, 5)
-        box_sizer_horizontal.Add(text_ctrl, 1, wx.ALL | wx.EXPAND, 5)
-        self.main_box_sizer.Add(box_sizer_horizontal, 0, wx.EXPAND)
+        box_sizer_horizontal.Add(wx.StaticText(self, label=text_label, size=(40, -1)), 1, wx.ALL, 1)
+        box_sizer_horizontal.Add(text_ctrl, 1, wx.ALL | wx.EXPAND, 0)
+        if dialog_place == "left":
+            self.left_box_sizer.Add(box_sizer_horizontal, 1, wx.EXPAND, 1)
+        else:
+            self.right_box_sizer.Add(box_sizer_horizontal, 1, wx.EXPAND, 1)
 
     def on_save(self, event):
         #######################################################################################
         # TODO: MUST INCLUDE OTHER ELEMENTS IN THE HEADER OBJECT
         #######################################################################################
-        self.url.object_date_added = self.date_added.GetValue()
-        self.url.object_date_modified = self.date_modified.GetValue()
-        self.url.object_date_visited = self.date_visited.GetValue()
+        self.url.add_data(self.attribute_list)
+        #######################################################################################
+        # TODO: MUST VERIFY IF HEADER LIST IS UPDATED WITH SINGLE ITEM CHANGES
+        # self.url.object_date_modified = self.date_modified.GetValue()
+        #######################################################################################
 
 
 class ProfileChooser(wx.Dialog):
