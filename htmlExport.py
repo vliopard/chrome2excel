@@ -42,10 +42,6 @@ def new_tab():
 
 
 def write_html(folder):
-    #######################################################################################
-    # TODO: MAY CHANGE CHROME.HTML TO OTHER FILENAME
-    #######################################################################################
-
     with open(preset.html_filename, 'w', encoding='utf-8') as html_file:
         html_file.write(header)
 

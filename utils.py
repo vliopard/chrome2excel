@@ -14,7 +14,7 @@ def check_is_none(value):
 
 
 def to_number(value):
-    if value != preset.empty_string and value != preset.empty and value != preset.blank:
+    if value != preset.empty_string and value != preset.empty and value != preset.blank and value != preset.no_date:
         return int(value)
     return None
 
@@ -26,13 +26,15 @@ def to_date(value):
         seconds, microseconds = divmod(microseconds, 1000000)
         days, seconds = divmod(seconds, 86400)
         return datetime(1601, 1, 1) + timedelta(days, seconds, microseconds)
-    return None
+    return preset.no_date
 
 
 def date_to_string(date_value):
-    if not date_value:
-        return preset.no_date
-    return date_value.strftime(preset.date_format)
+    if isinstance(date_value, str):
+        return date_value
+    if isinstance(date_value, datetime):
+        return date_value.strftime(preset.date_format)
+    return preset.no_date
 
 
 def epoch_to_date(epoch_value):

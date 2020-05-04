@@ -13,6 +13,9 @@ main_section = 'main'
 
 debug_mode = False
 text_filename = "chrome.txt"
+#######################################################################################
+# TODO: MAY CHANGE CHROME.HTML TO OTHER FILENAME
+#######################################################################################
 html_filename = "chrome.html"
 xlsx_filename = "chrome.xlsx"
 
@@ -147,8 +150,6 @@ facebook_tracking_tokens = (
         "permPage",
         "notif_id"
 )
-
-
 
 
 def set_language(selected_language):

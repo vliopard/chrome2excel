@@ -54,9 +54,6 @@ def generate_from_txt(url_list):
 
 
 def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, import_txt, get_hostname_title):
-    #######################################################################################
-    # TODO: SETTINGS MUST BE AVAILABLE BY SETTINGS LOAD FUNCTION
-    #######################################################################################
     tools.display(preset.message["generating_html"])
 
     data_table = append_data_table(data_table, import_text_file())

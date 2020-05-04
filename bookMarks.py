@@ -219,11 +219,11 @@ def generate_bookmarks(profile):
 def generate_data(instance):
     for folder in instance.folders:
         folder_item = None
-        folder_date_added = preset.empty
-        folder_date_modified = preset.empty
+        folder_date_added = preset.no_date
+        folder_date_modified = preset.no_date
         folder_guid = preset.empty
         folder_id = preset.empty
-        folder_last_visited = preset.empty
+        folder_last_visited = preset.no_date
         folder_name = preset.empty
         folder_sync_transaction_version = preset.empty
         folder_type = preset.empty

@@ -23,12 +23,13 @@ class MainUrlPanel(wx.Panel):
         #######################################################################################
         # TODO: SET APPLICATION ICON
         #######################################################################################
-        #######################################################################################
         # TODO: SAVE COLUMNS WIDTH
         #######################################################################################
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
         #######################################################################################
         # TODO: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
+        #######################################################################################
+        # TODO: CLEAR LIST CONTROL ITEMS WHILE RE-IMPORTING PROFILE FROM CHROME
         #######################################################################################
         index = [-1]
 
@@ -96,12 +97,16 @@ class MainUrlPanel(wx.Panel):
         selected_item = self.list_ctrl.GetFocusedItem()
         if selected_item >= 0:
             edit_dialog = EditDialog(self.row_obj_dict[selected_item])
-            edit_dialog.ShowModal()
-            self.update_url_listing(self.current_folder_path)
+            #######################################################################################
+            # TODO: CHANGE CANCEL TO OK_EVENT
+            #######################################################################################
+            if edit_dialog.ShowModal() == wx.ID_CANCEL:
+                self.row_obj_dict[selected_item] = edit_dialog.url
+                self.list_ctrl.DeleteItem(selected_item)
+                self.update_element(selected_item, edit_dialog.url.to_list())
             edit_dialog.Destroy()
 
-    def update_url_listing(self, folder_path):
-        self.current_folder_path = folder_path
+    def update_url_screen(self, items):
         self.list_ctrl.ClearAll()
         index = [-1]
         self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=115)
@@ -113,25 +118,30 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.InsertColumn(add(index), preset.label_original_url, width=150)
         self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=150)
 
-        url_list = chrome2excel.generate_from_txt(chrome2excel.import_text_file(folder_path))
+    def update_url_listing(self, path_to_text_file):
+        self.update_url_screen(None)
+        url_list = chrome2excel.generate_from_txt(chrome2excel.import_text_file(path_to_text_file))
         self.update_list(url_list)
+
+    def update_element(self, index, url):
+        position = [0]
+        self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))  # 'URL Added',       #13
+        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified',    #14
+        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',     #15
+        self.list_ctrl.SetItem(index, add(position), url[7])  # 'Folder Name',     #07
+        self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
+        self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
+        self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
+        self.list_ctrl.SetItem(index, add(position), url[21])  # 'Hostname',        #21
 
     def update_list(self, url_list):
         index = 0
         url_objects = []
         for url in url_list:
-            position = [0]
             #######################################################################################
             # TODO: May change from index to dict key
             #######################################################################################
-            self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))  # 'URL Added',       #13
-            self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified',    #14
-            self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',     #15
-            self.list_ctrl.SetItem(index, add(position), url[7])  # 'Folder Name',     #07
-            self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
-            self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
-            self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
-            self.list_ctrl.SetItem(index, add(position), url[21])  # 'Hostname',        #21
+            self.update_element(index, url)
             url_object = preset.Header()
             url_object.set_data(url)
             url_objects.append(url_object.to_list())
@@ -201,9 +211,6 @@ class MainFrame(wx.Frame):
         profile_chooser_dialog.Destroy()
 
     def on_open_settings(self, event):
-        #######################################################################################
-        # TODO: LOAD LANGUAGE FROM SETTINGS (COMBOBOX)
-        #######################################################################################
         settings_dialog = SettingsDialog(self, 0)
         settings_dialog.ShowModal()
         settings_dialog.Destroy()
@@ -253,9 +260,7 @@ class EditDialog(wx.Dialog):
         self.url = edit_url
 
         self.main_box_sizer = wx.BoxSizer(wx.VERTICAL)
-
         self.horizontal_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
         self.left_box_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_box_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -281,7 +286,7 @@ class EditDialog(wx.Dialog):
         self.main_box_sizer.Add(self.horizontal_box_sizer, 1, wx.EXPAND, 1)
 
         button_box_sizer = wx.BoxSizer()
-        save_button = wx.Button(self, label=preset.message["edit_save"])
+        save_button = wx.Button(self, id=wx.ID_OK, label=preset.message["edit_save"])
         save_button.Bind(wx.EVT_BUTTON, self.on_save)
         button_box_sizer.Add(save_button, 0, wx.ALL, 1)
         button_box_sizer.Add(wx.Button(self, id=wx.ID_CANCEL), 0, wx.ALL, 1)
@@ -299,14 +304,11 @@ class EditDialog(wx.Dialog):
             self.right_box_sizer.Add(box_sizer_horizontal, 1, wx.EXPAND, 1)
 
     def on_save(self, event):
-        #######################################################################################
-        # TODO: MUST INCLUDE OTHER ELEMENTS IN THE HEADER OBJECT
-        #######################################################################################
-        self.url.add_data(self.attribute_list)
-        #######################################################################################
-        # TODO: MUST VERIFY IF HEADER LIST IS UPDATED WITH SINGLE ITEM CHANGES
-        # self.url.object_date_modified = self.date_modified.GetValue()
-        #######################################################################################
+        save_list = []
+        for element in self.attribute_list:
+            save_list.append(element.GetValue())
+        self.url.set_data(save_list)
+        self.Close(True)
 
 
 class ProfileChooser(wx.Dialog):
