@@ -174,7 +174,7 @@ def read_content(folder_items):
                 url_guid = folder_item[item]
             elif item == preset.icon:
                 #######################################################################################
-                # TODO: Add icon to the spreadsheet
+                # TODO: ADD ICON TO THE SPREADSHEET
                 #######################################################################################
                 url_icon = folder_item[item]
             elif item == preset.item_id:

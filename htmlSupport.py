@@ -82,11 +82,11 @@ def clean_url(url_address):
 
 def get_title(url_address):
     #######################################################################################
-    # TODO: If not enabled, returns current name or url
+    # TODO: IF NOT ENABLED, RETURN CURRENT NAME OR URL
     #######################################################################################
     try:
         #######################################################################################
-        # TODO: Place timeout in a settings file
+        # TODO: PLACE TIMEOUT IN A SETTINGS FILE
         #######################################################################################
         with urlopen(url_address, timeout=120) as stream:
             url_data = stream.read()

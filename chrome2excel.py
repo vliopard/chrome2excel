@@ -39,7 +39,7 @@ def append_data_table(data_table, url_list):
         head = preset.Header()
         head.Hostname = htmlSupport.parse_url(url_item)[2]
         #######################################################################################
-        # TODO: If not enabled, returns current name or url
+        # TODO: IF NOT ENABLED, RETURNS CURRENT NAME OR URL
         #######################################################################################
         head.URL_Clean = htmlSupport.clean_url(url_item)
         head.URL = url_item

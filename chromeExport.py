@@ -76,7 +76,7 @@ class MainUrlPanel(wx.Panel):
         #######################################################################################
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
         #######################################################################################
-        # TODO: Generate HTML
+        # TODO: GENERATE HTML
         #######################################################################################
         # chrome2excel.generate_html(refresh, undupe, clean, input)
 
@@ -89,7 +89,7 @@ class MainUrlPanel(wx.Panel):
         #######################################################################################
         # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
         #######################################################################################
-        # TODO: Generate XLSX
+        # TODO: GENERATE XLSX
         #######################################################################################
         # chrome2excel.generate_workbook(refresh, undupe, clean)
 
@@ -139,7 +139,7 @@ class MainUrlPanel(wx.Panel):
         url_objects = []
         for url in url_list:
             #######################################################################################
-            # TODO: May change from index to dict key
+            # TODO: MAY CHANGE FROM INDEX TO DICTY KEY
             #######################################################################################
             self.update_element(index, url)
             url_object = preset.Header()
@@ -155,10 +155,13 @@ class MainFrame(wx.Frame):
                           parent=None,
                           title=preset.message["bookmarks_editor"],
                           size=(1200, 600))
-        self.settings = bookMarks.Options()
-        self.settings.load_settings()
-        self.selected = -1
-        self.panel = MainUrlPanel(self)
+        application_icon = wx.Icon()
+        application_icon.CopyFromBitmap(wx.Bitmap(preset.main_icon, wx.BITMAP_TYPE_ANY))
+        self.SetIcon(application_icon)
+        self.application_settings = bookMarks.Options()
+        self.application_settings.load_settings()
+        self.selected_account = -1
+        self.main_url_panel = MainUrlPanel(self)
         self.create_menu()
         self.Show()
 
@@ -195,7 +198,7 @@ class MainFrame(wx.Frame):
                                            wildcard=preset.message["text_file_filter"],
                                            style=wx.DD_DEFAULT_STYLE)
         if open_folder_dialog.ShowModal() == wx.ID_OK:
-            self.panel.update_url_listing(open_folder_dialog.GetPath())
+            self.main_url_panel.update_url_listing(open_folder_dialog.GetPath())
         open_folder_dialog.Destroy()
 
     def on_open_account(self, event):
@@ -203,11 +206,11 @@ class MainFrame(wx.Frame):
         button_pressed = profile_chooser_dialog.ShowModal()
         if button_pressed == wx.ID_OK:
             tools.display(preset.message["loading_bookmarks"])
-            data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected))
-            self.panel.update_list(data_table)
-            self.panel.Update()
+            data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected_account))
+            self.main_url_panel.update_list(data_table)
+            self.main_url_panel.Update()
         else:
-            self.selected = -1
+            self.selected_account = -1
         profile_chooser_dialog.Destroy()
 
     def on_open_settings(self, event):
@@ -320,7 +323,7 @@ class ProfileChooser(wx.Dialog):
         chrome_profile_list = chromeProfile.profile_list()
 
         self.parent = parent
-        self.parent.selected = 0
+        self.parent.selected_account = 0
 
         position = 10
         if chrome_profile_list:
@@ -344,7 +347,7 @@ class ProfileChooser(wx.Dialog):
 
     def on_radio_group(self, event):
         event_object = event.GetEventObject()
-        self.parent.selected = event_object.GetId()
+        self.parent.selected_account = event_object.GetId()
 
 
 class SettingsDialog(wx.Dialog):
@@ -380,7 +383,7 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button06 = wx.ToggleButton(self, id=5, label=settings_button_label, size=button_size, pos=(150, 70), style=wx.BU_LEFT)
         self.toggle_button06.SetValue(settings_button_value)
 
-        self.language_combo_box = wx.ComboBox(self, id=6, value=parent.settings.system_language, pos=(10, 100), size=(135, 25), choices=preset.get_languages(), style=0, name="Select Language")
+        self.language_combo_box = wx.ComboBox(self, id=6, value=parent.application_settings.system_language, pos=(10, 100), size=(135, 25), choices=preset.get_languages(), style=0, name="Select Language")
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.on_radio_group)
         self.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combo_box)
@@ -394,12 +397,12 @@ class SettingsDialog(wx.Dialog):
         label, value = set_button_toggle(self, event_object.GetId(), True)
         event_object.SetLabel(label)
         event_object.SetValue(value)
-        self.parent.settings.save_settings()
+        self.parent.application_settings.save_settings()
 
     def on_combo_box(self, event):
         event_object = event.GetEventObject()
-        self.parent.settings.system_language = event_object.GetValue()
-        self.parent.settings.save_settings()
+        self.parent.application_settings.system_language = event_object.GetValue()
+        self.parent.application_settings.save_settings()
 
 
 def set_button_toggle(self, button_id, toggle_button):
@@ -407,8 +410,8 @@ def set_button_toggle(self, button_id, toggle_button):
     settings_button_value = None
     if button_id == 0:
         if toggle_button:
-            self.parent.settings.export_file_type = not self.parent.settings.export_file_type
-        if self.parent.settings.export_file_type:
+            self.parent.application_settings.export_file_type = not self.parent.application_settings.export_file_type
+        if self.parent.application_settings.export_file_type:
             settings_button_label = preset.message["output_off"] + preset.message["output_type"]
             settings_button_value = True
         else:
@@ -416,8 +419,8 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = False
     if button_id == 1:
         if toggle_button:
-            self.parent.settings.refresh_url_title = not self.parent.settings.refresh_url_title
-        if self.parent.settings.refresh_url_title:
+            self.parent.application_settings.refresh_url_title = not self.parent.application_settings.refresh_url_title
+        if self.parent.application_settings.refresh_url_title:
             settings_button_label = preset.message["on_label"] + preset.message["refresh_url_title"]
             settings_button_value = True
         else:
@@ -425,8 +428,8 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = False
     if button_id == 2:
         if toggle_button:
-            self.parent.settings.remove_duplicated_urls = not self.parent.settings.remove_duplicated_urls
-        if self.parent.settings.remove_duplicated_urls:
+            self.parent.application_settings.remove_duplicated_urls = not self.parent.application_settings.remove_duplicated_urls
+        if self.parent.application_settings.remove_duplicated_urls:
             settings_button_label = preset.message["on_label"] + preset.message["undupe_urls"]
             settings_button_value = True
         else:
@@ -434,8 +437,8 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = False
     if button_id == 3:
         if toggle_button:
-            self.parent.settings.remove_tracking_tokens_from_url = not self.parent.settings.remove_tracking_tokens_from_url
-        if self.parent.settings.remove_tracking_tokens_from_url:
+            self.parent.application_settings.remove_tracking_tokens_from_url = not self.parent.application_settings.remove_tracking_tokens_from_url
+        if self.parent.application_settings.remove_tracking_tokens_from_url:
             settings_button_label = preset.message["on_label"] + preset.message["clean_url"]
             settings_button_value = True
         else:
@@ -443,8 +446,8 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = False
     if button_id == 4:
         if toggle_button:
-            self.parent.settings.import_urls_from_text_file = not self.parent.settings.import_urls_from_text_file
-        if self.parent.settings.import_urls_from_text_file:
+            self.parent.application_settings.import_urls_from_text_file = not self.parent.application_settings.import_urls_from_text_file
+        if self.parent.application_settings.import_urls_from_text_file:
             settings_button_label = preset.message["on_label"] + preset.message["import_txt"]
             settings_button_value = True
         else:
@@ -452,8 +455,8 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = False
     if button_id == 5:
         if toggle_button:
-            self.parent.settings.refresh_folder_name_with_hostname_title = not self.parent.settings.refresh_folder_name_with_hostname_title
-        if self.parent.settings.refresh_folder_name_with_hostname_title:
+            self.parent.application_settings.refresh_folder_name_with_hostname_title = not self.parent.application_settings.refresh_folder_name_with_hostname_title
+        if self.parent.application_settings.refresh_folder_name_with_hostname_title:
             settings_button_label = preset.message["on_label"] + preset.message["check_hostname"]
             settings_button_value = True
         else:

@@ -11,17 +11,24 @@ def load_translation_file():
 configuration_filename = "config.ini"
 main_section = 'main'
 
+#######################################################################################
+# TODO: MAY CHANGE DEBUG MODE FROM SETTINGS
+#######################################################################################
 debug_mode = False
 text_filename = "chrome.txt"
 #######################################################################################
 # TODO: MAY CHANGE CHROME.HTML TO OTHER FILENAME
 #######################################################################################
 html_filename = "chrome.html"
+#######################################################################################
+# TODO: MAY CHANGE CHROME.XLSX TO OTHER FILENAME
+#######################################################################################
 xlsx_filename = "chrome.xlsx"
 
 english = 'en-us'
 message = load_translation_file()[english]
 
+main_icon = "blue.ico"
 on = 'on'
 off = 'off'
 empty = ""
