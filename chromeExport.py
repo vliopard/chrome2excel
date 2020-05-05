@@ -16,9 +16,16 @@ class MainUrlPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
+
         main_box_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.row_obj_dict = {}
+
         self.header = preset.Header()
+
+        self.row_obj_dict = {}
+
+        self.url_objects = None
+        self.save_file_name = None
+
         self.list_ctrl = wx.ListCtrl(self, size=(10, 500), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
         #######################################################################################
         # TODO: SET APPLICATION ICON
@@ -65,33 +72,38 @@ class MainUrlPanel(wx.Panel):
 
     def on_html(self, event):
         #######################################################################################
+        # TODO: GENERATE HTML WITH PROGRESS BAR
         # TODO: https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
         #######################################################################################
-        tools.display("_______________")
-        tools.display("HTML SETUP")
-        tools.display("reload:", self.parent.refresh_url_title)
-        tools.display("undupe:", self.parent.remove_duplicates)
-        tools.display("clean:", self.parent.remove_tracking_tokens_from_url)
-        tools.display("txt:", self.parent.import_txt)
-        #######################################################################################
-        # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
-        #######################################################################################
-        # TODO: GENERATE HTML
-        #######################################################################################
-        # chrome2excel.generate_html(refresh, undupe, clean, input)
+        if self.url_objects:
+            self.on_save_file("html")
+            if self.save_file_name:
+                refresh = self.parent.application_settings.refresh_url_title
+                undupe = self.parent.application_settings.remove_duplicated_urls
+                clean = self.parent.application_settings.remove_tracking_tokens_from_url
+                get_hostname = self.parent.application_settings.refresh_folder_name_with_hostname_title
+                bookmarks_data = self.to_tuple()
+                chrome2excel.generate_html(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname)
 
     def on_xlsx(self, event):
-        tools.display("_______________")
-        tools.display("XLSX SETUP")
-        tools.display("reload:", self.parent.refresh_url_title)
-        tools.display("undupe:", self.parent.remove_duplicates)
-        tools.display("clean:", self.parent.remove_tracking_tokens_from_url)
         #######################################################################################
-        # TODO: MUST CHECK IF WORKBOOK IS DONE FOR GENERATION
+        # TODO: GENERATE XLSX WITH PROGRESS BAR
+        # TODO: https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
         #######################################################################################
-        # TODO: GENERATE XLSX
-        #######################################################################################
-        # chrome2excel.generate_workbook(refresh, undupe, clean)
+        if self.url_objects:
+            self.on_save_file("xlsx")
+            if self.save_file_name:
+                refresh = self.parent.application_settings.refresh_url_title
+                undupe = self.parent.application_settings.remove_duplicated_urls
+                clean = self.parent.application_settings.remove_tracking_tokens_from_url
+                bookmarks_data = self.to_tuple()
+                chrome2excel.generate_workbook(self.save_file_name, bookmarks_data, refresh, undupe, clean)
+
+    def to_tuple(self):
+        bookmarks_data = []
+        for row in self.url_objects:
+            bookmarks_data.append(tuple(row))
+        return bookmarks_data
 
     def on_edit(self, event):
         selected_item = self.list_ctrl.GetFocusedItem()
@@ -126,7 +138,7 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))  # 'URL Added',       #13
         self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified',    #14
         self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',     #15
-        self.list_ctrl.SetItem(index, add(position), url[7])  # 'Folder Name',     #07
+        self.list_ctrl.SetItem(index, add(position), url[7])   # 'Folder Name',     #07
         self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
         self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
         self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
@@ -134,17 +146,35 @@ class MainUrlPanel(wx.Panel):
 
     def update_list(self, url_list):
         index = 0
-        url_objects = []
+        self.url_objects = []
         for url in url_list:
-            #######################################################################################
-            # TODO: MAY CHANGE FROM INDEX TO DICTY KEY
-            #######################################################################################
             self.update_element(index, url)
             url_object = preset.Header()
             url_object.set_data(url)
-            url_objects.append(url_object.to_list())
+            self.url_objects.append(url_object.to_list())
             self.row_obj_dict[index] = url_object
             index += 1
+
+    def on_save_file(self, save_file_default):
+        if save_file_default == "html":
+            wildcard_export = preset.message["html_file_filter"]
+        else:
+            wildcard_export = preset.message["xlsx_file_filter"]
+
+        save_file_dialog = wx.FileDialog(self,
+                                         message=preset.message["save_file"],
+                                         defaultDir="",
+                                         wildcard=wildcard_export,
+                                         style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+
+        if save_file_dialog.ShowModal() == wx.ID_OK:
+            # dirname = save_file_dialog.GetDirectory()
+            # filename = save_file_dialog.GetFilename()
+            self.save_file_name = save_file_dialog.GetPath()
+        else:
+            self.save_file_name = None
+
+        save_file_dialog.Destroy()
 
 
 class MainFrame(wx.Frame):

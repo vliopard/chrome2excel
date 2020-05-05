@@ -50,18 +50,18 @@ def generate_from_txt(url_list):
     return append_data_table(txt_header, url_list)
 
 
-def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
+def generate_html(web_page_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
     tools.display(preset.message["generating_html"])
 
-    data_table = append_data_table(data_table, import_text_file())
+    # data_table = append_data_table(data_table, import_text_file())
     visited_hostname_title = set()
     visited_url_address = set()
     folder_list = []
     data_table_without_duplicates = []
     if remove_duplicated_urls == preset.on:
-        tools.display(preset.underline*(screenSupport.get_terminal_width()))
+        tools.underline()
         tools.display(preset.message["removing_duplicates"])
-        tools.display(preset.overline*(screenSupport.get_terminal_width()))
+        tools.overline()
         with tqdm.tqdm(total=len(data_table)) as progress_bar:
             for data_row in data_table:
                 progress_bar.update(1)
@@ -75,11 +75,11 @@ def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_t
     else:
         data_table_without_duplicates = data_table
 
-    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.underline()
     tools.display(preset.message["writing_html"])
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
-    with tqdm.tqdm(total=len(data_table_without_duplicates[1:])) as progress_bar:
-        for data_row in data_table_without_duplicates[1:]:
+    tools.overline()
+    with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
+        for data_row in data_table_without_duplicates:
             progress_bar.update(1)
 
             url_title = data_row[16]
@@ -112,15 +112,15 @@ def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_t
                     if folder.folder_name == hostname_title:
                         folder.add_url(url_data)
 
-    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.underline()
     tools.display(preset.message["saving_html"])
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
-    htmlExport.write_html(folder_list)
+    tools.overline()
+    htmlExport.write_html(web_page_filename, folder_list)
     tools.display(preset.message["done"])
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
+    tools.overline()
 
 
-def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url):
+def generate_workbook(spreadsheet_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url):
     tools.display(preset.message["generating_workbook"])
     excel_workbook = Workbook()
     excel_worksheet = excel_workbook.active
@@ -130,9 +130,9 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
     data_table_without_duplicates = []
     tools.display(preset.message["find_duplicated_lines"])
     if reload_url_title != preset.off:
-        tools.display(preset.underline*(screenSupport.get_terminal_width()))
+        tools.underline()
         tools.display(preset.message["get_url_status"])
-        tools.display(preset.overline*(screenSupport.get_terminal_width()))
+        tools.overline()
 
     reload_url_title_disabled = True
     if reload_url_title != preset.off:
@@ -151,8 +151,13 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
                 data_table_without_duplicates.append(("DUPE", get_title_conditional(progress_bar, reload_url_title_disabled, data_row[16], url_address)) + data_row)
 
     tools.display(preset.message["writing_spreadsheet"])
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
+    tools.overline()
     with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
+        data_row_header = ["DUPE", "HOSTNAME"]
+        for item in preset.label_dictionary:
+            data_row_header.append(preset.label_dictionary[item])
+        excel_worksheet.append(tuple(data_row_header))
+        progress_bar.update(1)
         for data_row in data_table_without_duplicates:
             progress_bar.update(1)
             excel_worksheet.append(data_row)
@@ -160,9 +165,9 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
     excel_worksheet.freeze_panes = "A2"
     excel_worksheet.auto_filter.ref = "A1:AT30000"
 
-    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.underline()
     tools.display(preset.message["format_columns"])
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
+    tools.overline()
     font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                     'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
                     'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
@@ -173,9 +178,9 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
                 progress_bar.update(1)
                 worksheet_column.font = Font(size=10, name='Courier New')
 
-    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.underline()
     tools.display(preset.message["format_dates"])
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
+    tools.overline()
     date_columns = ['G', 'H', 'I', 'P', 'Q', 'R']
     with tqdm.tqdm(total=(len(date_columns)*len(excel_worksheet['G']))) as progress_bar:
         for date_column in date_columns:
@@ -184,7 +189,7 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
                 progress_bar.update(1)
                 worksheet_column.number_format = preset.number_format
 
-    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.underline()
     tools.display(preset.message["hide_columns"])
     hidden_columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Z', 'AA', 'AB', 'AC']
     for h in hidden_columns:
@@ -200,9 +205,9 @@ def generate_workbook(data_table, reload_url_title, remove_duplicated_urls, remo
     excel_worksheet.column_dimensions['T'].width = 85
 
     tools.display(preset.message["saving_workbook"])
-    excel_workbook.save(preset.xlsx_filename)
+    excel_workbook.save(spreadsheet_filename)
     tools.display(preset.message["done"])
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
+    tools.overline()
 
 
 def get_profile(profile):
@@ -221,18 +226,18 @@ def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname
     # TODO: READ CHROME.TXT AND IMPORT IT
     #######################################################################################
     tools.display(preset.new_line+preset.new_line)
-    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.underline()
     tools.display(preset.message["starting_export"])
     email, full, name = get_profile(profile)
     bookmarks = bookMarks.generate_bookmarks(profile)
-    tools.display(preset.underline*(screenSupport.get_terminal_width()))
+    tools.underline()
     tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")
-    tools.display(preset.overline*(screenSupport.get_terminal_width()))
+    tools.overline()
     bookmarks_data = bookMarks.generate_data(bookmarks)
     if output == "xlsx":
-        generate_workbook(bookmarks_data, refresh, undupe, clean)
+        generate_workbook(preset.xlsx_filename, bookmarks_data, refresh, undupe, clean)
     else:
-        generate_html(bookmarks_data, refresh, undupe, clean, get_hostname)
+        generate_html(preset.html_filename, bookmarks_data, refresh, undupe, clean, get_hostname)
 
 
 if __name__ == "__main__":

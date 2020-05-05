@@ -75,7 +75,10 @@
     "warning": "WARNING ",
     "writing_html": "Writing html...",
     "writing_spreadsheet": "Writing spreadsheet...",
-    "timeout_label": "Timeout:"
+    "timeout_label": "Timeout:",
+    "save_file": "Save file as...",
+    "html_file_filter": "HTML file (*.html)|*.html",
+    "xlsx_file_filter": "XLSX file (*.xlsx)|*.xlsx"
   },
   "pt-br": {
     "about_description": "Sobre o aplicativo",
@@ -153,6 +156,9 @@
     "warning": "PERIGO ",
     "writing_html": "Gravando HTML...",
     "writing_spreadsheet": "Gravando planilha...",
-    "timeout_label": "Aguardo:"
-  }
+    "timeout_label": "Aguardo:",
+    "save_file": "Salvar arquivo como...",
+    "html_file_filter": "Arquivo HTML (*.html)|*.html",
+    "xlsx_file_filter": "Arquivo XLSX (*.xlsx)|*.xlsx"
+ }
 }

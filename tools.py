@@ -1,5 +1,6 @@
 import os
 import preset
+import screenSupport
 
 from platform import system
 
@@ -47,13 +48,21 @@ def debug(*arguments):
 def display(*arguments):
     argument_count = len(arguments)
     if argument_count > 0:
-        text = preset.empty
+        display_text = preset.empty
         for element in arguments:
-            text = text + element + preset.blank
-        text = text.rstrip()
-        print(text)
+            display_text = display_text + element + preset.blank
+        display_text = display_text.rstrip()
+        print(display_text)
     else:
         return 0
+
+
+def underline():
+    display(preset.underline*(screenSupport.get_terminal_width()))
+
+
+def overline():
+    display(preset.overline*(screenSupport.get_terminal_width()))
 
 
 def select_profile(profile):

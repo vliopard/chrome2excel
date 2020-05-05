@@ -41,8 +41,8 @@ def new_tab():
     return preset.tab*level
 
 
-def write_html(folder):
-    with open(preset.html_filename, 'w', encoding='utf-8') as html_file:
+def write_html(webpage_filename, folder):
+    with open(webpage_filename, 'w', encoding='utf-8') as html_file:
         html_file.write(header)
 
         for item in folder:
