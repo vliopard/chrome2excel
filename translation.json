@@ -2,7 +2,7 @@
   "en-us": {
     "about_description": "About software",
     "about_menu": "&About",
-    "appending_data_table":"Appending data table...",
+    "appending_data_table": "Appending data table...",
     "bookmarks_editor": "Bookmarks Editor",
     "cancel_button": " Cancel ",
     "check_hostname": "Check hostname",
@@ -12,7 +12,7 @@
     "done": "Done.",
     "edit": "Edit",
     "edit_save": "Save",
-    "edit_title":"Editing ",
+    "edit_title": "Editing ",
     "exit_description": "Exit from GUI",
     "exit_menu": "&Exit",
     "exit_question": "Want to exit?",
@@ -22,7 +22,7 @@
     "find_duplicated_lines": "Find duplicate lines...",
     "format_columns": "Formatting columns...",
     "format_dates": "Formatting dates...",
-    "format_header":"Formatting header...",
+    "format_header": "Formatting header...",
     "generating_bookmarks": "Generating bookmarks...",
     "generating_from_text": "Generating from TXT...",
     "generating_html": "Generating html...",
@@ -66,7 +66,7 @@
     "settings_description": "Set options on/off",
     "settings_menu": "&Settings",
     "settings_title": "Settings",
-    "sizing_columns":"Sizing columns...",
+    "sizing_columns": "Sizing columns...",
     "starting_export": "Starting Chrome Bookmarks export.",
     "text_file_filter": "Text file (*.txt)|*.txt",
     "undupe_urls": "Undupe URLs",
@@ -74,12 +74,13 @@
     "user": "User",
     "warning": "WARNING ",
     "writing_html": "Writing html...",
-    "writing_spreadsheet": "Writing spreadsheet..."
+    "writing_spreadsheet": "Writing spreadsheet...",
+    "timeout_label": "Timeout:"
   },
   "pt-br": {
-     "about_description": "Sobre o aplicativo",
+    "about_description": "Sobre o aplicativo",
     "about_menu": "Sobr&e",
-    "appending_data_table":"Adicionando à tabela...",
+    "appending_data_table": "Adicionando à tabela...",
     "bookmarks_editor": "Editor de Bookmarks",
     "cancel_button": " Cancelar ",
     "check_hostname": "Verificar nome do Host",
@@ -89,7 +90,7 @@
     "done": "Pronto.",
     "edit": "Modificar",
     "edit_save": "Salvar",
-    "edit_title":"Modificando ",
+    "edit_title": "Modificando ",
     "exit_description": "Sair do sistema",
     "exit_menu": "&Sair",
     "exit_question": "Deseja sair?",
@@ -99,7 +100,7 @@
     "find_duplicated_lines": "Encontrando itens duplicados...",
     "format_columns": "Formatando colunas...",
     "format_dates": "Formatando datas...",
-    "format_header":"Formatando cabeçalho...",
+    "format_header": "Formatando cabeçalho...",
     "generating_bookmarks": "Gerando bookmarks...",
     "generating_from_text": "Gerando a partir de um arquivo TXT...",
     "generating_html": "Gerando um HTML...",
@@ -143,7 +144,7 @@
     "settings_description": "Habilita opções on/off",
     "settings_menu": "&Configurações",
     "settings_title": "Configurações",
-    "sizing_columns":"Dimensionando colunas...",
+    "sizing_columns": "Dimensionando colunas...",
     "starting_export": "Iniciando exportação do Chrome Bookmarks.",
     "text_file_filter": "Arquivo texto (*.txt)|*.txt",
     "undupe_urls": "Desduplicar URLs",
@@ -151,5 +152,7 @@
     "user": "Usuário",
     "warning": "PERIGO ",
     "writing_html": "Gravando HTML...",
-    "writing_spreadsheet": "Gravando planilha..." }
+    "writing_spreadsheet": "Gravando planilha...",
+    "timeout_label": "Aguardo:"
+  }
 }

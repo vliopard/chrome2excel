@@ -97,16 +97,14 @@ class MainUrlPanel(wx.Panel):
         selected_item = self.list_ctrl.GetFocusedItem()
         if selected_item >= 0:
             edit_dialog = EditDialog(self.row_obj_dict[selected_item])
-            #######################################################################################
-            # TODO: CHANGE CANCEL TO OK_EVENT
-            #######################################################################################
-            if edit_dialog.ShowModal() == wx.ID_CANCEL:
+            return_value = edit_dialog.ShowModal()
+            if return_value == wx.ID_OK:
                 self.row_obj_dict[selected_item] = edit_dialog.url
                 self.list_ctrl.DeleteItem(selected_item)
                 self.update_element(selected_item, edit_dialog.url.to_list())
             edit_dialog.Destroy()
 
-    def update_url_screen(self, items):
+    def update_url_screen(self):
         self.list_ctrl.ClearAll()
         index = [-1]
         self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=115)
@@ -119,7 +117,7 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=150)
 
     def update_url_listing(self, path_to_text_file):
-        self.update_url_screen(None)
+        self.update_url_screen()
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_text_file(path_to_text_file))
         self.update_list(url_list)
 
@@ -289,10 +287,13 @@ class EditDialog(wx.Dialog):
         self.main_box_sizer.Add(self.horizontal_box_sizer, 1, wx.EXPAND, 1)
 
         button_box_sizer = wx.BoxSizer()
+
         save_button = wx.Button(self, id=wx.ID_OK, label=preset.message["edit_save"])
         save_button.Bind(wx.EVT_BUTTON, self.on_save)
         button_box_sizer.Add(save_button, 0, wx.ALL, 1)
-        button_box_sizer.Add(wx.Button(self, id=wx.ID_CANCEL), 0, wx.ALL, 1)
+
+        cancel_button = wx.Button(self, id=wx.ID_CANCEL, label=preset.message["cancel_button"])
+        button_box_sizer.Add(cancel_button, 0, wx.ALL, 1)
 
         self.main_box_sizer.Add(button_box_sizer, 0, wx.CENTER)
         self.SetSizer(self.main_box_sizer)
@@ -311,16 +312,17 @@ class EditDialog(wx.Dialog):
         for element in self.attribute_list:
             save_list.append(element.GetValue())
         self.url.set_data(save_list)
-        self.Close(True)
+        self.EndModal(event.EventObject.Id)
 
 
 class ProfileChooser(wx.Dialog):
-    def __init__(self, parent, id_, title=preset.message["profile_chooser"], size=(600, 600)):
-        wx.Dialog.__init__(self, parent, id_, title)
+    def __init__(self, parent, id_, title=preset.message["profile_chooser"]):
+        chrome_profile_list = chromeProfile.profile_list()
+        dialog_height = len(chrome_profile_list) * 30 + 30
+        wx.Dialog.__init__(self, parent, id_, title, size=(400, dialog_height))
 
         profile_chooser_panel = wx.Panel(self)
         vertical_box_sizer = wx.BoxSizer(wx.VERTICAL)
-        chrome_profile_list = chromeProfile.profile_list()
 
         self.parent = parent
         self.parent.selected_account = 0
@@ -383,10 +385,14 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button06 = wx.ToggleButton(self, id=5, label=settings_button_label, size=button_size, pos=(150, 70), style=wx.BU_LEFT)
         self.toggle_button06.SetValue(settings_button_value)
 
-        self.language_combo_box = wx.ComboBox(self, id=6, value=parent.application_settings.system_language, pos=(10, 100), size=(135, 25), choices=preset.get_languages(), style=0, name="Select Language")
+        self.language_combo_box = wx.ComboBox(self, id=6, value=parent.application_settings.system_language, pos=(10, 100), size=(135, 25), choices=preset.get_languages(), style=0)
+
+        wx.StaticText(self, id=wx.ID_ANY, label=preset.message["timeout_label"], pos=(150, 105), size=(50, 25), style=0)
+        self.time_out = wx.SpinCtrl(self, id=7, value=str(preset.timeout), pos=(205, 100), size=(80, 25), style=wx.SP_ARROW_KEYS, min=10, max=9000, initial=120)
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.on_radio_group)
         self.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combo_box)
+        self.Bind(wx.EVT_SPINCTRL, self.on_spin_control)
 
         self.ok_button = wx.Button(self, wx.ID_OK, preset.message["ok_button"], size=button_size, pos=(70, 140))
         self.Centre()
@@ -402,6 +408,11 @@ class SettingsDialog(wx.Dialog):
     def on_combo_box(self, event):
         event_object = event.GetEventObject()
         self.parent.application_settings.system_language = event_object.GetValue()
+        self.parent.application_settings.save_settings()
+
+    def on_spin_control(self, event):
+        event_object = event.GetEventObject()
+        preset.timeout = event_object.GetValue()
         self.parent.application_settings.save_settings()
 
 

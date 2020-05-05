@@ -81,14 +81,8 @@ def clean_url(url_address):
 
 
 def get_title(url_address):
-    #######################################################################################
-    # TODO: IF NOT ENABLED, RETURN CURRENT NAME OR URL
-    #######################################################################################
     try:
-        #######################################################################################
-        # TODO: PLACE TIMEOUT IN A SETTINGS FILE
-        #######################################################################################
-        with urlopen(url_address, timeout=120) as stream:
+        with urlopen(url_address, timeout=preset.timeout) as stream:
             url_data = stream.read()
     except HTTPError as error:
         error_message = str(error)

@@ -28,6 +28,8 @@ xlsx_filename = "chrome.xlsx"
 english = 'en-us'
 message = load_translation_file()[english]
 
+timeout = 120
+
 main_icon = "blue.ico"
 on = 'on'
 off = 'off'
@@ -78,6 +80,7 @@ empty_string = '[Empty]'
 date_format = "%Y/%m/%d %H:%M:%S"
 number_format = "YYYY/MM/DD hh:mm:ss"
 
+load_time_out = "load_time_out"
 system_language = "system_language"
 export_file_type = "export_file_type"
 refresh_url_title = "refresh_url_title"

@@ -38,9 +38,6 @@ def append_data_table(data_table, url_list):
     for url_item in url_list:
         head = preset.Header()
         head.Hostname = htmlSupport.parse_url(url_item)[2]
-        #######################################################################################
-        # TODO: IF NOT ENABLED, RETURNS CURRENT NAME OR URL
-        #######################################################################################
         head.URL_Clean = htmlSupport.clean_url(url_item)
         head.URL = url_item
         data_table.append(head.to_tuple())
@@ -53,7 +50,7 @@ def generate_from_txt(url_list):
     return append_data_table(txt_header, url_list)
 
 
-def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, import_txt, get_hostname_title):
+def generate_html(data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
     tools.display(preset.message["generating_html"])
 
     data_table = append_data_table(data_table, import_text_file())
@@ -220,7 +217,9 @@ def get_profile(profile):
 def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
     settings = bookMarks.Options()
     settings.load_settings()
-
+    #######################################################################################
+    # TODO: READ CHROME.TXT AND IMPORT IT
+    #######################################################################################
     tools.display(preset.new_line+preset.new_line)
     tools.display(preset.underline*(screenSupport.get_terminal_width()))
     tools.display(preset.message["starting_export"])
@@ -233,7 +232,7 @@ def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname
     if output == "xlsx":
         generate_workbook(bookmarks_data, refresh, undupe, clean)
     else:
-        generate_html(bookmarks_data, refresh, undupe, clean, import_txt, get_hostname)
+        generate_html(bookmarks_data, refresh, undupe, clean, get_hostname)
 
 
 if __name__ == "__main__":
