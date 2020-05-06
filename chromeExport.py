@@ -399,6 +399,9 @@ class SettingsDialog(wx.Dialog):
         self.SetSize((320, 220))
         button_size = (135, 25)
 
+        #######################################################################################
+        # TODO: NOT WORKING ON WINDOWS10
+        #######################################################################################
         wx.StaticBoxSizer(wx.StaticBox(self, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47)))
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
