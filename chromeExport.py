@@ -82,9 +82,9 @@ class MainUrlPanel(wx.Panel):
                 refresh = self.parent.application_settings.refresh_url_title
                 undupe = self.parent.application_settings.remove_duplicated_urls
                 clean = self.parent.application_settings.remove_tracking_tokens_from_url
-                get_hostname = self.parent.application_settings.refresh_folder_name_with_hostname_title
+                get_hostname_title = self.parent.application_settings.refresh_folder_name_with_hostname_title
                 bookmarks_data = self.to_tuple()
-                chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname)
+                chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
 
     def on_xlsx(self, event):
         #######################################################################################
@@ -97,8 +97,9 @@ class MainUrlPanel(wx.Panel):
                 refresh = self.parent.application_settings.refresh_url_title
                 undupe = self.parent.application_settings.remove_duplicated_urls
                 clean = self.parent.application_settings.remove_tracking_tokens_from_url
+                get_hostname_title = self.parent.application_settings.refresh_folder_name_with_hostname_title
                 bookmarks_data = self.to_tuple()
-                chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean)
+                chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
 
     def on_reset(self, event):
         self.header = None
@@ -401,7 +402,7 @@ class SettingsDialog(wx.Dialog):
         wx.StaticBoxSizer(wx.StaticBox(self, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47)))
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
-        self.toggle_button01 = wx.ToggleButton(self, id=0, label=settings_button_label, size=button_size, pos=(10, 20), style=wx.BU_LEFT)
+        self.toggle_button01 = wx.CheckBox(self, id=0, label=settings_button_label, size=button_size, pos=(12, 20), style=wx.BU_LEFT)
         self.toggle_button01.SetValue(settings_button_value)
 
         settings_button_label, settings_button_value = set_button_toggle(self, 1, False)
@@ -413,7 +414,7 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button03.SetValue(settings_button_value)
 
         settings_button_label, settings_button_value = set_button_toggle(self, 3, False)
-        self.toggle_button04 = wx.ToggleButton(self, id=3, label=settings_button_label, size=button_size, pos=(150, 20), style=wx.BU_LEFT)
+        self.toggle_button04 = wx.CheckBox(self, id=3, label=settings_button_label, size=button_size, pos=(152, 20), style=wx.BU_LEFT)
         self.toggle_button04.SetValue(settings_button_value)
 
         settings_button_label, settings_button_value = set_button_toggle(self, 4, False)
@@ -424,16 +425,21 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button06 = wx.ToggleButton(self, id=5, label=settings_button_label, size=button_size, pos=(150, 85), style=wx.BU_LEFT)
         self.toggle_button06.SetValue(settings_button_value)
 
-        self.language_combo_box = wx.ComboBox(self, id=6, value=parent.application_settings.system_language, pos=(10, 115), size=(135, 25), choices=preset.get_languages(), style=0)
+        settings_button_label, settings_button_value = set_button_toggle(self, 6, False)
+        self.toggle_button07 = wx.CheckBox(self, id=6, label=settings_button_label, size=(100, 25), pos=(152, 145))
+        self.toggle_button07.SetValue(settings_button_value)
+
+        self.language_combo_box = wx.ComboBox(self, id=7, value=parent.application_settings.system_language, pos=(10, 115), size=(135, 25), choices=preset.get_languages(), style=0)
 
         wx.StaticText(self, id=wx.ID_ANY, label=preset.message["timeout_label"], pos=(150, 120), size=(50, 25), style=0)
-        self.time_out = wx.SpinCtrl(self, id=7, value=str(preset.timeout), pos=(205, 115), size=(80, 25), style=wx.SP_ARROW_KEYS, min=10, max=9000, initial=120)
+        self.time_out = wx.SpinCtrl(self, id=8, value=str(preset.timeout), pos=(205, 115), size=(80, 25), style=wx.SP_ARROW_KEYS, min=10, max=9000, initial=120)
 
+        self.Bind(wx.EVT_CHECKBOX, self.on_radio_group)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.on_radio_group)
         self.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combo_box)
         self.Bind(wx.EVT_SPINCTRL, self.on_spin_control)
 
-        self.ok_button = wx.Button(self, wx.ID_OK, preset.message["ok_button"], size=button_size, pos=(70, 145))
+        self.ok_button = wx.Button(self, wx.ID_OK, preset.message["ok_button"], size=button_size, pos=(10, 145))
         self.Centre()
         self.Show(True)
 
@@ -511,6 +517,15 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = True
         else:
             settings_button_label = preset.message["off_label"] + preset.message["check_hostname"]
+            settings_button_value = False
+    if button_id == 6:
+        if toggle_button:
+            preset.debug_mode = not preset.debug_mode
+        if preset.debug_mode:
+            settings_button_label = preset.message["debug_system"] + preset.message["on_label"]
+            settings_button_value = True
+        else:
+            settings_button_label = preset.message["debug_system"] + preset.message["off_label"]
             settings_button_value = False
     return settings_button_label, settings_button_value
 

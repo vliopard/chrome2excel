@@ -82,7 +82,9 @@
     "main_filename_help": "Output filename.",
     "missing_parameter": "Must select at least one of user profile or text file to import.",
     "works_only_on_cli": "  Works only on CLI  ",
-    "reset_button": "Reset Fields"
+    "reset_button": "Reset Fields",
+    "resolving_hostnames": "Getting hostname titles...",
+    "debug_system": "Debug is "
   },
   "pt-br": {
     "about_description": "Sobre o aplicativo",
@@ -167,6 +169,8 @@
     "main_filename_help": "Nome do arquivo de saída.",
     "missing_parameter": "Necessário escolher ao menos um perfil de usuário ou arquivo texto para importação.",
     "works_only_on_cli": "  Funciona apenas no Terminal  ",
-    "reset_button": "Limpar Tudo"
+    "reset_button": "Limpar Tudo",
+    "resolving_hostnames": "Extraíndo nomes de sites...",
+    "debug_system": "Depuração está "
  }
 }

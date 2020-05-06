@@ -12,6 +12,7 @@ from configparser import ConfigParser, DuplicateSectionError
 class Options:
     def __init__(self):
         self.system_language = preset.english
+        self.debug_system = False
         self.export_file_type = False
         self.refresh_url_title = False
         self.remove_duplicated_urls = False
@@ -29,6 +30,7 @@ class Options:
         except DuplicateSectionError:
             pass
 
+        self.configuration_parser.set(self.configuration_category, preset.debug_system, str(preset.debug_mode))
         self.configuration_parser.set(self.configuration_category, preset.load_time_out, str(preset.timeout))
         self.configuration_parser.set(self.configuration_category, preset.system_language, str(self.system_language))
         self.configuration_parser.set(self.configuration_category, preset.export_file_type, str(self.export_file_type))
@@ -42,6 +44,7 @@ class Options:
 
     def load_settings(self):
         try:
+            preset.debug_mode = self.configuration_parser.getboolean(self.configuration_category, preset.debug_system)
             preset.timeout = self.configuration_parser.getint(self.configuration_category, preset.load_time_out)
             self.system_language = self.configuration_parser.get(self.configuration_category, preset.system_language)
             self.export_file_type = self.configuration_parser.getboolean(self.configuration_category, preset.export_file_type)
@@ -52,6 +55,7 @@ class Options:
             self.refresh_folder_name_with_hostname_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_folder_name_with_hostname_title)
         except Exception as error:
             preset.timeout = 120
+            preset.debug_mode = False
             self.system_language = preset.english
             self.export_file_type = False
             self.refresh_url_title = False
@@ -222,6 +226,7 @@ def generate_bookmarks(profile):
 
 def generate_data(instance):
     for folder in instance.folders:
+
         folder_item = None
         folder_date_added = preset.no_date
         folder_date_modified = preset.no_date
@@ -232,6 +237,7 @@ def generate_data(instance):
         folder_sync_transaction_version = preset.empty
         folder_type = preset.empty
         folder_url = preset.empty
+
         for item in folder:
             if item == preset.children:
                 folder_item = read_content(folder[item])
@@ -257,6 +263,7 @@ def generate_data(instance):
                 folder_url = folder[item]
             else:
                 tools.debug(preset.message["warning"] + str(item))
+
         folder_data = (
                 folder_guid,
                 utils.to_number(folder_id),

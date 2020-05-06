@@ -52,7 +52,8 @@ def display(*arguments):
         for element in arguments:
             display_text = display_text + element + preset.blank
         display_text = display_text.rstrip()
-        print(display_text)
+        if display_text != "default":
+            print(display_text)
     else:
         return 0
 

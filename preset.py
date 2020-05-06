@@ -11,9 +11,6 @@ def load_translation_file():
 configuration_filename = "config.ini"
 main_section = 'main'
 
-#######################################################################################
-# TODO: MAY CHANGE DEBUG MODE FROM SETTINGS
-#######################################################################################
 debug_mode = False
 text_filename = "chrome.txt"
 html_filename = "chrome.html"
@@ -40,7 +37,7 @@ bookmarks = "Bookmarks"
 tab = "\t"
 new_line = "\n"
 
-underline = "_"
+underline = "\u2017"
 overline = "\u203e"
 
 no_host_name = "[no hostname]"
@@ -75,6 +72,7 @@ empty_string = '[Empty]'
 date_format = "%Y/%m/%d %H:%M:%S"
 number_format = "YYYY/MM/DD hh:mm:ss"
 
+debug_system = "debug_system"
 load_time_out = "load_time_out"
 system_language = "system_language"
 export_file_type = "export_file_type"
@@ -910,20 +908,20 @@ label_dictionary = {
 data_header = []
 
 trail = (
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank,
-            blank
+            blank,  # 28
+            blank,  # 29
+            blank,  # 30
+            blank,  # 31
+            blank,  # 32
+            blank,  # 33
+            blank,  # 34
+            blank,  # 35
+            blank,  # 36
+            blank,  # 37
+            blank,  # 38
+            blank,  # 39
+            blank,  # 40
+            blank,  # 41
+            blank,  # 42
+            blank   # 43
         )

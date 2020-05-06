@@ -60,6 +60,14 @@ For choosing an alternative profile:
 
 `python chrome2excel.py -p <ProfileNumber> -o [html, xlsx]`
 
+**To set input text file name:**
+
+`python chrome2excel.py -i <FileName>`
+
+**To set output file name:**
+
+`python chrome2excel.py -p <ProfileNumber> -n <FileName>`
+
 ## About
 *This is an* ***Open Source Project*** *that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
 

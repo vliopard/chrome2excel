@@ -1,5 +1,6 @@
 import tqdm
 import tools
+import utils
 import preset
 import bookMarks
 
@@ -136,15 +137,24 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
         tools.overline()
         reload_url_title_disabled = False
 
+    if get_hostname_title != preset.off:
+        tools.underline()
+        tools.display(preset.message["resolving_hostnames"])
+        tools.overline()
+        with tqdm.tqdm(total=len(data_table)) as progress_bar:
+            temporary_table = []
+            for data_row in data_table:
+                temporary_table.append(utils.update_tuple(data_row, htmlSupport.get_title(preset.protocol + data_row[21])[1], 2))
+                progress_bar.update(1)
+            data_table = temporary_table
+
     with tqdm.tqdm(total=len(data_table), disable=reload_url_title_disabled) as progress_bar:
         for data_row in data_table:
-            #######################################################################################
-            # TODO: IF get_hostname_title: UPDATE FOLDERNAME WITH HOST GET TITLE
-            #######################################################################################
             if remove_tracking_from_url == preset.on:
                 url_address = data_row[17]
             else:
                 url_address = data_row[18]
+
             if url_address not in visited_url_address:
                 visited_url_address.add(url_address)
                 data_table_without_duplicates.append(("MAIN", get_title_conditional(progress_bar, reload_url_title_disabled, data_row[16], url_address)) + data_row)
@@ -154,7 +164,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
     tools.display(preset.message["writing_spreadsheet"])
     tools.overline()
     with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
-        data_row_header = ["DUPE", "HOSTNAME"]
+        data_row_header = ["DUPE", "Site Name"]
         for item in preset.label_dictionary:
             data_row_header.append(preset.label_dictionary[item])
         excel_worksheet.append(tuple(data_row_header))
@@ -221,15 +231,7 @@ def get_profile(profile):
 
 
 def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name):
-    print("profile[", profile,
-          "]\noutput[", output,
-          "]\nrefresh[", refresh,
-          "]\nundupe[", undupe,
-          "]\nclean[", clean,
-          "]\nimport_txt[", import_txt,
-          "]\nget_hostname[", get_hostname,
-          "]\noutput_name[", output_name,
-          "]")
+    tools.debug("profile[", profile, "]\noutput[", output, "]\nrefresh[", refresh, "]\nundupe[", undupe, "]\nclean[", clean, "]\nimport_txt[", import_txt, "]\nget_hostname[", get_hostname, "]\noutput_name[", output_name, "]")
     if import_txt == preset.none and profile == preset.none:
         tools.underline()
         tools.display(preset.message["missing_parameter"])
