@@ -5,7 +5,6 @@ import bookMarks
 
 import htmlExport
 import htmlSupport
-import screenSupport
 import chromeProfile
 
 from openpyxl import Workbook
@@ -25,7 +24,9 @@ def get_title_conditional(progress_bar, get_title_disabled, url_name, url_addres
 
 
 def import_text_file(text_file=preset.text_filename):
-    tools.display(preset.message["import_text_file"])
+    tools.underline()
+    tools.display(preset.message["import_text_file"] + " [" + text_file + "]")
+    tools.overline()
     url_list = []
     with open(text_file, encoding='utf-8') as text_file:
         for url_item in text_file:
@@ -50,10 +51,9 @@ def generate_from_txt(url_list):
     return append_data_table(txt_header, url_list)
 
 
-def generate_html(web_page_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
-    tools.display(preset.message["generating_html"])
+def generate_web_page(web_page_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
+    tools.display(preset.message["generating_html"] + " [" + web_page_filename + "]")
 
-    # data_table = append_data_table(data_table, import_text_file())
     visited_hostname_title = set()
     visited_url_address = set()
     folder_list = []
@@ -120,8 +120,8 @@ def generate_html(web_page_filename, data_table, reload_url_title, remove_duplic
     tools.overline()
 
 
-def generate_workbook(spreadsheet_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url):
-    tools.display(preset.message["generating_workbook"])
+def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
+    tools.display(preset.message["generating_workbook"] + " [" + spreadsheet_filename + "]")
     excel_workbook = Workbook()
     excel_worksheet = excel_workbook.active
     excel_worksheet.title = preset.message["chrome_urls"]
@@ -129,17 +129,18 @@ def generate_workbook(spreadsheet_filename, data_table, reload_url_title, remove
     visited_url_address = set()
     data_table_without_duplicates = []
     tools.display(preset.message["find_duplicated_lines"])
+    reload_url_title_disabled = True
     if reload_url_title != preset.off:
         tools.underline()
         tools.display(preset.message["get_url_status"])
         tools.overline()
-
-    reload_url_title_disabled = True
-    if reload_url_title != preset.off:
         reload_url_title_disabled = False
 
     with tqdm.tqdm(total=len(data_table), disable=reload_url_title_disabled) as progress_bar:
         for data_row in data_table:
+            #######################################################################################
+            # TODO: IF get_hostname_title: UPDATE FOLDERNAME WITH HOST GET TITLE
+            #######################################################################################
             if remove_tracking_from_url == preset.on:
                 url_address = data_row[17]
             else:
@@ -219,25 +220,50 @@ def get_profile(profile):
     return chromeProfile.get_user(user_data)
 
 
-def run_chrome(profile, refresh, undupe, output, clean, import_txt, get_hostname):
-    settings = bookMarks.Options()
-    settings.load_settings()
-    #######################################################################################
-    # TODO: READ CHROME.TXT AND IMPORT IT
-    #######################################################################################
-    tools.display(preset.new_line+preset.new_line)
-    tools.underline()
-    tools.display(preset.message["starting_export"])
-    email, full, name = get_profile(profile)
-    bookmarks = bookMarks.generate_bookmarks(profile)
-    tools.underline()
-    tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")
-    tools.overline()
-    bookmarks_data = bookMarks.generate_data(bookmarks)
-    if output == "xlsx":
-        generate_workbook(preset.xlsx_filename, bookmarks_data, refresh, undupe, clean)
+def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name):
+    print("profile[", profile,
+          "]\noutput[", output,
+          "]\nrefresh[", refresh,
+          "]\nundupe[", undupe,
+          "]\nclean[", clean,
+          "]\nimport_txt[", import_txt,
+          "]\nget_hostname[", get_hostname,
+          "]\noutput_name[", output_name,
+          "]")
+    if import_txt == preset.none and profile == preset.none:
+        tools.underline()
+        tools.display(preset.message["missing_parameter"])
+        tools.overline()
     else:
-        generate_html(preset.html_filename, bookmarks_data, refresh, undupe, clean, get_hostname)
+        # settings = bookMarks.Options()
+        # settings.load_settings()
+        tools.display(preset.new_line+preset.new_line)
+        tools.underline()
+        tools.display(preset.message["starting_export"])
+
+        if profile != preset.none:
+            email, full, name = get_profile(profile)
+            bookmarks = bookMarks.generate_bookmarks(profile)
+            tools.underline()
+            tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")
+            tools.overline()
+            bookmarks_data = bookMarks.generate_data(bookmarks)
+        else:
+            bookmarks_data = []
+
+        if import_txt != preset.none:
+            bookmarks_data = append_data_table(bookmarks_data, import_text_file(import_txt))
+
+        if output_name == preset.none:
+            if output == "xlsx":
+                output_name = preset.xlsx_filename
+            else:
+                output_name = preset.html_filename
+
+        if output == "xlsx":
+            generate_work_book(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
+        else:
+            generate_web_page(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
 
 
 if __name__ == "__main__":
@@ -248,7 +274,7 @@ if __name__ == "__main__":
         "--profile",
         "-p",
         help=preset.message["main_profile_help"],
-        default="0"
+        default=preset.none
     )
     argument_parser.add_argument(
         "--output",
@@ -278,13 +304,19 @@ if __name__ == "__main__":
         "--import_txt",
         "-i",
         help=preset.message["main_import_help"],
-        default=preset.off
+        default=preset.none
     )
     argument_parser.add_argument(
         "--get_hostname",
         "-g",
         help=preset.message["main_hostname_help"],
         default=preset.off
+    )
+    argument_parser.add_argument(
+        "--output_name",
+        "-n",
+        help=preset.message["main_filename_help"],
+        default=preset.none
     )
 
     arguments = vars(argument_parser.parse_args())

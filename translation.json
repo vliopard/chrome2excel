@@ -38,9 +38,9 @@
     "main_clean_help": "Remove trackers from URL [on, off]: off Default.",
     "main_description": "Script to extract bookmarks from Google Chrome to Microsoft Excel Spreadsheet.",
     "main_hostname_help": "Get hostname [on, off]: off Default.",
-    "main_import_help": "Import TXT file [on, off]: off Default.",
+    "main_import_help": "Import TXT file.",
     "main_output_help": "Output file type [html, xlsx]: xlsx Default.",
-    "main_profile_help": "Profile number to extract: 0 Default.",
+    "main_profile_help": "Profile number to extract.",
     "main_refresh_help": "Refresh URL Title [on, off]: off Default.",
     "main_undupe_help": "Remove duplicated URL [on, off]: off Default.",
     "new_folder": "New Folder",
@@ -67,7 +67,7 @@
     "settings_menu": "&Settings",
     "settings_title": "Settings",
     "sizing_columns": "Sizing columns...",
-    "starting_export": "Starting Chrome Bookmarks export.",
+    "starting_export": "Starting Chrome Bookmarks Tool.",
     "text_file_filter": "Text file (*.txt)|*.txt",
     "undupe_urls": "Undupe URLs",
     "unknown_exception": "Unknown Exception: ",
@@ -78,7 +78,11 @@
     "timeout_label": "Timeout:",
     "save_file": "Save file as...",
     "html_file_filter": "HTML file (*.html)|*.html",
-    "xlsx_file_filter": "XLSX file (*.xlsx)|*.xlsx"
+    "xlsx_file_filter": "XLSX file (*.xlsx)|*.xlsx",
+    "main_filename_help": "Output filename.",
+    "missing_parameter": "Must select at least one of user profile or text file to import.",
+    "works_only_on_cli": "  Works only on CLI  ",
+    "reset_button": "Reset Fields"
   },
   "pt-br": {
     "about_description": "Sobre o aplicativo",
@@ -119,9 +123,9 @@
     "main_clean_help": "Remove rastreamento de URL [on, off]: off Default.",
     "main_description": "Comando para extrair bookmarks do Google Chrome para uma planilha do Microsoft Excel.",
     "main_hostname_help": "Atualiza nome do host [on, off]: off Default.",
-    "main_import_help": "Importa arquivo TXT [on, off]: off Default.",
+    "main_import_help": "Importa arquivo TXT.",
     "main_output_help": "Formato do arquivo de saída [html, xlsx]: xlsx Default.",
-    "main_profile_help": "Número do perfil para extrair: 0 Default.",
+    "main_profile_help": "Número do perfil para extrair.",
     "main_refresh_help": "Atualizar título do URL [on, off]: off Default.",
     "main_undupe_help": "Remover URLs duplicados [on, off]: off Default.",
     "new_folder": "Nova pasta",
@@ -148,7 +152,7 @@
     "settings_menu": "&Configurações",
     "settings_title": "Configurações",
     "sizing_columns": "Dimensionando colunas...",
-    "starting_export": "Iniciando exportação do Chrome Bookmarks.",
+    "starting_export": "Iniciando Ferramenta do Chrome Bookmarks.",
     "text_file_filter": "Arquivo texto (*.txt)|*.txt",
     "undupe_urls": "Desduplicar URLs",
     "unknown_exception": "Exceção desconhecida: ",
@@ -159,6 +163,10 @@
     "timeout_label": "Aguardo:",
     "save_file": "Salvar arquivo como...",
     "html_file_filter": "Arquivo HTML (*.html)|*.html",
-    "xlsx_file_filter": "Arquivo XLSX (*.xlsx)|*.xlsx"
+    "xlsx_file_filter": "Arquivo XLSX (*.xlsx)|*.xlsx",
+    "main_filename_help": "Nome do arquivo de saída.",
+    "missing_parameter": "Necessário escolher ao menos um perfil de usuário ou arquivo texto para importação.",
+    "works_only_on_cli": "  Funciona apenas no Terminal  ",
+    "reset_button": "Limpar Tudo"
  }
 }

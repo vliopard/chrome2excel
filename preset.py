@@ -16,13 +16,7 @@ main_section = 'main'
 #######################################################################################
 debug_mode = False
 text_filename = "chrome.txt"
-#######################################################################################
-# TODO: MAY CHANGE CHROME.HTML TO OTHER FILENAME
-#######################################################################################
 html_filename = "chrome.html"
-#######################################################################################
-# TODO: MAY CHANGE CHROME.XLSX TO OTHER FILENAME
-#######################################################################################
 xlsx_filename = "chrome.xlsx"
 
 english = 'en-us'
@@ -33,6 +27,7 @@ timeout = 120
 main_icon = "blue.ico"
 on = 'on'
 off = 'off'
+none = None
 empty = ""
 blank = " "
 all_profiles = "all"
