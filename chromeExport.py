@@ -399,10 +399,9 @@ class SettingsDialog(wx.Dialog):
         self.SetSize((320, 220))
         button_size = (135, 25)
 
-        #######################################################################################
-        # TODO: NOT WORKING ON WINDOWS10
-        #######################################################################################
-        wx.StaticBoxSizer(wx.StaticBox(self, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47)))
+        static_panel = wx.Panel(self, size=(300, 60))
+        wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47))
+        wx.StaticBoxSizer(wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47)))
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
         self.toggle_button01 = wx.CheckBox(self, id=0, label=settings_button_label, size=button_size, pos=(12, 20), style=wx.BU_LEFT)
@@ -494,7 +493,7 @@ def set_button_toggle(self, button_id, toggle_button):
         else:
             settings_button_label = preset.message["off_label"] + preset.message["undupe_urls"]
             settings_button_value = False
-    if button_id == 4:
+    if button_id == 5:
         if toggle_button:
             self.parent.application_settings.remove_tracking_tokens_from_url = not self.parent.application_settings.remove_tracking_tokens_from_url
         if self.parent.application_settings.remove_tracking_tokens_from_url:
@@ -512,7 +511,7 @@ def set_button_toggle(self, button_id, toggle_button):
         else:
             settings_button_label = preset.message["off_label"] + preset.message["import_txt"]
             settings_button_value = False
-    if button_id == 5:
+    if button_id == 4:
         if toggle_button:
             self.parent.application_settings.refresh_folder_name_with_hostname_title = not self.parent.application_settings.refresh_folder_name_with_hostname_title
         if self.parent.application_settings.refresh_folder_name_with_hostname_title:
