@@ -150,7 +150,7 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
         self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
         self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
-        self.list_ctrl.SetItem(index, add(position), url[21])  # 'Hostname',        #21
+        self.list_ctrl.SetItem(index, add(position), url[22])  # 'Hostname',        #21
 
     def update_list(self, url_list):
         index = 0

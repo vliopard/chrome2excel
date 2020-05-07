@@ -313,8 +313,8 @@ class Header:
             tuple_list.append(item[0])
         return tuple(tuple_list)
 
-    def get_label(self, index):
-        return label_dictionary[index]
+    def get_label(self, element_index):
+        return label_dictionary[element_index]
 
     def to_dict_index(self):
         return self.__dict__
@@ -549,6 +549,18 @@ class Header:
     @URL.getter
     def URL(self):
         return self._URL[0]
+
+    @property
+    def Icon(self):
+        return self._Icon
+
+    @Icon.setter
+    def Icon(self, Icon):
+        self._Icon = (Icon, self._Icon[1])
+
+    @Icon.getter
+    def Icon(self):
+        return self._Icon[0]
 
     @property
     def Scheme(self):
@@ -851,64 +863,65 @@ class Header:
         return self._ParamP[0]
 
 
+index = [-1]
 label_dictionary = {
-                    "0": "Folder GUID",
-                    "1": "Folder ID",
-                    "2": "Folder Sync",
-                    "3": "Type",
+                    str(add(index)): "Folder GUID",
+                    str(add(index)): "Folder ID",
+                    str(add(index)): "Folder Sync",
+                    str(add(index)): "Type",
 
-                    "4": "Folder Added",
-                    "5": "Folder Modified",
-                    "6": "Folder visited",
+                    str(add(index)): "Folder Added",
+                    str(add(index)): "Folder Modified",
+                    str(add(index)): "Folder visited",
 
-                    "7": "Folder Name",
-                    "8": "Folder URL",
+                    str(add(index)): "Folder Name",
+                    str(add(index)): "Folder URL",
 
-                    "9": "URL GUID",
-                    "10": "URL ID",
-                    "11": "URL Sync",
-                    "12": "Type",
+                    str(add(index)): "URL GUID",
+                    str(add(index)): "URL ID",
+                    str(add(index)): "URL Sync",
+                    str(add(index)): "Type",
 
-                    "13": "URL Added",
-                    "14": "URL Modified",
-                    "15": "URL Visited",
+                    str(add(index)): "URL Added",
+                    str(add(index)): "URL Modified",
+                    str(add(index)): "URL Visited",
 
-                    "16": "URL Name",
-                    "17": "URL Clean",
-                    "18": "URL",
-                    "19": "Scheme",
-                    "20": "Netloc",
-                    "21": "Hostname",
-                    "22": "Path",
-                    "23": "Port",
-                    "24": "Param",
-                    "25": "Fragment",
-                    "26": "Username",
-                    "27": "Password",
+                    str(add(index)): "URL Name",
+                    str(add(index)): "URL Clean",
+                    str(add(index)): "URL",
+                    str(add(index)): "Icon",
 
-                    "28": "ParamA",
-                    "29": "ParamB",
-                    "30": "ParamC",
-                    "31": "ParamD",
-                    "32": "ParamE",
-                    "33": "ParamF",
-                    "34": "ParamG",
-                    "35": "ParamH",
-                    "36": "ParamI",
-                    "37": "ParamJ",
-                    "38": "ParamK",
-                    "39": "ParamL",
-                    "40": "ParamM",
-                    "41": "ParamN",
-                    "42": "ParamO",
-                    "43": "ParamP"
+                    str(add(index)): "Scheme",
+                    str(add(index)): "Netloc",
+                    str(add(index)): "Hostname",
+                    str(add(index)): "Path",
+                    str(add(index)): "Port",
+                    str(add(index)): "Param",
+                    str(add(index)): "Fragment",
+                    str(add(index)): "Username",
+                    str(add(index)): "Password",
 
+                    str(add(index)): "ParamA",
+                    str(add(index)): "ParamB",
+                    str(add(index)): "ParamC",
+                    str(add(index)): "ParamD",
+                    str(add(index)): "ParamE",
+                    str(add(index)): "ParamF",
+                    str(add(index)): "ParamG",
+                    str(add(index)): "ParamH",
+                    str(add(index)): "ParamI",
+                    str(add(index)): "ParamJ",
+                    str(add(index)): "ParamK",
+                    str(add(index)): "ParamL",
+                    str(add(index)): "ParamM",
+                    str(add(index)): "ParamN",
+                    str(add(index)): "ParamO",
+                    str(add(index)): "ParamP"
     }
 
 data_header = []
 
 trail = (
-            blank,  # 28
             blank,  # 29
             blank,  # 30
             blank,  # 31
@@ -923,5 +936,6 @@ trail = (
             blank,  # 40
             blank,  # 41
             blank,  # 42
-            blank   # 43
+            blank,  # 43
+            blank   # 44
         )

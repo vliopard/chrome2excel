@@ -181,9 +181,6 @@ def read_content(folder_items):
             elif item == preset.guid:
                 url_guid = folder_item[item]
             elif item == preset.icon:
-                #######################################################################################
-                # TODO: ADD ICON TO THE SPREADSHEET
-                #######################################################################################
                 url_icon = folder_item[item]
             elif item == preset.item_id:
                 url_item_id = folder_item[item]
@@ -209,7 +206,8 @@ def read_content(folder_items):
 
                 url_name,
                 htmlSupport.clean_url(url_address),
-                url_address
+                url_address,
+                url_icon
         )
         parsed_url = htmlSupport.parse_url(url_address)
         url_list.append(url_data + parsed_url)

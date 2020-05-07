@@ -144,7 +144,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
         with tqdm.tqdm(total=len(data_table)) as progress_bar:
             temporary_table = []
             for data_row in data_table:
-                temporary_table.append(utils.update_tuple(data_row, htmlSupport.get_title(preset.protocol + data_row[21])[1], 2))
+                temporary_table.append(utils.update_tuple(data_row, htmlSupport.get_title(preset.protocol + data_row[22])[1], 2))
                 progress_bar.update(1)
             data_table = temporary_table
 
@@ -174,15 +174,14 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
             excel_worksheet.append(data_row)
 
     excel_worksheet.freeze_panes = "A2"
-    excel_worksheet.auto_filter.ref = "A1:AT30000"
+    excel_worksheet.auto_filter.ref = "A1:AU30000"
 
     tools.underline()
     tools.display(preset.message["format_columns"])
     tools.overline()
-    font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                    'AA', 'AB', 'AC', 'AD', 'AE', 'AF',
-                    'AG', 'AH', 'AI', 'AJ', 'AK', 'AL',
-                    'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS']
+    font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD',
+                    'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN',
+                    'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU']
     with tqdm.tqdm(total=(len(font_columns)*len(excel_worksheet['T']))) as progress_bar:
         for font_column in font_columns:
             for worksheet_column in excel_worksheet[font_column]:
@@ -202,7 +201,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
 
     tools.underline()
     tools.display(preset.message["hide_columns"])
-    hidden_columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Z', 'AA', 'AB', 'AC']
+    hidden_columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'AA', 'AB', 'AC', 'AD']
     for h in hidden_columns:
         excel_worksheet.column_dimensions[h].width = 9
         excel_worksheet.column_dimensions[h].hidden = True
