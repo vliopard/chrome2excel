@@ -90,8 +90,8 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
             else:
                 url_address = data_row[18]
 
-            hostname_title = data_row[21]
-            original_hostname = data_row[21]
+            hostname_title = data_row[22]
+            original_hostname = data_row[22]
 
             if reload_url_title == preset.on:
                 status_number, url_title = htmlSupport.get_title(url_address)
