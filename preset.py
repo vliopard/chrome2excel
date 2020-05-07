@@ -45,15 +45,6 @@ no_site_name = "[no site name]"
 no_clean_url = "[no clean URL]"
 no_url_address = "[no URL address]"
 
-label_date_added = "Date Added"
-label_date_modified = "Date Modified"
-label_date_visited = "Date Visited"
-label_url_name = "URL Name"
-label_url_clean = "URL Clean"
-label_original_url = "URL Address"
-label_url_hostname = "Hostname"
-label_folder_name = "Folder"
-
 children = 'children'
 meta_info = 'meta_info'
 last_visited = 'last_visited'
@@ -167,10 +158,62 @@ def get_languages():
     return language_list
 
 
+folder_guid_attr = "Folder_GUID"
+folder_id_attr = "Folder_ID"
+folder_sync_attr = "Folder_Sync"
+folder_type_attr = "Folder_Type"
+
+folder_added_attr = "Folder_Added"
+folder_modified_attr = "Folder_Modified"
+folder_visited_attr = "Folder_visited"
+
+folder_name_attr = "Folder_Name"
+folder_url_attr = "Folder_URL"
+
+url_guid_attr = "URL_GUID"
+url_id_attr = "URL_ID"
+url_sync_attr = "URL_Sync"
+url_type_attr = "URL_Type"
+
+url_added_attr = "URL_Added"
+url_modified_attr = "URL_Modified"
+url_visited_attr = "URL_Visited"
+
+url_name_attr = "URL_Name"
+url_clean_attr = "URL_Clean"
+url_attr = "URL"
+scheme_attr = "Scheme"
+netloc_attr = "Netloc"
+hostname_attr = "Hostname"
+path_attr = "Path"
+port_attr = "Port"
+param_attr = "Param"
+fragment_attr = "Fragment"
+username_attr = "Username"
+password_attr = "Password"
+
+parama_attr = "ParamA"
+paramb_attr = "ParamB"
+paramc_attr = "ParamC"
+paramd_attr = "ParamD"
+parame_attr = "ParamE"
+paramf_attr = "ParamF"
+paramg_attr = "ParamG"
+paramh_attr = "ParamH"
+parami_attr = "ParamI"
+paramj_attr = "ParamJ"
+paramk_attr = "ParamK"
+paraml_attr = "ParamL"
+paramm_attr = "ParamM"
+paramn_attr = "ParamN"
+paramo_attr = "ParamO"
+paramp_attr = "ParamP"
+
 class Header:
     def __init__(self):
         index = [-1]
         stub_date = to_date(13231709218000000)
+
         self._Folder_GUID = (empty, add(index))
         self._Folder_ID = (empty, add(index))
         self._Folder_Sync = (empty, add(index))
@@ -276,13 +319,13 @@ class Header:
         self._ParamO = (url_element[add(index)], index[0])
         self._ParamP = (url_element[add(index)], index[0])
 
-    def get_position(self, position):
+    def get_position(self, index):
         item = self.to_tuple()
-        return item[position]
+        return item[index]
 
     def get_name(self, name):
         item = self.to_dict()
-        return item[underline + name][0]
+        return item["_" + name]
 
     def to_list(self):
         dictionary = self.__dict__
@@ -313,8 +356,8 @@ class Header:
             tuple_list.append(item[0])
         return tuple(tuple_list)
 
-    def get_label(self, element_index):
-        return label_dictionary[element_index]
+    def get_label(self, index):
+        return label_dictionary[index]
 
     def to_dict_index(self):
         return self.__dict__
@@ -327,8 +370,8 @@ class Header:
         return self._Folder_GUID
 
     @Folder_GUID.setter
-    def Folder_GUID(self, Folder_GUID):
-        self._Folder_GUID = (Folder_GUID, self._Folder_GUID[1])
+    def Folder_GUID(self, folder_guid):
+        self._Folder_GUID = (folder_guid, self._Folder_GUID[1])
 
     @Folder_GUID.getter
     def Folder_GUID(self):
@@ -339,8 +382,8 @@ class Header:
         return self._Folder_ID
 
     @Folder_ID.setter
-    def Folder_ID(self, Folder_ID):
-        self._Folder_ID = (Folder_ID, self._Folder_ID[1])
+    def Folder_ID(self, folder_id):
+        self._Folder_ID = (folder_id, self._Folder_ID[1])
 
     @Folder_ID.getter
     def Folder_ID(self):
@@ -351,8 +394,8 @@ class Header:
         return self._Folder_Sync
 
     @Folder_Sync.setter
-    def Folder_Sync(self, Folder_Sync):
-        self._Folder_Sync = (Folder_Sync, self._Folder_Sync[1])
+    def Folder_Sync(self, folder_sync):
+        self._Folder_Sync = (folder_sync, self._Folder_Sync[1])
 
     @Folder_Sync.getter
     def Folder_Sync(self):
@@ -363,8 +406,8 @@ class Header:
         return self._Folder_Type
 
     @Folder_Type.setter
-    def Folder_Type(self, Folder_Type):
-        self._Folder_Type = (Folder_Type, self._Folder_Type[1])
+    def Folder_Type(self, folder_type):
+        self._Folder_Type = (folder_type, self._Folder_Type[1])
 
     @Folder_Type.getter
     def Folder_Type(self):
@@ -375,8 +418,8 @@ class Header:
         return self._Folder_Added
 
     @Folder_Added.setter
-    def Folder_Added(self, Folder_Added):
-        self._Folder_Added = (Folder_Added, self._Folder_Added[1])
+    def Folder_Added(self, folder_added):
+        self._Folder_Added = (folder_added, self._Folder_Added[1])
 
     @Folder_Added.getter
     def Folder_Added(self):
@@ -387,8 +430,8 @@ class Header:
         return self._Folder_Modified
 
     @Folder_Modified.setter
-    def Folder_Modified(self, Folder_Modified):
-        self._Folder_Modified = (Folder_Modified, self._Folder_Modified[1])
+    def Folder_Modified(self, folder_modified):
+        self._Folder_Modified = (folder_modified, self._Folder_Modified[1])
 
     @Folder_Modified.getter
     def Folder_Modified(self):
@@ -399,8 +442,8 @@ class Header:
         return self._Folder_visited
 
     @Folder_visited.setter
-    def Folder_visited(self, Folder_visited):
-        self._Folder_visited = (Folder_visited, self._Folder_visited[1])
+    def Folder_visited(self, folder_visited):
+        self._Folder_visited = (folder_visited, self._Folder_visited[1])
 
     @Folder_visited.getter
     def Folder_visited(self):
@@ -411,8 +454,8 @@ class Header:
         return self._Folder_Name
 
     @Folder_Name.setter
-    def Folder_Name(self, Folder_Name):
-        self._Folder_Name = (Folder_Name, self._Folder_Name[1])
+    def Folder_Name(self, folder_name):
+        self._Folder_Name = (folder_name, self._Folder_Name[1])
 
     @Folder_Name.getter
     def Folder_Name(self):
@@ -423,8 +466,8 @@ class Header:
         return self._Folder_URL
 
     @Folder_URL.setter
-    def Folder_URL(self, Folder_URL):
-        self._Folder_URL = (Folder_URL, self._Folder_URL[1])
+    def Folder_URL(self, folder_url):
+        self._Folder_URL = (folder_url, self._Folder_URL[1])
 
     @Folder_URL.getter
     def Folder_URL(self):
@@ -435,8 +478,8 @@ class Header:
         return self._URL_GUID
 
     @URL_GUID.setter
-    def URL_GUID(self, URL_GUID):
-        self._URL_GUID = (URL_GUID, self._URL_GUID[1])
+    def URL_GUID(self, url_guid):
+        self._URL_GUID = (url_guid, self._URL_GUID[1])
 
     @URL_GUID.getter
     def URL_GUID(self):
@@ -447,8 +490,8 @@ class Header:
         return self._URL_ID
 
     @URL_ID.setter
-    def URL_ID(self, URL_ID):
-        self._URL_ID = (URL_ID, self._URL_ID[1])
+    def URL_ID(self, url_id):
+        self._URL_ID = (url_id, self._URL_ID[1])
 
     @URL_ID.getter
     def URL_ID(self):
@@ -459,8 +502,8 @@ class Header:
         return self._URL_Sync
 
     @URL_Sync.setter
-    def URL_Sync(self, URL_Sync):
-        self._URL_Sync = (URL_Sync, self._URL_Sync[1])
+    def URL_Sync(self, url_sync):
+        self._URL_Sync = (url_sync, self._URL_Sync[1])
 
     @URL_Sync.getter
     def URL_Sync(self):
@@ -471,8 +514,8 @@ class Header:
         return self._URL_Type
 
     @URL_Type.setter
-    def URL_Type(self, URL_Type):
-        self._URL_Type = (URL_Type, self._URL_Type[1])
+    def URL_Type(self, url_type):
+        self._URL_Type = (url_type, self._URL_Type[1])
 
     @URL_Type.getter
     def URL_Type(self):
@@ -483,8 +526,8 @@ class Header:
         return self._URL_Added
 
     @URL_Added.setter
-    def URL_Added(self, URL_Added):
-        self._URL_Added = (URL_Added, self._URL_Added[1])
+    def URL_Added(self, url_added):
+        self._URL_Added = (url_added, self._URL_Added[1])
 
     @URL_Added.getter
     def URL_Added(self):
@@ -495,8 +538,8 @@ class Header:
         return self._URL_Modified
 
     @URL_Modified.setter
-    def URL_Modified(self, URL_Modified):
-        self._URL_Modified = (URL_Modified, self._URL_Modified[1])
+    def URL_Modified(self, url_modified):
+        self._URL_Modified = (url_modified, self._URL_Modified[1])
 
     @URL_Modified.getter
     def URL_Modified(self):
@@ -507,8 +550,8 @@ class Header:
         return self._URL_Visited
 
     @URL_Visited.setter
-    def URL_Visited(self, URL_Visited):
-        self._URL_Visited = (URL_Visited, self._URL_Visited[1])
+    def URL_Visited(self, url_visited):
+        self._URL_Visited = (url_visited, self._URL_Visited[1])
 
     @URL_Visited.getter
     def URL_Visited(self):
@@ -519,8 +562,8 @@ class Header:
         return self._URL_Name
 
     @URL_Name.setter
-    def URL_Name(self, URL_Name):
-        self._URL_Name = (URL_Name, self._URL_Name[1])
+    def URL_Name(self, url_name):
+        self._URL_Name = (url_name, self._URL_Name[1])
 
     @URL_Name.getter
     def URL_Name(self):
@@ -531,8 +574,8 @@ class Header:
         return self._URL_Clean
 
     @URL_Clean.setter
-    def URL_Clean(self, URL_Clean):
-        self._URL_Clean = (URL_Clean, self._URL_Clean[1])
+    def URL_Clean(self, url_clean):
+        self._URL_Clean = (url_clean, self._URL_Clean[1])
 
     @URL_Clean.getter
     def URL_Clean(self):
@@ -543,8 +586,8 @@ class Header:
         return self._URL
 
     @URL.setter
-    def URL(self, URL):
-        self._URL = (URL, self._URL[1])
+    def URL(self, url):
+        self._URL = (url, self._URL[1])
 
     @URL.getter
     def URL(self):
@@ -555,8 +598,8 @@ class Header:
         return self._Icon
 
     @Icon.setter
-    def Icon(self, Icon):
-        self._Icon = (Icon, self._Icon[1])
+    def Icon(self, icon):
+        self._Icon = (icon, self._Icon[1])
 
     @Icon.getter
     def Icon(self):
@@ -567,8 +610,8 @@ class Header:
         return self._Scheme
 
     @Scheme.setter
-    def Scheme(self, Scheme):
-        self._Scheme = (Scheme, self._Scheme[1])
+    def Scheme(self, scheme):
+        self._Scheme = (scheme, self._Scheme[1])
 
     @Scheme.getter
     def Scheme(self):
@@ -579,8 +622,8 @@ class Header:
         return self._Netloc
 
     @Netloc.setter
-    def Netloc(self, Netloc):
-        self._Netloc = (Netloc, self._Netloc[1])
+    def Netloc(self, netloc):
+        self._Netloc = (netloc, self._Netloc[1])
 
     @Netloc.getter
     def Netloc(self):
@@ -591,8 +634,8 @@ class Header:
         return self._Hostname
 
     @Hostname.setter
-    def Hostname(self, Hostname):
-        self._Hostname = (Hostname, self._Hostname[1])
+    def Hostname(self, hostname):
+        self._Hostname = (hostname, self._Hostname[1])
 
     @Hostname.getter
     def Hostname(self):
@@ -603,8 +646,8 @@ class Header:
         return self._Path
 
     @Path.setter
-    def Path(self, Path):
-        self._Path = (Path, self._Path[1])
+    def Path(self, path):
+        self._Path = (path, self._Path[1])
 
     @Path.getter
     def Path(self):
@@ -615,8 +658,8 @@ class Header:
         return self._Port
 
     @Port.setter
-    def Port(self, Port):
-        self._Port = (Port, self._Port[1])
+    def Port(self, port):
+        self._Port = (port, self._Port[1])
 
     @Port.getter
     def Port(self):
@@ -627,8 +670,8 @@ class Header:
         return self._Param
 
     @Param.setter
-    def Param(self, Param):
-        self._Param = (Param, self._Param[1])
+    def Param(self, param):
+        self._Param = (param, self._Param[1])
 
     @Param.getter
     def Param(self):
@@ -639,8 +682,8 @@ class Header:
         return self._Fragment
 
     @Fragment.setter
-    def Fragment(self, Fragment):
-        self._Fragment = (Fragment, self._Fragment[1])
+    def Fragment(self, fragment):
+        self._Fragment = (fragment, self._Fragment[1])
 
     @Fragment.getter
     def Fragment(self):
@@ -863,60 +906,60 @@ class Header:
         return self._ParamP[0]
 
 
-index = [-1]
+position = [-1]
 label_dictionary = {
-                    str(add(index)): "Folder GUID",
-                    str(add(index)): "Folder ID",
-                    str(add(index)): "Folder Sync",
-                    str(add(index)): "Type",
+                    str(add(position)): "Folder GUID",
+                    str(add(position)): "Folder ID",
+                    str(add(position)): "Folder Sync",
+                    str(add(position)): "Type",
 
-                    str(add(index)): "Folder Added",
-                    str(add(index)): "Folder Modified",
-                    str(add(index)): "Folder visited",
+                    str(add(position)): "Folder Added",
+                    str(add(position)): "Folder Modified",
+                    str(add(position)): "Folder visited",
 
-                    str(add(index)): "Folder Name",
-                    str(add(index)): "Folder URL",
+                    str(add(position)): "Folder Name",
+                    str(add(position)): "Folder URL",
 
-                    str(add(index)): "URL GUID",
-                    str(add(index)): "URL ID",
-                    str(add(index)): "URL Sync",
-                    str(add(index)): "Type",
+                    str(add(position)): "URL GUID",
+                    str(add(position)): "URL ID",
+                    str(add(position)): "URL Sync",
+                    str(add(position)): "Type",
 
-                    str(add(index)): "URL Added",
-                    str(add(index)): "URL Modified",
-                    str(add(index)): "URL Visited",
+                    str(add(position)): "URL Added",
+                    str(add(position)): "URL Modified",
+                    str(add(position)): "URL Visited",
 
-                    str(add(index)): "URL Name",
-                    str(add(index)): "URL Clean",
-                    str(add(index)): "URL",
-                    str(add(index)): "Icon",
+                    str(add(position)): "URL Name",
+                    str(add(position)): "URL Clean",
+                    str(add(position)): "URL",
+                    str(add(position)): "Icon",
 
-                    str(add(index)): "Scheme",
-                    str(add(index)): "Netloc",
-                    str(add(index)): "Hostname",
-                    str(add(index)): "Path",
-                    str(add(index)): "Port",
-                    str(add(index)): "Param",
-                    str(add(index)): "Fragment",
-                    str(add(index)): "Username",
-                    str(add(index)): "Password",
+                    str(add(position)): "Scheme",
+                    str(add(position)): "Netloc",
+                    str(add(position)): "Hostname",
+                    str(add(position)): "Path",
+                    str(add(position)): "Port",
+                    str(add(position)): "Param",
+                    str(add(position)): "Fragment",
+                    str(add(position)): "Username",
+                    str(add(position)): "Password",
 
-                    str(add(index)): "ParamA",
-                    str(add(index)): "ParamB",
-                    str(add(index)): "ParamC",
-                    str(add(index)): "ParamD",
-                    str(add(index)): "ParamE",
-                    str(add(index)): "ParamF",
-                    str(add(index)): "ParamG",
-                    str(add(index)): "ParamH",
-                    str(add(index)): "ParamI",
-                    str(add(index)): "ParamJ",
-                    str(add(index)): "ParamK",
-                    str(add(index)): "ParamL",
-                    str(add(index)): "ParamM",
-                    str(add(index)): "ParamN",
-                    str(add(index)): "ParamO",
-                    str(add(index)): "ParamP"
+                    str(add(position)): "ParamA",
+                    str(add(position)): "ParamB",
+                    str(add(position)): "ParamC",
+                    str(add(position)): "ParamD",
+                    str(add(position)): "ParamE",
+                    str(add(position)): "ParamF",
+                    str(add(position)): "ParamG",
+                    str(add(position)): "ParamH",
+                    str(add(position)): "ParamI",
+                    str(add(position)): "ParamJ",
+                    str(add(position)): "ParamK",
+                    str(add(position)): "ParamL",
+                    str(add(position)): "ParamM",
+                    str(add(position)): "ParamN",
+                    str(add(position)): "ParamO",
+                    str(add(position)): "ParamP"
     }
 
 data_header = []

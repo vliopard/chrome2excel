@@ -65,11 +65,15 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
         tools.overline()
         with tqdm.tqdm(total=len(data_table)) as progress_bar:
             for data_row in data_table:
+
+                header = preset.Header()
+                header.set_data(data_row)
+
                 progress_bar.update(1)
                 if remove_tracking_from_url == preset.on:
-                    url_address = data_row[17]
+                    url_address = header.get_name(preset.url_clean_attr)
                 else:
-                    url_address = data_row[18]
+                    url_address = header.get_name(preset.url_attr)
                 if url_address not in visited_url_address:
                     visited_url_address.add(url_address)
                     data_table_without_duplicates.append(data_row)
@@ -81,22 +85,26 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
     tools.overline()
     with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
         for data_row in data_table_without_duplicates:
+
+            header = preset.Header()
+            header.set_data(data_row)
+
             progress_bar.update(1)
 
-            url_title = data_row[16]
+            url_title = header.get_name(preset.url_name_attr)
 
             if remove_tracking_from_url == preset.on:
-                url_address = data_row[17]
+                url_address = header.get_name(preset.url_clean_attr)
             else:
-                url_address = data_row[18]
+                url_address = header.get_name(preset.url_attr)
 
-            hostname_title = data_row[22]
-            original_hostname = data_row[22]
+            hostname_title = header.get_name(preset.hostname_attr)
+            original_hostname = header.get_name(preset.hostname_attr)
 
             if reload_url_title == preset.on:
                 status_number, url_title = htmlSupport.get_title(url_address)
                 if status_number != 0:
-                    url_title = "[ " + url_title + " " + str(status_number) + " - " + data_row[16] + " ]"
+                    url_title = "[ " + url_title + " " + str(status_number) + " - " + header.get_name(preset.url_name_attr) + " ]"
 
             if get_hostname_title == preset.on:
                 status_number, hostname_title = htmlSupport.get_title(preset.protocol + original_hostname)
@@ -104,11 +112,11 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
                     hostname_title = "[ " + hostname_title + " " + str(status_number) + " - " + original_hostname + " ]"
 
             if hostname_title not in visited_hostname_title:
-                url_data = tools.Urls(url_address, data_row[13], url_title)
+                url_data = tools.Urls(url_address, header.get_name(preset.url_added_attr), url_title)
                 visited_hostname_title.add(hostname_title)
-                folder_list.append(tools.Folder(data_row[4], data_row[5], hostname_title, [url_data]))
+                folder_list.append(tools.Folder(header.get_name(preset.folder_added_attr), header.get_name(preset.folder_modified_attr), hostname_title, [url_data]))
             else:
-                url_data = tools.Urls(url_address, data_row[13], url_title)
+                url_data = tools.Urls(url_address, header.get_name(preset.url_added_attr), url_title)
                 for folder in folder_list:
                     if folder.folder_name == hostname_title:
                         folder.add_url(url_data)
@@ -150,16 +158,19 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
 
     with tqdm.tqdm(total=len(data_table), disable=reload_url_title_disabled) as progress_bar:
         for data_row in data_table:
+            header = preset.Header()
+            header.set_data(data_row)
             if remove_tracking_from_url == preset.on:
-                url_address = data_row[17]
+                url_address = header.get_name(preset.url_clean_attr)
             else:
-                url_address = data_row[18]
+                url_address = header.get_name(preset.url_attr)
 
+            url_name = header.get_name(preset.url_name_attr)
             if url_address not in visited_url_address:
                 visited_url_address.add(url_address)
-                data_table_without_duplicates.append(("MAIN", get_title_conditional(progress_bar, reload_url_title_disabled, data_row[16], url_address)) + data_row)
+                data_table_without_duplicates.append(("MAIN", get_title_conditional(progress_bar, reload_url_title_disabled, url_name, url_address)) + data_row)
             elif remove_duplicated_urls == preset.off:
-                data_table_without_duplicates.append(("DUPE", get_title_conditional(progress_bar, reload_url_title_disabled, data_row[16], url_address)) + data_row)
+                data_table_without_duplicates.append(("DUPE", get_title_conditional(progress_bar, reload_url_title_disabled, url_name, url_address)) + data_row)
 
     tools.display(preset.message["writing_spreadsheet"])
     tools.overline()
@@ -236,8 +247,6 @@ def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname
         tools.display(preset.message["missing_parameter"])
         tools.overline()
     else:
-        # settings = bookMarks.Options()
-        # settings.load_settings()
         tools.display(preset.new_line+preset.new_line)
         tools.underline()
         tools.display(preset.message["starting_export"])
@@ -268,6 +277,29 @@ def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname
 
 
 if __name__ == "__main__":
+    settings = bookMarks.Options()
+    settings.load_settings()
+
+    default_output = "xlsx"
+    if settings.export_file_type:
+        default_output = "html"
+
+    default_refresh = preset.off
+    if settings.refresh_url_title:
+        default_refresh = preset.on
+
+    default_undupe = preset.off
+    if settings.remove_duplicated_urls:
+        default_undupe = preset.on
+
+    default_clean = preset.off
+    if settings.remove_tracking_tokens_from_url:
+        default_clean = preset.on
+
+    default_hostname = preset.off
+    if settings.refresh_folder_name_with_hostname_title:
+        default_hostname = preset.on
+
     argument_parser = ArgumentParser(
         description=preset.message["main_description"]
     )
@@ -280,26 +312,26 @@ if __name__ == "__main__":
     argument_parser.add_argument(
         "--output",
         "-o",
-        help=preset.message["main_output_help"],
-        default="xlsx"
+        help=preset.message["main_output_help"] + default_output + preset.message["default"],
+        default=default_output
     )
     argument_parser.add_argument(
         "--refresh",
         "-r",
-        help=preset.message["main_refresh_help"],
-        default=preset.off
+        help=preset.message["main_refresh_help"] + default_refresh + preset.message["default"],
+        default=default_refresh
     )
     argument_parser.add_argument(
         "--undupe",
         "-u",
-        help=preset.message["main_undupe_help"],
-        default=preset.off
+        help=preset.message["main_undupe_help"] + default_undupe + preset.message["default"],
+        default=default_undupe
     )
     argument_parser.add_argument(
         "--clean",
         "-c",
-        help=preset.message["main_clean_help"],
-        default=preset.off
+        help=preset.message["main_clean_help"] + default_clean + preset.message["default"],
+        default=default_clean
     )
     argument_parser.add_argument(
         "--import_txt",
@@ -310,8 +342,8 @@ if __name__ == "__main__":
     argument_parser.add_argument(
         "--get_hostname",
         "-g",
-        help=preset.message["main_hostname_help"],
-        default=preset.off
+        help=preset.message["main_hostname_help"] + default_hostname + preset.message["default"],
+        default=default_hostname
     )
     argument_parser.add_argument(
         "--output_name",

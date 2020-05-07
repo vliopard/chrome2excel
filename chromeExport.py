@@ -38,14 +38,14 @@ class MainUrlPanel(wx.Panel):
         #######################################################################################
         index = [-1]
 
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_modified, width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_visited, width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.label_folder_name, width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.label_url_name, width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.label_url_clean, width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.label_original_url, width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_visited"], width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_folder_name"], width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_name"], width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_clean"], width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=200)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
 
         main_box_sizer.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 5)
         main_box_sizer.AddStretchSpacer()
