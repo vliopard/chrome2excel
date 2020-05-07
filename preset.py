@@ -962,8 +962,6 @@ label_dictionary = {
                     str(add(position)): "ParamP"
     }
 
-data_header = []
-
 trail = (
             blank,  # 29
             blank,  # 30

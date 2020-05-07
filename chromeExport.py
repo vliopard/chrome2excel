@@ -127,14 +127,14 @@ class MainUrlPanel(wx.Panel):
     def update_url_screen(self):
         self.list_ctrl.ClearAll()
         index = [-1]
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_added, width=115)
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_modified, width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.label_date_visited, width=120)
-        self.list_ctrl.InsertColumn(add(index), preset.label_folder_name, width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.label_url_name, width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.label_url_clean, width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.label_original_url, width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.label_url_hostname, width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=115)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_visited"], width=120)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_folder_name"], width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_name"], width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_clean"], width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=150)
+        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
 
     def update_url_listing(self, path_to_text_file):
         self.update_url_screen()

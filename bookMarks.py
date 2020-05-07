@@ -53,7 +53,7 @@ class Options:
             self.remove_tracking_tokens_from_url = self.configuration_parser.getboolean(self.configuration_category, preset.remove_tracking_tokens_from_url)
             self.import_urls_from_text_file = self.configuration_parser.getboolean(self.configuration_category, preset.import_urls_from_text_file)
             self.refresh_folder_name_with_hostname_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_folder_name_with_hostname_title)
-        except Exception as error:
+        except Exception:
             preset.timeout = 120
             preset.debug_mode = False
             self.system_language = preset.english
@@ -275,7 +275,7 @@ def generate_data(instance):
                 folder_name,
                 folder_url
         )
-
+        data_header = []
         for item in folder_item:
-            preset.data_header.append(folder_data + item + preset.trail)
-    return preset.data_header
+            data_header.append(folder_data + item + preset.trail)
+    return data_header
