@@ -223,6 +223,8 @@ def generate_bookmarks(profile):
 
 
 def generate_data(instance):
+    data_header = []
+
     for folder in instance.folders:
 
         folder_item = None
@@ -275,7 +277,6 @@ def generate_data(instance):
                 folder_name,
                 folder_url
         )
-        data_header = []
         for item in folder_item:
             data_header.append(folder_data + item + preset.trail)
     return data_header

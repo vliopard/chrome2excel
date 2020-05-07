@@ -79,10 +79,8 @@ class MainUrlPanel(wx.Panel):
         if self.url_objects:
             self.on_save_file("html")
             if self.save_file_name:
-                refresh = self.parent.application_settings.refresh_url_title
-                undupe = self.parent.application_settings.remove_duplicated_urls
-                clean = self.parent.application_settings.remove_tracking_tokens_from_url
-                get_hostname_title = self.parent.application_settings.refresh_folder_name_with_hostname_title
+
+                refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
                 chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
 
@@ -94,10 +92,8 @@ class MainUrlPanel(wx.Panel):
         if self.url_objects:
             self.on_save_file("xlsx")
             if self.save_file_name:
-                refresh = self.parent.application_settings.refresh_url_title
-                undupe = self.parent.application_settings.remove_duplicated_urls
-                clean = self.parent.application_settings.remove_tracking_tokens_from_url
-                get_hostname_title = self.parent.application_settings.refresh_folder_name_with_hostname_title
+
+                refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
                 chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
 
@@ -415,6 +411,9 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button03 = wx.ToggleButton(self, id=2, label=settings_button_label, size=button_size, pos=(10, 85), style=wx.BU_LEFT)
         self.toggle_button03.SetValue(settings_button_value)
 
+        #######################################################################################
+        # TODO: IMPORT TXT IS NOT ON/OFF ANYMORE. IT IS ON IF THERE IS A FILENAME, OTHERWISE OFF. IT DOESNT MAKE SENSE TO KEEP THIS ITEM IN SETTINGS MENU AS IT IS
+        #######################################################################################
         settings_button_label, settings_button_value = set_button_toggle(self, 3, False)
         self.toggle_button04 = wx.CheckBox(self, id=3, label=settings_button_label, size=button_size, pos=(152, 20), style=wx.BU_LEFT)
         self.toggle_button04.SetValue(settings_button_value)

@@ -88,3 +88,23 @@ def get_chrome_element(profile_number, item):
     if os.path.exists(chrome_file):
         return chrome_file
     return None
+
+
+def get_settings(settings):
+    refresh = preset.off
+    if settings.refresh_url_title:
+        refresh = preset.on
+
+    undupe = preset.off
+    if settings.remove_duplicated_urls:
+        undupe = preset.on
+
+    clean = preset.off
+    if settings.remove_tracking_tokens_from_url:
+        clean = preset.on
+
+    get_hostname_title = preset.off
+    if settings.refresh_folder_name_with_hostname_title:
+        get_hostname_title = preset.on
+
+    return refresh, undupe, clean, get_hostname_title

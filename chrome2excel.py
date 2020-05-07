@@ -135,9 +135,6 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
     excel_worksheet = excel_workbook.active
     excel_worksheet.title = preset.message["chrome_urls"]
 
-    visited_url_address = set()
-    data_table_without_duplicates = []
-    tools.display(preset.message["find_duplicated_lines"])
     reload_url_title_disabled = True
     if reload_url_title != preset.off:
         tools.underline()
@@ -155,6 +152,10 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
                 temporary_table.append(utils.update_tuple(data_row, htmlSupport.get_title(preset.protocol + data_row[22])[1], 2))
                 progress_bar.update(1)
             data_table = temporary_table
+
+    visited_url_address = set()
+    data_table_without_duplicates = []
+    tools.display(preset.message["find_duplicated_lines"])
 
     with tqdm.tqdm(total=len(data_table), disable=reload_url_title_disabled) as progress_bar:
         for data_row in data_table:
@@ -284,21 +285,7 @@ if __name__ == "__main__":
     if settings.export_file_type:
         default_output = "html"
 
-    default_refresh = preset.off
-    if settings.refresh_url_title:
-        default_refresh = preset.on
-
-    default_undupe = preset.off
-    if settings.remove_duplicated_urls:
-        default_undupe = preset.on
-
-    default_clean = preset.off
-    if settings.remove_tracking_tokens_from_url:
-        default_clean = preset.on
-
-    default_hostname = preset.off
-    if settings.refresh_folder_name_with_hostname_title:
-        default_hostname = preset.on
+    default_refresh, default_undupe, default_clean, default_hostname = tools.get_settings(settings)
 
     argument_parser = ArgumentParser(
         description=preset.message["main_description"]
