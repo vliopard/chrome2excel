@@ -4,6 +4,7 @@ import wx.adv
 import tools
 import utils
 import preset
+import locale
 import datetime
 import bookMarks
 import chrome2excel
@@ -11,13 +12,13 @@ import chromeProfile
 
 from utils import add
 
+locale.setlocale(locale.LC_ALL, '')
+
 
 class MainUrlPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-
-        main_box_sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.header = preset.Header()
 
@@ -26,18 +27,12 @@ class MainUrlPanel(wx.Panel):
         self.url_objects = None
         self.save_file_name = None
 
-        self.list_ctrl = wx.ListCtrl(self, size=(10, 500), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
-        #######################################################################################
-        # TODO: SAVE COLUMNS WIDTH
+        self.list_ctrl = wx.ListCtrl(self, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+
         #######################################################################################
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
         #######################################################################################
-        # TODO: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
-        #######################################################################################
-        # TODO: CLEAR LIST CONTROL ITEMS WHILE RE-IMPORTING PROFILE FROM CHROME
-        #######################################################################################
         index = [-1]
-
         self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=118)
         self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
         self.list_ctrl.InsertColumn(add(index), preset.message["label_date_visited"], width=118)
@@ -47,29 +42,33 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=200)
         self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
 
-        main_box_sizer.Add(self.list_ctrl, 0, wx.ALL | wx.EXPAND, 5)
-        main_box_sizer.AddStretchSpacer()
 
         edit_button = wx.Button(self, label=preset.message["edit"])
         edit_button.Bind(wx.EVT_BUTTON, self.on_edit)
+
         html_button = wx.Button(self, label=preset.message["export_html"])
         html_button.Bind(wx.EVT_BUTTON, self.on_html)
+
         xlsx_button = wx.Button(self, label=preset.message["export_xlsx"])
         xlsx_button.Bind(wx.EVT_BUTTON, self.on_xlsx)
+
         reset_button = wx.Button(self, label=preset.message["reset_button"])
         reset_button.Bind(wx.EVT_BUTTON, self.on_reset)
 
-        #######################################################################################
-        # TODO: KEEP BUTTON RATIO WHEN SCREEN IS MAXIMIZED
-        #######################################################################################
         button_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        button_box_sizer.Add(edit_button, 1, wx.EXPAND)
-        button_box_sizer.Add(html_button, 1, wx.EXPAND)
-        button_box_sizer.Add(xlsx_button, 1, wx.EXPAND)
-        button_box_sizer.Add(reset_button, 1, wx.EXPAND)
-        main_box_sizer.Add(button_box_sizer, 1, wx.EXPAND)
+        button_box_sizer.Add(edit_button, 1)
+        button_box_sizer.Add(html_button, 1)
+        button_box_sizer.Add(xlsx_button, 1)
+        button_box_sizer.Add(reset_button, 1)
 
-        self.SetSizer(main_box_sizer)
+        list_control_box_sizer = wx.BoxSizer(wx.VERTICAL)
+        list_control_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
+        list_control_box_sizer.Add(self.list_ctrl, 2, wx.ALL | wx.EXPAND, 0)
+        list_control_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
+        list_control_box_sizer.Add(button_box_sizer, 0, wx.ALL | wx.EXPAND, 0)
+        list_control_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
+
+        self.SetSizer(list_control_box_sizer)
 
     def on_html(self, event):
         #######################################################################################
@@ -193,6 +192,14 @@ class MainFrame(wx.Frame):
         self.application_settings = bookMarks.Options()
         self.application_settings.load_settings()
         self.selected_account = -1
+
+        self.status_bar = self.CreateStatusBar(3)
+        self.status_bar.SetStatusWidths([200, 500, -1])
+
+        self.status_bar.SetStatusText(preset.message["application_title"])
+        self.status_bar.SetStatusText("", 1)
+        self.status_bar.SetStatusText(preset.message["total_items"] + "0", 2)
+
         self.main_url_panel = MainUrlPanel(self)
         self.create_menu()
         self.Show()
@@ -207,6 +214,7 @@ class MainFrame(wx.Frame):
         open_account_menu_item = options_menu.Append(wx.ID_ANY, preset.message["import_account_menu"], preset.message["import_account_description"])
         open_folder_menu_item = options_menu.Append(wx.ID_ANY, preset.message["open_file_menu"], preset.message["open_file_description"])
         open_settings_menu_item = options_menu.Append(wx.ID_ANY, preset.message["settings_menu"], preset.message["settings_description"])
+        options_menu.AppendSeparator()
         open_exit_menu_item = options_menu.Append(wx.ID_ANY, preset.message["exit_menu"], preset.message["exit_description"])
 
         menu_bar.Append(options_menu, preset.message["options_menu"])
@@ -231,6 +239,7 @@ class MainFrame(wx.Frame):
                                            style=wx.DD_DEFAULT_STYLE)
         if open_folder_dialog.ShowModal() == wx.ID_OK:
             self.main_url_panel.update_url_listing(open_folder_dialog.GetPath())
+            self.set_total_items()
         open_folder_dialog.Destroy()
 
     def on_open_account(self, event):
@@ -241,6 +250,7 @@ class MainFrame(wx.Frame):
             data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected_account))
             self.main_url_panel.update_list(data_table)
             self.main_url_panel.Update()
+            self.set_total_items()
         else:
             self.selected_account = -1
         profile_chooser_dialog.Destroy()
@@ -266,6 +276,9 @@ class MainFrame(wx.Frame):
         exit_dialog.Destroy()
         # self.Close(True)
 
+    def set_total_items(self):
+        self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(len(self.main_url_panel.url_objects)), 2)
+
 
 class AboutDialog(wx.Dialog):
     def __init__(self, parent):
@@ -274,22 +287,27 @@ class AboutDialog(wx.Dialog):
         about_application.Name = "Chrome Exporter"
         about_application.Version = "1.0"
         about_application.Copyright = "OTDS H Co."
-        #######################################################################################
-        # TODO: TRANSLATE
-        #######################################################################################
-        about_application.Description = "This Python Application helps you to convert your Google Bookmarks to a Microsoft Excel Spreadsheet." \
-                                        "\n\nHow it works:\n\nThis software access your Google Chrome Bookmarks and dump database to Excel Spreadsheet format." \
-                                        "\nIt also has features regarding to clean URLs, stripping tracking tokens."
+        about_application.Description = preset.message["application_description"]
         about_application.WebSite = ("https://github.com/vliopard/chrome2excel",
-                                     "Chrome Bookmarks to Microsoft Excel")
-        about_application.Developers = ["Vincent Liopard."]
-        about_application.License = "This is an Open Source Project that uses other General Public License (GPL) sources from the web."
-        about_application.SetTranslators = ["Vincent Liopard."]
+                                     preset.message["application_website"])
+        vincent_liopard = "Vincent Liopard."
+        about_application.Developers = [vincent_liopard]
+        about_application.License = preset.message["application_licence"]
+        about_application.SetTranslators = [vincent_liopard]
+        about_application.DocWriters = [vincent_liopard]
+        about_application.SetArtists = [vincent_liopard]
 
         wx.adv.AboutBox(about_application)
 
 
 class EditDialog(wx.Dialog):
+    #######################################################################################
+    # TODO: SAVE COLUMNS WIDTH AND/OR AUTOSIZE COLUMNS
+    # TODO: https://coldfix.de/2015/10/05/autosized-listctrl/
+    # TODO: EDIT ROW ITEMS INPLACE
+    # TODO: ALTERNATE ROW COLORS
+    # TODO: https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
+    #######################################################################################
     def __init__(self, edit_url):
         super().__init__(parent=None, title=preset.message["edit_title"] + edit_url.URL_Name, size=(700, 590))
         self.url = edit_url
@@ -412,6 +430,7 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button03.SetValue(settings_button_value)
 
         #######################################################################################
+        # TODO: DEPRECATED: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
         # TODO: IMPORT TXT IS NOT ON/OFF ANYMORE. IT IS ON IF THERE IS A FILENAME, OTHERWISE OFF. IT DOESNT MAKE SENSE TO KEEP THIS ITEM IN SETTINGS MENU AS IT IS
         #######################################################################################
         settings_button_label, settings_button_value = set_button_toggle(self, 3, False)
@@ -441,6 +460,7 @@ class SettingsDialog(wx.Dialog):
         self.Bind(wx.EVT_SPINCTRL, self.on_spin_control)
 
         self.ok_button = wx.Button(self, wx.ID_OK, preset.message["ok_button"], size=button_size, pos=(10, 145))
+
         self.Centre()
         self.Show(True)
 
