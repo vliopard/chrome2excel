@@ -241,12 +241,12 @@ def get_profile(profile):
     return tools.get_user(user_data)
 
 
-def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name, list_profiles):
+def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name, list_profile):
     tools.debug("profile[", profile, "]\noutput[", output, "]\nrefresh[", refresh, "]\nundupe[", undupe, "]\nclean[", clean, "]\nimport_txt[", import_txt, "]\nget_hostname[", get_hostname, "]\noutput_name[", output_name, "]\nlist_profiles[" + list_profiles + "]")
-    if list_profiles:
-        if not list_profiles.isdigit():
-            list_profiles = preset.all_profiles
-        tools.get_profile(list_profiles)
+    if list_profile:
+        if not list_profile.isdigit():
+            list_profile = preset.all_profiles
+        tools.list_profiles(list_profile)
     else:
         if import_txt == preset.none and profile == preset.none:
             tools.underline()
@@ -280,6 +280,7 @@ def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname
                 generate_work_book(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
             else:
                 generate_web_page(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
+
 
 if __name__ == "__main__":
     settings = bookMarks.Options()
@@ -343,7 +344,7 @@ if __name__ == "__main__":
         default=preset.none
     )
     argument_parser.add_argument(
-        "--list_profiles",
+        "--list_profile",
         "-l",
         help=preset.message["profile_help"],
         default=preset.none

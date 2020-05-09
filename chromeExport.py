@@ -8,7 +8,6 @@ import locale
 import datetime
 import bookMarks
 import chrome2excel
-import chromeProfile
 
 from utils import add
 
@@ -369,7 +368,7 @@ class EditDialog(wx.Dialog):
 
 class ProfileChooser(wx.Dialog):
     def __init__(self, parent, id_, title=preset.message["profile_chooser"]):
-        chrome_profile_list = chromeProfile.profile_list()
+        chrome_profile_list = tools.get_profile_list()
         dialog_height = len(chrome_profile_list) * 30 + 30
         wx.Dialog.__init__(self, parent, id_, title, size=(400, dialog_height))
 

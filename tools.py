@@ -110,6 +110,7 @@ def get_settings(settings):
 
     return refresh, undupe, clean, get_hostname_title
 
+
 def get_user(user_path):
     user_name = json.loads(open(user_path, encoding='utf-8').read())["account_info"][0]
     return user_name['email'], user_name['full_name'], user_name['given_name']
@@ -122,7 +123,7 @@ def retrieve_profile(profile):
     return get_user(user_data)
 
 
-def profile_list():
+def get_profile_list():
     user_list = []
     for number in range(0, 100):
         try:
@@ -133,7 +134,7 @@ def profile_list():
     return user_list
 
 
-def get_profile(profile):
+def list_profiles(profile):
     if profile == preset.all_profiles:
         for number in range(0, 100):
             try:
