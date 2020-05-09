@@ -30,6 +30,9 @@ class MainUrlPanel(wx.Panel):
 
         #######################################################################################
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
+        # TODO: SAVE COLUMNS WIDTH AND/OR AUTO-SIZE COLUMNS https://coldfix.de/2015/10/05/autosized-listctrl/
+        # TODO: EDIT ROW ITEMS INPLACE https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
+        # TODO: SORT ROWS BY CLICKING HEADER https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         #######################################################################################
         index = [-1]
         self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=118)
@@ -70,8 +73,7 @@ class MainUrlPanel(wx.Panel):
 
     def on_html(self, event):
         #######################################################################################
-        # TODO: GENERATE HTML WITH PROGRESS BAR
-        # TODO: https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
+        # TODO: GENERATE HTML WITH PROGRESS BAR https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
         #######################################################################################
         if self.url_objects:
             self.on_save_file("html")
@@ -83,8 +85,7 @@ class MainUrlPanel(wx.Panel):
 
     def on_xlsx(self, event):
         #######################################################################################
-        # TODO: GENERATE XLSX WITH PROGRESS BAR
-        # TODO: https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
+        # TODO: GENERATE XLSX WITH PROGRESS BAR https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
         #######################################################################################
         if self.url_objects:
             self.on_save_file("xlsx")
@@ -154,6 +155,14 @@ class MainUrlPanel(wx.Panel):
             url_object.set_data(url)
             self.url_objects.append(url_object.to_list())
             self.row_obj_dict[index] = url_object
+            #######################################################################################
+            # TODO: LET USER CHANGE COLOR IN SETTINGS
+            #######################################################################################
+            if index % 2:
+                self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
+            else:
+                self.list_ctrl.SetItemBackgroundColour(index, "#EEEEEE")
+
             index += 1
 
     def on_save_file(self, save_file_default):
@@ -299,13 +308,6 @@ class AboutDialog(wx.Dialog):
 
 
 class EditDialog(wx.Dialog):
-    #######################################################################################
-    # TODO: SAVE COLUMNS WIDTH AND/OR AUTOSIZE COLUMNS
-    # TODO: https://coldfix.de/2015/10/05/autosized-listctrl/
-    # TODO: EDIT ROW ITEMS INPLACE
-    # TODO: ALTERNATE ROW COLORS
-    # TODO: https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
-    #######################################################################################
     def __init__(self, edit_url):
         super().__init__(parent=None, title=preset.message["edit_title"] + edit_url.URL_Name, size=(700, 590))
         self.url = edit_url
@@ -329,7 +331,7 @@ class EditDialog(wx.Dialog):
             self.add_widgets(edit_url.get_label(str(index)), self.attribute_list[index], dialog_place)
 
         #######################################################################################
-        # TODO: MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
+        # TODO: DEPRECATED: (EDIT IS GOING TO BE INLINE) MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
         #######################################################################################
         self.horizontal_box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
         self.horizontal_box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
@@ -434,7 +436,9 @@ class SettingsDialog(wx.Dialog):
 
         #######################################################################################
         # TODO: DEPRECATED: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
-        # TODO: IMPORT TXT IS NOT ON/OFF ANYMORE. IT IS ON IF THERE IS A FILENAME, OTHERWISE OFF. IT DOESNT MAKE SENSE TO KEEP THIS ITEM IN SETTINGS MENU AS IT IS
+        # TODO: DEPRECATED: MERGE IS DONE BY SELECTING TXT AND THEN SELECTING PROFILE OR VICE-VERSA
+        # TODO: DEPRECATED: IMPORT TXT IS NOT ON/OFF ANYMORE. IT IS ON IF THERE IS A FILENAME, OTHERWISE OFF.
+        # TODO: DEPRECATED: IT DOESNT MAKE SENSE TO KEEP THIS ITEM IN SETTINGS MENU AS IT IS
         #######################################################################################
         settings_button_label, settings_button_value = set_button_toggle(self, 3, False)
         self.toggle_button04 = wx.CheckBox(self, id=3, label=settings_button_label, size=button_size, pos=(152, 20), style=wx.BU_LEFT)
