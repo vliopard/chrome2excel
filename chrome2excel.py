@@ -6,7 +6,6 @@ import bookMarks
 
 import htmlExport
 import htmlSupport
-import chromeProfile
 
 from openpyxl import Workbook
 from openpyxl.styles import Font

@@ -41,7 +41,6 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=200)
         self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
 
-
         edit_button = wx.Button(self, label=preset.message["edit"])
         edit_button.Bind(wx.EVT_BUTTON, self.on_edit)
 
@@ -369,34 +368,39 @@ class EditDialog(wx.Dialog):
 class ProfileChooser(wx.Dialog):
     def __init__(self, parent, id_, title=preset.message["profile_chooser"]):
         chrome_profile_list = tools.get_profile_list()
-        dialog_height = len(chrome_profile_list) * 30 + 30
-        wx.Dialog.__init__(self, parent, id_, title, size=(400, dialog_height))
+        maximum_length = 0
+        for profile in chrome_profile_list:
+            if len(profile[1]) > maximum_length:
+                maximum_length = len(profile[1])
+        chooser_width = maximum_length * 7
+        chooser_height = len(chrome_profile_list) * 45 + 60
 
-        profile_chooser_panel = wx.Panel(self)
-        vertical_box_sizer = wx.BoxSizer(wx.VERTICAL)
+        wx.Dialog.__init__(self, parent, id_, title, size=(chooser_width, chooser_height))
+        profile_chooser_panel = wx.Panel(self, size=(chooser_width, chooser_height))
 
         self.parent = parent
         self.parent.selected_account = 0
 
-        position = 10
+        vertical_box_sizer = wx.BoxSizer(wx.VERTICAL)
+        horizontal_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+
         if chrome_profile_list:
-            vertical_box_sizer.Add(wx.RadioButton(profile_chooser_panel, 0, label=chrome_profile_list[0][1], pos=(10, 10), style=wx.RB_GROUP))
+            vertical_box_sizer.Add(wx.RadioButton(profile_chooser_panel, 0, label=chrome_profile_list[0][1], style=wx.RB_GROUP))
             for profile in chrome_profile_list[1:]:
-                position = position + 20
-                vertical_box_sizer.Add(wx.RadioButton(profile_chooser_panel, profile[0], label=profile[1], pos=(10, position)))
-
+                vertical_box_sizer.Add(wx.RadioButton(profile_chooser_panel, profile[0], label=profile[1]))
             self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_group)
-
-            position = position + 30
-            vertical_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_OK, preset.message["ok_button"], pos=(10, position)))
+            horizontal_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_OK, preset.message["ok_button"]), 1)
         else:
-            vertical_box_sizer.Add(wx.StaticText(profile_chooser_panel, wx.ID_ANY, label=preset.message["no_account"], pos=(10, position)))
-            position = position + 30
+            vertical_box_sizer.Add(wx.StaticText(profile_chooser_panel, wx.ID_ANY, label=preset.message["no_account"]))
+        horizontal_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_CANCEL, preset.message["cancel_button"]), 1)
 
-        vertical_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_CANCEL, preset.message["cancel_button"], pos=(130, position)))
-
-        self.Centre()
-        self.Show(True)
+        main_box_sizer = wx.BoxSizer(wx.VERTICAL)
+        main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
+        main_box_sizer.Add(vertical_box_sizer, 2, wx.ALL | wx.EXPAND, 8)
+        main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
+        main_box_sizer.Add(horizontal_box_sizer, 0, wx.ALL | wx.EXPAND, 1)
+        main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
+        self.SetSizer(main_box_sizer)
 
     def on_radio_group(self, event):
         event_object = event.GetEventObject()
