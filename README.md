@@ -1,14 +1,14 @@
 # Chrome Bookmarks to Microsoft Excel
 
-*This Python Application helps you to convert your Google Bookmarks to a Microsoft Excel Spreadsheet.*
+*This Python Application helps you to convert your **Google Chrome Bookmarks** to a **Microsoft Excel compatible Spreadsheet.***
 
 ## How it works:
 
-This software access your Google Chrome Bookmarks and dump database to Excel Spreadsheet format.
+This software access your **Google Chrome Bookmarks** and dump database to spreadsheet format.
 
-It also has features regarding to clean URLs, stripping tracking tokens.
+It also has features regarding to clean URLs, refresh URLs titles and stripping tracking tokens from dirty URLs.
 
-## How to install:
+## Requirements - How to install:
 
 Run command:
 
@@ -32,9 +32,9 @@ For running default profile in Command Line Interface:
 
 **To identify local profiles:**
 
-`python chromeProfile.py -p <ProfileNumber>`
+`python chrome2excel.py -l ['all' | <ProfileNumber>]`
 
-For choosing an alternative profile:
+For choosing an specific profile:
 
 `python chrome2excel.py -p <ProfileNumber>`
 
@@ -69,7 +69,7 @@ For choosing an alternative profile:
 `python chrome2excel.py -p <ProfileNumber> -n <FileName>`
 
 ## About
-*This is an* ***Open Source Project*** *that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
+*This is an **Open Source Project** that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
 
 By OTDS H Co.
 ___

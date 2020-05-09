@@ -238,44 +238,48 @@ def get_profile(profile):
     if not user_data:
         tools.display(preset.message["invalid_profile"])
         exit(1)
-    return chromeProfile.get_user(user_data)
+    return tools.get_user(user_data)
 
 
-def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name):
-    tools.debug("profile[", profile, "]\noutput[", output, "]\nrefresh[", refresh, "]\nundupe[", undupe, "]\nclean[", clean, "]\nimport_txt[", import_txt, "]\nget_hostname[", get_hostname, "]\noutput_name[", output_name, "]")
-    if import_txt == preset.none and profile == preset.none:
-        tools.underline()
-        tools.display(preset.message["missing_parameter"])
-        tools.overline()
+def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name, list_profiles):
+    tools.debug("profile[", profile, "]\noutput[", output, "]\nrefresh[", refresh, "]\nundupe[", undupe, "]\nclean[", clean, "]\nimport_txt[", import_txt, "]\nget_hostname[", get_hostname, "]\noutput_name[", output_name, "]\nlist_profiles[" + list_profiles + "]")
+    if list_profiles:
+        if not list_profiles.isdigit():
+            list_profiles = preset.all_profiles
+        tools.get_profile(list_profiles)
     else:
-        tools.display(preset.new_line+preset.new_line)
-        tools.underline()
-        tools.display(preset.message["starting_export"])
-
-        if profile != preset.none:
-            email, full, name = get_profile(profile)
-            bookmarks = bookMarks.generate_bookmarks(profile)
+        if import_txt == preset.none and profile == preset.none:
             tools.underline()
-            tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")
+            tools.display(preset.message["missing_parameter"])
             tools.overline()
-            bookmarks_data = bookMarks.generate_data(bookmarks)
         else:
-            bookmarks_data = []
+            tools.display(preset.new_line+preset.new_line)
+            tools.underline()
+            tools.display(preset.message["starting_export"])
 
-        if import_txt != preset.none:
-            bookmarks_data = append_data_table(bookmarks_data, import_text_file(import_txt))
-
-        if output_name == preset.none:
-            if output == "xlsx":
-                output_name = preset.xlsx_filename
+            if profile != preset.none:
+                email, full, name = get_profile(profile)
+                bookmarks = bookMarks.generate_bookmarks(profile)
+                tools.underline()
+                tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")
+                tools.overline()
+                bookmarks_data = bookMarks.generate_data(bookmarks)
             else:
-                output_name = preset.html_filename
+                bookmarks_data = []
 
-        if output == "xlsx":
-            generate_work_book(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
-        else:
-            generate_web_page(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
+            if import_txt != preset.none:
+                bookmarks_data = append_data_table(bookmarks_data, import_text_file(import_txt))
 
+            if output_name == preset.none:
+                if output == "xlsx":
+                    output_name = preset.xlsx_filename
+                else:
+                    output_name = preset.html_filename
+
+            if output == "xlsx":
+                generate_work_book(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
+            else:
+                generate_web_page(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
 
 if __name__ == "__main__":
     settings = bookMarks.Options()
@@ -338,6 +342,11 @@ if __name__ == "__main__":
         help=preset.message["main_filename_help"],
         default=preset.none
     )
-
+    argument_parser.add_argument(
+        "--list_profiles",
+        "-l",
+        help=preset.message["profile_help"],
+        default=preset.none
+    )
     arguments = vars(argument_parser.parse_args())
     run_chrome(**arguments)
