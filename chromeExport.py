@@ -228,10 +228,10 @@ class MainFrame(wx.Frame):
         options_menu = wx.Menu()
 
         open_account_menu_item = options_menu.Append(wx.ID_ANY, preset.message["import_account_menu"], preset.message["import_account_description"])
-        open_folder_menu_item = options_menu.Append(wx.ID_ANY, preset.message["open_file_menu"], preset.message["open_file_description"])
+        open_folder_menu_item = options_menu.Append(wx.ID_OPEN, preset.message["open_file_menu"], preset.message["open_file_description"])
         open_settings_menu_item = options_menu.Append(wx.ID_ANY, preset.message["settings_menu"], preset.message["settings_description"])
         options_menu.AppendSeparator()
-        open_exit_menu_item = options_menu.Append(wx.ID_ANY, preset.message["exit_menu"], preset.message["exit_description"])
+        open_exit_menu_item = options_menu.Append(wx.ID_EXIT, preset.message["exit_menu"], preset.message["exit_description"])
 
         menu_bar.Append(options_menu, preset.message["options_menu"])
 
@@ -294,7 +294,7 @@ class MainFrame(wx.Frame):
             if exit_value == wx.ID_YES:
                 self.Destroy()
         else:
-            self.Destroy()
+            self.Close()
 
     def set_total_items(self):
         #######################################################################################
