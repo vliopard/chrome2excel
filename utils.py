@@ -7,6 +7,10 @@ def add(value):
     return value[0]
 
 
+def get(value):
+    return value[0]
+
+
 def check_is_none(value):
     if value is None:
         return preset.empty_string

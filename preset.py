@@ -4,6 +4,9 @@ from pathlib import Path
 from utils import add, to_date
 
 
+#######################################################################################
+# TODO: MOVE RESOURCES TO FOLDER
+#######################################################################################
 def load_translation_file():
     return load(Path("translation.json").open(encoding="utf-8"))
 

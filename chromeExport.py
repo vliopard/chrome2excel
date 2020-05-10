@@ -9,9 +9,17 @@ import datetime
 import bookMarks
 import chrome2excel
 
-from utils import add
+from utils import add, get
+from wx.lib.mixins import listctrl
 
 locale.setlocale(locale.LC_ALL, '')
+
+
+class ListCtrl(wx.ListCtrl, listctrl.ListCtrlAutoWidthMixin):
+    def __init__(self, parent, id_, pos=wx.DefaultPosition, size=wx.DefaultSize, style=0):
+        wx.ListCtrl.__init__(self, parent, id_, pos, size, style)
+        listctrl.ListCtrlAutoWidthMixin.__init__(self)
+        self.setResizeColumn(6)
 
 
 class MainUrlPanel(wx.Panel):
@@ -26,28 +34,21 @@ class MainUrlPanel(wx.Panel):
         self.url_objects = None
         self.save_file_name = None
 
-        self.list_ctrl = wx.ListCtrl(self, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+        # self.list_ctrl = wx.ListCtrl(self, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+        self.list_ctrl = ListCtrl(self, wx.ID_ANY, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
 
         #######################################################################################
+        # TODO: SAVE COLUMNS WIDTH
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
         # TODO: EDIT ROW ITEMS INPLACE https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         # TODO: SORT ROWS BY CLICKING HEADER https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         #######################################################################################
-        # TODO: SAVE COLUMNS WIDTH AND/OR AUTO-SIZE COLUMNS
+        # TODO: AUTO-SIZE COLUMNS
         # https://stackoverflow.com/questions/11314339/make-column-width-take-up-available-space-in-wxpython-listctrl
         # https://discuss.wxpython.org/t/will-wx-list-autosize-useheader-resize-dynamically/29689
-        # https://www.reddit.com/r/learnpython/comments/1hk3ib/resizing_columns_to_fit_with_a_vanilla_wxpython/
-        # https://stackoverflow.com/questions/11314339/make-column-width-take-up-available-space-in-wxpython-listctrl
+        # https://www.reddit.com/r/learnpython/comments/1hk3ib/resizing_columns_to_fit_with_a_vanilla_wxpython/cav3aox/
         #######################################################################################
-        index = [-1]
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_visited"], width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_folder_name"], width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_name"], width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_clean"], width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=200)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
+        self.update_url_screen(False)
 
         edit_button = wx.Button(self, label=preset.message["edit"])
         edit_button.Bind(wx.EVT_BUTTON, self.on_edit)
@@ -83,7 +84,6 @@ class MainUrlPanel(wx.Panel):
         if self.url_objects:
             self.on_save_file("html")
             if self.save_file_name:
-
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
                 chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
@@ -95,7 +95,6 @@ class MainUrlPanel(wx.Panel):
         if self.url_objects:
             self.on_save_file("xlsx")
             if self.save_file_name:
-
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
                 chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
@@ -104,7 +103,7 @@ class MainUrlPanel(wx.Panel):
         self.header = None
         self.row_obj_dict = {}
         self.url_objects = None
-        self.update_url_screen()
+        self.update_url_screen(True)
 
     def to_tuple(self):
         bookmarks_data = []
@@ -123,8 +122,10 @@ class MainUrlPanel(wx.Panel):
                 self.update_element(selected_item, edit_dialog.url.to_list())
             edit_dialog.Destroy()
 
-    def update_url_screen(self):
-        self.list_ctrl.ClearAll()
+    def update_url_screen(self, reset):
+        if reset:
+            self.list_ctrl.ClearAll()
+            
         index = [-1]
         self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=115)
         self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
@@ -136,20 +137,28 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
 
     def update_url_listing(self, path_to_text_file):
-        self.update_url_screen()
+        self.update_url_screen(False)
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_text_file(path_to_text_file))
         self.update_list(url_list)
 
     def update_element(self, index, url):
         position = [0]
         self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))  # 'URL Added',       #13
+        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified',    #14
+        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',     #15
+        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), url[7])   # 'Folder Name',     #07
+        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
+
         self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
+
         self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
+
         self.list_ctrl.SetItem(index, add(position), url[22])  # 'Hostname',        #21
+        self.list_ctrl.SetColumnWidth(get(position), -1)
 
     def update_list(self, url_list):
         index = 0
