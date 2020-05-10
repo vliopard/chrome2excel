@@ -578,3 +578,22 @@ if __name__ == '__main__':
     application = wx.App(False)
     application_frame = MainFrame()
     application.MainLoop()
+
+'''
+progress_dialog = wx.GenericProgressDialog("Title", "Message", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+run_tqdm(progress_dialog)
+
+def run_tqdm(gui_update):
+    with tqdm.tqdm(total=500) as progress_bar:
+
+        gui_update.SetLabel("Measuring...")
+        gui_update.SetRange(450)
+
+        for x in range(0, 500):
+            time.sleep(0.001)
+            progress_bar.update(1)
+
+            progress_dialog_not_cancelled, _ = gui_update.Update(x, str(x))
+            if not progress_dialog_not_cancelled:
+                break
+'''
