@@ -38,7 +38,7 @@ class MainUrlPanel(wx.Panel):
 
         #######################################################################################
         # TODO: AUTO SAVE COLUMNS WIDTH
-        # TODO: SELECT COLUMNS TO SHOW IN POPUP MENU
+        # TODO: SELECT COLUMNS TO SHOW IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
         # TODO: EDIT ROW ITEMS INPLACE https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         # TODO: SORT ROWS BY CLICKING HEADER https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         #######################################################################################
@@ -157,7 +157,9 @@ class MainUrlPanel(wx.Panel):
             self.url_objects.append(url_object.to_list())
             self.row_obj_dict[index] = url_object
             #######################################################################################
-            # TODO: LET USER CHANGE COLOR IN SETTINGS
+            # TODO: LET USER CHANGE COLOR IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
+            # TODO: http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
+            # TODO: https://www.daniweb.com/programming/software-development/threads/352474/wxpython-wx-listctrl-and-wx-menu
             #######################################################################################
             if index % 2:
                 self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
