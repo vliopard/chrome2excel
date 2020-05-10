@@ -19,7 +19,7 @@ class Options:
         self.remove_tracking_tokens_from_url = False
         self.import_urls_from_text_file = False
         self.refresh_folder_name_with_hostname_title = False
-
+        self.exit_dialog_confirmation = True
         self.configuration_category = preset.main_section
         self.configuration_parser = ConfigParser()
         self.configuration_parser.read(preset.configuration_filename)
@@ -39,6 +39,7 @@ class Options:
         self.configuration_parser.set(self.configuration_category, preset.remove_tracking_tokens_from_url, str(self.remove_tracking_tokens_from_url))
         self.configuration_parser.set(self.configuration_category, preset.import_urls_from_text_file, str(self.import_urls_from_text_file))
         self.configuration_parser.set(self.configuration_category, preset.refresh_folder_name_with_hostname_title, str(self.refresh_folder_name_with_hostname_title))
+        self.configuration_parser.set(self.configuration_category, preset.exit_dialog_confirmation, str(self.exit_dialog_confirmation))
         with open(preset.configuration_filename, 'w') as configuration_file:
             self.configuration_parser.write(configuration_file)
 
@@ -53,6 +54,8 @@ class Options:
             self.remove_tracking_tokens_from_url = self.configuration_parser.getboolean(self.configuration_category, preset.remove_tracking_tokens_from_url)
             self.import_urls_from_text_file = self.configuration_parser.getboolean(self.configuration_category, preset.import_urls_from_text_file)
             self.refresh_folder_name_with_hostname_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_folder_name_with_hostname_title)
+            self.exit_dialog_confirmation = self.configuration_parser.getboolean(self.configuration_category, preset.exit_dialog_confirmation)
+
         except Exception:
             preset.timeout = 120
             preset.debug_mode = False
@@ -63,6 +66,7 @@ class Options:
             self.remove_tracking_tokens_from_url = False
             self.import_urls_from_text_file = False
             self.refresh_folder_name_with_hostname_title = False
+            self.exit_dialog_confirmation = True
         preset.set_language(self.system_language)
 
 

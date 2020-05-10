@@ -9,7 +9,7 @@ import datetime
 import bookMarks
 import chrome2excel
 
-from utils import add, get
+from utils import add
 from wx.lib.mixins import listctrl
 
 locale.setlocale(locale.LC_ALL, '')
@@ -115,21 +115,21 @@ class MainUrlPanel(wx.Panel):
                 self.list_ctrl.DeleteItem(selected_item)
                 self.update_element(selected_item, edit_dialog.url.to_list())
                 self.update_column_width()
-            edit_dialog.Destroy()
 
     def update_url_screen(self, reset):
         if reset:
             self.list_ctrl.ClearAll()
-            
-        index = [-1]
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=115)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_date_visited"], width=120)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_folder_name"], width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_name"], width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_clean"], width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=150)
-        self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
+
+        if self.list_ctrl.GetItemCount() < 1:
+            index = [-1]
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=115)
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_date_visited"], width=120)
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_folder_name"], width=150)
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_url_name"], width=150)
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_url_clean"], width=150)
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=150)
+            self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
 
     def update_url_listing(self, path_to_text_file):
         self.update_url_screen(False)
@@ -138,14 +138,14 @@ class MainUrlPanel(wx.Panel):
 
     def update_element(self, index, url):
         position = [0]
-        self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))  # 'URL Added',       #13
-        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified',    #14
-        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',     #15
-        self.list_ctrl.SetItem(index, add(position), url[7])   # 'Folder Name',     #07
-        self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
-        self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
-        self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
-        self.list_ctrl.SetItem(index, add(position), url[22])  # 'Hostname',        #21
+        self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))              # 'URL Added',    #13
+        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified', #14
+        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',  #15
+        self.list_ctrl.SetItem(index, add(position), url[7])                         # 'Folder Name',  #07
+        self.list_ctrl.SetItem(index, add(position), url[16])                        # 'URL Name',     #16
+        self.list_ctrl.SetItem(index, add(position), url[17])                        # 'URL Clean',    #17
+        self.list_ctrl.SetItem(index, add(position), url[18])                        # 'URL',          #18
+        self.list_ctrl.SetItem(index, add(position), url[22])                        # 'Hostname',     #21
 
     def update_list(self, url_list):
         index = 0
@@ -158,8 +158,8 @@ class MainUrlPanel(wx.Panel):
             self.row_obj_dict[index] = url_object
             #######################################################################################
             # TODO: LET USER CHANGE COLOR IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
-            # TODO: http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
-            # TODO: https://www.daniweb.com/programming/software-development/threads/352474/wxpython-wx-listctrl-and-wx-menu
+            # TODO: CHANGE COLOR IN POPUP MENU http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
+            # TODO: CHANGE COLOR IN POPUP MENU https://www.daniweb.com/programming/software-development/threads/352474/wxpython-wx-listctrl-and-wx-menu
             #######################################################################################
             if index % 2:
                 self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
@@ -169,6 +169,9 @@ class MainUrlPanel(wx.Panel):
         self.update_column_width()
 
     def update_column_width(self):
+        #######################################################################################
+        # TODO: DATE COLUMNS MUST BE AUTO WIDTH
+        #######################################################################################
         self.list_ctrl.SetColumnWidth(0, -1)
         self.list_ctrl.SetColumnWidth(1, -1)
         self.list_ctrl.SetColumnWidth(2, -1)
@@ -188,13 +191,9 @@ class MainUrlPanel(wx.Panel):
                                          style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
 
         if save_file_dialog.ShowModal() == wx.ID_OK:
-            # dirname = save_file_dialog.GetDirectory()
-            # filename = save_file_dialog.GetFilename()
             self.save_file_name = save_file_dialog.GetPath()
         else:
             self.save_file_name = None
-
-        save_file_dialog.Destroy()
 
 
 class MainFrame(wx.Frame):
@@ -257,7 +256,6 @@ class MainFrame(wx.Frame):
         if open_folder_dialog.ShowModal() == wx.ID_OK:
             self.main_url_panel.update_url_listing(open_folder_dialog.GetPath())
             self.set_total_items()
-        open_folder_dialog.Destroy()
 
     def on_open_account(self, event):
         profile_chooser_dialog = ProfileChooser(self, -1)
@@ -270,31 +268,39 @@ class MainFrame(wx.Frame):
             self.set_total_items()
         else:
             self.selected_account = -1
-        profile_chooser_dialog.Destroy()
 
     def on_open_settings(self, event):
         settings_dialog = SettingsDialog(self, 0)
         settings_dialog.ShowModal()
-        settings_dialog.Destroy()
 
     def on_about(self, event):
         AboutDialog(self)
 
     def on_open_exit(self, event):
-        #######################################################################################
-        # TODO: EXIT CONFIRMATION SHOW NEXT TICKER
-        #######################################################################################
-        exit_dialog = wx.MessageDialog(self,
-                                       preset.message["exit_question"],
-                                       preset.message["exit_title"],
-                                       wx.YES_NO | wx.ICON_QUESTION)
-        if exit_dialog.ShowModal() == wx.ID_YES:
+        if self.application_settings.exit_dialog_confirmation:
+            exit_dialog = wx.RichMessageDialog(self,
+                                               preset.message["exit_question"],
+                                               preset.message["exit_title"],
+                                               wx.YES_NO | wx.ICON_QUESTION)
+            exit_dialog.ShowCheckBox(preset.message["exit_confirmation"])
+            exit_value = exit_dialog.ShowModal()
+            if exit_dialog.IsCheckBoxChecked():
+                #######################################################################################
+                # TODO: RECOVER DISPLAYING EXIT DIALOG FROM SETTINGS
+                #######################################################################################
+                self.application_settings.exit_dialog_confirmation = False
+                self.application_settings.save_settings()
+
+            if exit_value == wx.ID_YES:
+                self.Destroy()
+        else:
             self.Destroy()
-        exit_dialog.Destroy()
-        # self.Close(True)
 
     def set_total_items(self):
-        self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(len(self.main_url_panel.url_objects)), 2)
+        #######################################################################################
+        # TODO: self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
+        #######################################################################################
+        self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(self.main_url_panel.list_ctrl.GetItemCount()), 2)
 
 
 class AboutDialog(wx.Dialog):
