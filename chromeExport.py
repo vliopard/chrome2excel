@@ -120,6 +120,7 @@ class MainUrlPanel(wx.Panel):
                 self.row_obj_dict[selected_item] = edit_dialog.url
                 self.list_ctrl.DeleteItem(selected_item)
                 self.update_element(selected_item, edit_dialog.url.to_list())
+                self.update_column_width()
             edit_dialog.Destroy()
 
     def update_url_screen(self, reset):
@@ -144,21 +145,13 @@ class MainUrlPanel(wx.Panel):
     def update_element(self, index, url):
         position = [0]
         self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))  # 'URL Added',       #13
-        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified',    #14
-        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',     #15
-        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), url[7])   # 'Folder Name',     #07
-        self.list_ctrl.SetColumnWidth(get(position), -1)
         self.list_ctrl.SetItem(index, add(position), url[16])  # 'URL Name',        #16
-
         self.list_ctrl.SetItem(index, add(position), url[17])  # 'URL Clean',       #17
-
         self.list_ctrl.SetItem(index, add(position), url[18])  # 'URL',             #18
-
         self.list_ctrl.SetItem(index, add(position), url[22])  # 'Hostname',        #21
-        self.list_ctrl.SetColumnWidth(get(position), -1)
 
     def update_list(self, url_list):
         index = 0
@@ -176,8 +169,15 @@ class MainUrlPanel(wx.Panel):
                 self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
             else:
                 self.list_ctrl.SetItemBackgroundColour(index, "#EEEEEE")
-
             index += 1
+        self.update_column_width()
+
+    def update_column_width(self):
+        self.list_ctrl.SetColumnWidth(0, -1)
+        self.list_ctrl.SetColumnWidth(1, -1)
+        self.list_ctrl.SetColumnWidth(2, -1)
+        self.list_ctrl.SetColumnWidth(3, -1)
+        self.list_ctrl.SetColumnWidth(7, -1)
 
     def on_save_file(self, save_file_default):
         if save_file_default == "html":
