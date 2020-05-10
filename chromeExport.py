@@ -30,9 +30,14 @@ class MainUrlPanel(wx.Panel):
 
         #######################################################################################
         # TODO: SELECT COLUMNS TO SHOW IN SETTINGS
-        # TODO: SAVE COLUMNS WIDTH AND/OR AUTO-SIZE COLUMNS https://coldfix.de/2015/10/05/autosized-listctrl/
         # TODO: EDIT ROW ITEMS INPLACE https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         # TODO: SORT ROWS BY CLICKING HEADER https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
+        #######################################################################################
+        # TODO: SAVE COLUMNS WIDTH AND/OR AUTO-SIZE COLUMNS
+        # https://stackoverflow.com/questions/11314339/make-column-width-take-up-available-space-in-wxpython-listctrl
+        # https://discuss.wxpython.org/t/will-wx-list-autosize-useheader-resize-dynamically/29689
+        # https://www.reddit.com/r/learnpython/comments/1hk3ib/resizing_columns_to_fit_with_a_vanilla_wxpython/
+        # https://stackoverflow.com/questions/11314339/make-column-width-take-up-available-space-in-wxpython-listctrl
         #######################################################################################
         index = [-1]
         self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=118)
