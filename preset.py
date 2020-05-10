@@ -3,15 +3,15 @@ from pathlib import Path
 
 from utils import add, to_date
 
+main_icon = "resources/blue.ico"
+configuration_filename = "resources/config.ini"
+translation_filename = "resources/translation.json"
 
-#######################################################################################
-# TODO: MOVE RESOURCES TO FOLDER
-#######################################################################################
+
 def load_translation_file():
-    return load(Path("translation.json").open(encoding="utf-8"))
+    return load(Path(translation_filename).open(encoding="utf-8"))
 
 
-configuration_filename = "config.ini"
 main_section = 'main'
 
 debug_mode = False
@@ -24,7 +24,6 @@ message = load_translation_file()[english]
 
 timeout = 120
 
-main_icon = "blue.ico"
 on = 'on'
 off = 'off'
 none = None
