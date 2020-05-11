@@ -70,3 +70,21 @@ def update_progress(message, index, total_items):
             if not progress_dialog_not_cancelled:
                 return True
     return False
+
+
+def process_tree(children_list, count):
+    for item in children_list:
+        if "type" in item and item["type"] == "url":
+            count += 1
+        if "type" in item and item["type"] == "folder":
+            if "children" in item:
+                count = process_tree(item["children"], count)
+    return count
+
+
+def count_urls(items):
+    count = 0
+    for key, value in items:
+        if "children" in value:
+            count = process_tree(value["children"], count)
+    return count
