@@ -62,13 +62,18 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
         tools.underline()
         tools.display(preset.message["removing_duplicates"])
         tools.overline()
-        with tqdm.tqdm(total=len(data_table)) as progress_bar:
-            for data_row in data_table:
+        total_items = len(data_table)
+        with tqdm.tqdm(total=total_items) as progress_bar:
+            utils.update_progress(preset.message["removing_duplicates"], -1, total_items)
+            for index, data_row in enumerate(data_table):
 
                 header = preset.Header()
                 header.set_data(data_row)
 
                 progress_bar.update(1)
+                if utils.update_progress(preset.message["removing_duplicates"], index, total_items):
+                    break
+
                 if remove_tracking_from_url == preset.on:
                     url_address = header.get_name(preset.url_clean_attr)
                 else:
@@ -82,13 +87,17 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
     tools.underline()
     tools.display(preset.message["writing_html"])
     tools.overline()
-    with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
-        for data_row in data_table_without_duplicates:
+    total_items = len(data_table_without_duplicates)
+    with tqdm.tqdm(total=total_items) as progress_bar:
+        utils.update_progress(preset.message["writing_html"], -1, total_items)
+        for index, data_row in enumerate(data_table_without_duplicates):
 
             header = preset.Header()
             header.set_data(data_row)
 
             progress_bar.update(1)
+            if utils.update_progress(preset.message["writing_html"], index, total_items):
+                break
 
             url_title = header.get_name(preset.url_name_attr)
 
@@ -145,19 +154,27 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
         tools.underline()
         tools.display(preset.message["resolving_hostnames"])
         tools.overline()
-        with tqdm.tqdm(total=len(data_table)) as progress_bar:
+        total_items = len(data_table)
+        with tqdm.tqdm(total=total_items) as progress_bar:
             temporary_table = []
-            for data_row in data_table:
+            utils.update_progress(preset.message["resolving_hostnames"], -1, total_items)
+            for index, data_row in enumerate(data_table):
                 temporary_table.append(utils.update_tuple(data_row, htmlSupport.get_title(preset.protocol + data_row[22])[1], 2))
                 progress_bar.update(1)
+                if utils.update_progress(preset.message["resolving_hostnames"], index, total_items):
+                    break
             data_table = temporary_table
 
     visited_url_address = set()
     data_table_without_duplicates = []
     tools.display(preset.message["find_duplicated_lines"])
+    total_items = len(data_table)
+    with tqdm.tqdm(total=total_items, disable=reload_url_title_disabled) as progress_bar:
+        utils.update_progress(preset.message["find_duplicated_lines"], -1, total_items)
+        for index, data_row in enumerate(data_table):
+            if utils.update_progress(preset.message["find_duplicated_lines"], index, total_items):
+                break
 
-    with tqdm.tqdm(total=len(data_table), disable=reload_url_title_disabled) as progress_bar:
-        for data_row in data_table:
             header = preset.Header()
             header.set_data(data_row)
             if remove_tracking_from_url == preset.on:
@@ -166,6 +183,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
                 url_address = header.get_name(preset.url_attr)
 
             url_name = header.get_name(preset.url_name_attr)
+
             if url_address not in visited_url_address:
                 visited_url_address.add(url_address)
                 data_table_without_duplicates.append(("MAIN", get_title_conditional(progress_bar, reload_url_title_disabled, url_name, url_address)) + data_row)
@@ -174,14 +192,18 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
 
     tools.display(preset.message["writing_spreadsheet"])
     tools.overline()
-    with tqdm.tqdm(total=len(data_table_without_duplicates)) as progress_bar:
+    total_items = len(data_table_without_duplicates)
+    with tqdm.tqdm(total=total_items) as progress_bar:
+        utils.update_progress(preset.message["writing_spreadsheet"], -1, total_items)
         data_row_header = ["DUPE", "Site Name"]
         for item in preset.label_dictionary:
             data_row_header.append(preset.label_dictionary[item])
         excel_worksheet.append(tuple(data_row_header))
         progress_bar.update(1)
-        for data_row in data_table_without_duplicates:
+        for index, data_row in enumerate(data_table_without_duplicates):
             progress_bar.update(1)
+            if utils.update_progress(preset.message["writing_spreadsheet"], index, total_items):
+                break
             excel_worksheet.append(data_row)
 
     excel_worksheet.freeze_panes = "A2"
@@ -193,21 +215,29 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
     font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD',
                     'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN',
                     'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU']
-    with tqdm.tqdm(total=(len(font_columns)*len(excel_worksheet['T']))) as progress_bar:
+    total_items = (len(font_columns)*len(excel_worksheet['T']))
+    with tqdm.tqdm(total=total_items) as progress_bar:
+        utils.update_progress(preset.message["format_columns"], -1, total_items)
         for font_column in font_columns:
-            for worksheet_column in excel_worksheet[font_column]:
+            for index, worksheet_column in enumerate(excel_worksheet[font_column]):
                 progress_bar.update(1)
+                if utils.update_progress(preset.message["format_columns"], index, total_items):
+                    break
                 worksheet_column.font = Font(size=10, name='Courier New')
 
     tools.underline()
     tools.display(preset.message["format_dates"])
     tools.overline()
     date_columns = ['G', 'H', 'I', 'P', 'Q', 'R']
-    with tqdm.tqdm(total=(len(date_columns)*len(excel_worksheet['G']))) as progress_bar:
+    total_items = (len(date_columns)*len(excel_worksheet['G']))
+    with tqdm.tqdm(total=total_items) as progress_bar:
+        utils.update_progress(preset.message["format_dates"], -1, total_items)
         for date_column in date_columns:
             excel_worksheet.column_dimensions[date_column].width = 18
-            for worksheet_column in excel_worksheet[date_column]:
+            for index, worksheet_column in enumerate(excel_worksheet[date_column]):
                 progress_bar.update(1)
+                if utils.update_progress(preset.message["format_dates"], index, total_items):
+                    break
                 worksheet_column.number_format = preset.number_format
 
     tools.underline()
@@ -241,7 +271,15 @@ def get_profile(profile):
 
 
 def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name, list_profile):
-    tools.debug("profile[", profile, "]\noutput[", output, "]\nrefresh[", refresh, "]\nundupe[", undupe, "]\nclean[", clean, "]\nimport_txt[", import_txt, "]\nget_hostname[", get_hostname, "]\noutput_name[", output_name, "]\nlist_profiles[" + list_profiles + "]")
+    tools.debug("profile[", str(profile),
+                "]\noutput[", str(output),
+                "]\nrefresh[", str(refresh),
+                "]\nundupe[", str(undupe),
+                "]\nclean[", str(clean),
+                "]\nimport_txt[", str(import_txt),
+                "]\nget_hostname[", str(get_hostname),
+                "]\noutput_name[", str(output_name),
+                "]\nlist_profiles[" + str(list_profile) + "]")
     if list_profile:
         if not list_profile.isdigit():
             list_profile = preset.all_profiles

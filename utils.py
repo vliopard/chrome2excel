@@ -46,7 +46,7 @@ def epoch_to_date(epoch_value):
 
 
 def date_to_epoch(date_value):
-    if date_value:
+    if isinstance(date_value, datetime):
         difference = date_value - datetime(1601, 1, 1)
         seconds_in_day = 60 * 60 * 24
         value = '{:<010d}'.format(difference.days * seconds_in_day + difference.seconds + difference.microseconds)
@@ -58,3 +58,15 @@ def update_tuple(tuple_object, value, position):
     list_object = list(tuple_object)
     list_object[position] = value
     return tuple(list_object)
+
+
+def update_progress(message, index, total_items):
+    if preset.progress_dialog:
+        if index < 0:
+            preset.progress_dialog.SetLabel(preset.message["removing_duplicates"])
+            preset.progress_dialog.SetRange(total_items)
+        else:
+            progress_dialog_not_cancelled, _ = preset.progress_dialog.Update(index, message + "\n" + str(int(index/total_items*100)) + "%  [ " + str(index) + " / " + str(total_items) + " ]")
+            if not progress_dialog_not_cancelled:
+                return True
+    return False

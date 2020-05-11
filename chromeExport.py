@@ -72,26 +72,30 @@ class MainUrlPanel(wx.Panel):
         self.SetSizer(list_control_box_sizer)
 
     def on_html(self, event):
-        #######################################################################################
-        # TODO: GENERATE HTML WITH PROGRESS BAR https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
-        #######################################################################################
         if self.url_objects:
             self.on_save_file("html")
             if self.save_file_name:
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
+                preset.progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+                #######################################################################################
+                # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
+                #######################################################################################
                 chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
+                preset.progress_dialog = None
 
     def on_xlsx(self, event):
-        #######################################################################################
-        # TODO: GENERATE XLSX WITH PROGRESS BAR https://wxpython.org/Phoenix/docs/html/wx.GenericProgressDialog.html
-        #######################################################################################
         if self.url_objects:
             self.on_save_file("xlsx")
             if self.save_file_name:
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
+                preset.progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+                #######################################################################################
+                # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
+                #######################################################################################
                 chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
+                preset.progress_dialog = None
 
     def on_reset(self, event):
         self.header = None
@@ -418,7 +422,7 @@ class ProfileChooser(wx.Dialog):
         main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
         main_box_sizer.Add(horizontal_box_sizer, 0, wx.ALL | wx.EXPAND, 1)
         main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
-        self.SetSizer(main_box_sizer)
+        self.SetSizerAndFit(main_box_sizer)
 
     def on_radio_group(self, event):
         event_object = event.GetEventObject()
@@ -578,22 +582,3 @@ if __name__ == '__main__':
     application = wx.App(False)
     application_frame = MainFrame()
     application.MainLoop()
-
-'''
-progress_dialog = wx.GenericProgressDialog("Title", "Message", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
-run_tqdm(progress_dialog)
-
-def run_tqdm(gui_update):
-    with tqdm.tqdm(total=500) as progress_bar:
-
-        gui_update.SetLabel("Measuring...")
-        gui_update.SetRange(450)
-
-        for x in range(0, 500):
-            time.sleep(0.001)
-            progress_bar.update(1)
-
-            progress_dialog_not_cancelled, _ = gui_update.Update(x, str(x))
-            if not progress_dialog_not_cancelled:
-                break
-'''

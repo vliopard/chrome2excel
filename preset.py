@@ -149,6 +149,9 @@ facebook_tracking_tokens = (
 )
 
 
+progress_dialog = None
+
+
 def set_language(selected_language):
     global message
     message = load_translation_file()[selected_language]
