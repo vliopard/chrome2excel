@@ -579,6 +579,7 @@ def set_button_toggle(self, button_id, toggle_button):
 
 
 if __name__ == '__main__':
+    preset.run_gui = True
     application = wx.App(False)
     application_frame = MainFrame()
     application.MainLoop()

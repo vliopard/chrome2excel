@@ -63,7 +63,10 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
         tools.display(preset.message["removing_duplicates"])
         tools.overline()
         total_items = len(data_table)
-        with tqdm.tqdm(total=total_items) as progress_bar:
+        disabled = False
+        if preset.gui_progress_dialog:
+            disabled = True
+        with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
             utils.update_progress(preset.message["removing_duplicates"], -1, total_items)
             for index, data_row in enumerate(data_table):
 
@@ -88,7 +91,10 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
     tools.display(preset.message["writing_html"])
     tools.overline()
     total_items = len(data_table_without_duplicates)
-    with tqdm.tqdm(total=total_items) as progress_bar:
+    disabled = False
+    if preset.gui_progress_dialog:
+        disabled = True
+    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
         utils.update_progress(preset.message["writing_html"], -1, total_items)
         for index, data_row in enumerate(data_table_without_duplicates):
 
@@ -155,7 +161,10 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
         tools.display(preset.message["resolving_hostnames"])
         tools.overline()
         total_items = len(data_table)
-        with tqdm.tqdm(total=total_items) as progress_bar:
+        disabled = False
+        if preset.gui_progress_dialog:
+            disabled = True
+        with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
             temporary_table = []
             utils.update_progress(preset.message["resolving_hostnames"], -1, total_items)
             for index, data_row in enumerate(data_table):
@@ -169,7 +178,12 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
     data_table_without_duplicates = []
     tools.display(preset.message["find_duplicated_lines"])
     total_items = len(data_table)
-    with tqdm.tqdm(total=total_items, disable=reload_url_title_disabled) as progress_bar:
+    disabled = False
+    if reload_url_title_disabled:
+        disabled = True
+    elif preset.gui_progress_dialog:
+        disabled = True
+    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
         utils.update_progress(preset.message["find_duplicated_lines"], -1, total_items)
         for index, data_row in enumerate(data_table):
             if utils.update_progress(preset.message["find_duplicated_lines"], index, total_items):
@@ -192,17 +206,16 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
 
     tools.display(preset.message["writing_spreadsheet"])
     tools.overline()
-    #######################################################################################
-    # TODO: TOTAL ITEMS DOES NOT MATCH WITH PROGRESS_BAR.UPDATE(1)
-    #######################################################################################
     total_items = len(data_table_without_duplicates)
-    with tqdm.tqdm(total=total_items) as progress_bar:
+    disabled = False
+    if preset.gui_progress_dialog:
+        disabled = True
+    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
         utils.update_progress(preset.message["writing_spreadsheet"], -1, total_items)
         data_row_header = ["DUPE", "Site Name"]
         for item in preset.label_dictionary:
             data_row_header.append(preset.label_dictionary[item])
         excel_worksheet.append(tuple(data_row_header))
-        progress_bar.update(1)
         for index, data_row in enumerate(data_table_without_duplicates):
             progress_bar.update(1)
             if utils.update_progress(preset.message["writing_spreadsheet"], index, total_items):
@@ -219,7 +232,10 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
                     'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN',
                     'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU']
     total_items = (len(font_columns)*len(excel_worksheet['T']))
-    with tqdm.tqdm(total=total_items) as progress_bar:
+    disabled = False
+    if preset.gui_progress_dialog:
+        disabled = True
+    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
         utils.update_progress(preset.message["format_columns"], -1, total_items)
         for font_column in font_columns:
             for index, worksheet_column in enumerate(excel_worksheet[font_column]):
@@ -233,7 +249,10 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
     tools.overline()
     date_columns = ['G', 'H', 'I', 'P', 'Q', 'R']
     total_items = (len(date_columns)*len(excel_worksheet['G']))
-    with tqdm.tqdm(total=total_items) as progress_bar:
+    disabled = False
+    if preset.gui_progress_dialog:
+        disabled = True
+    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
         utils.update_progress(preset.message["format_dates"], -1, total_items)
         for date_column in date_columns:
             excel_worksheet.column_dimensions[date_column].width = 18

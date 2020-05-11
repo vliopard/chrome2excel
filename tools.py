@@ -47,16 +47,17 @@ def debug(*arguments):
 
 
 def display(*arguments):
-    argument_count = len(arguments)
-    if argument_count > 0:
-        display_text = preset.empty
-        for element in arguments:
-            display_text = display_text + str(element) + preset.blank
-        display_text = display_text.rstrip()
-        if display_text != "default":
-            print(display_text)
-    else:
-        return 0
+    if not preset.run_gui:
+        argument_count = len(arguments)
+        if argument_count > 0:
+            display_text = preset.empty
+            for element in arguments:
+                display_text = display_text + str(element) + preset.blank
+            display_text = display_text.rstrip()
+            if display_text != "default":
+                print(display_text)
+        else:
+            return 0
 
 
 def underline():
