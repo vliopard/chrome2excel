@@ -179,7 +179,6 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.SetColumnWidth(0, -1)
         self.list_ctrl.SetColumnWidth(1, -1)
         self.list_ctrl.SetColumnWidth(2, -1)
-        self.list_ctrl.SetColumnWidth(3, -1)
         self.list_ctrl.SetColumnWidth(7, -1)
 
     def on_save_file(self, save_file_default):
