@@ -63,10 +63,10 @@ def update_tuple(tuple_object, value, position):
 def update_progress(message, index, total_items):
     if preset.gui_progress_dialog:
         if index < 0:
-            preset.gui_progress_dialog.SetLabel(preset.message["removing_duplicates"])
+            preset.gui_progress_dialog.SetLabel(message)
             preset.gui_progress_dialog.SetRange(total_items)
         else:
-            progress_dialog_not_cancelled, _ = preset.gui_progress_dialog.Update(index, message + "\n" + str(int(index / total_items * 100)) + "%  [ " + str(index) + " / " + str(total_items) + " ]")
+            progress_dialog_not_cancelled, _ = preset.gui_progress_dialog.Update(index, str(int(index / total_items * 100)) + "%  [ " + str(index) + " / " + str(total_items) + " ]")
             if not progress_dialog_not_cancelled:
                 return True
     return False

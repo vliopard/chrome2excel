@@ -155,6 +155,9 @@ class MainUrlPanel(wx.Panel):
         self.url_objects = []
         total_items = len(url_list)
         preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+        #######################################################################################
+        # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
+        #######################################################################################
         utils.update_progress(preset.message["loading_bookmarks"], -1, total_items)
         for index, url in enumerate(url_list):
             self.update_element(index, url)
