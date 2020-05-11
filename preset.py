@@ -148,8 +148,8 @@ facebook_tracking_tokens = (
         "notif_id"
 )
 
-
-progress_dialog = None
+cli_progress_dialog = None
+gui_progress_dialog = None
 
 
 def set_language(selected_language):

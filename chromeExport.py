@@ -77,12 +77,12 @@ class MainUrlPanel(wx.Panel):
             if self.save_file_name:
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
-                preset.progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+                preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
                 #######################################################################################
                 # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
                 chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
-                preset.progress_dialog = None
+                preset.gui_progress_dialog = None
 
     def on_xlsx(self, event):
         if self.url_objects:
@@ -90,12 +90,12 @@ class MainUrlPanel(wx.Panel):
             if self.save_file_name:
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
-                preset.progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+                preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
                 #######################################################################################
                 # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
                 chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
-                preset.progress_dialog = None
+                preset.gui_progress_dialog = None
 
     def on_reset(self, event):
         self.header = None

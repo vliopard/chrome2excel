@@ -192,6 +192,9 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
 
     tools.display(preset.message["writing_spreadsheet"])
     tools.overline()
+    #######################################################################################
+    # TODO: TOTAL ITEMS DOES NOT MATCH WITH PROGRESS_BAR.UPDATE(1)
+    #######################################################################################
     total_items = len(data_table_without_duplicates)
     with tqdm.tqdm(total=total_items) as progress_bar:
         utils.update_progress(preset.message["writing_spreadsheet"], -1, total_items)

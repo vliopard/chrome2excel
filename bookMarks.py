@@ -134,10 +134,11 @@ class Bookmarks:
         self.attrList = self.processRoots()
         self.urls = self.attrList["urls"]
         self.folders = self.attrList["folders"]
+        self.length = utils.count_urls(self.data["roots"].items())
 
     def processRoots(self):
         attribute_list = {"urls": [], "folders": []}
-        for key, value in json.loads(open(self.path, encoding='utf-8').read())["roots"].items():
+        for key, value in self.data["roots"].items():
             if "children" in value:
                 self.processTree(attribute_list, value["children"])
         return attribute_list
