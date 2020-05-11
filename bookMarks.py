@@ -42,6 +42,8 @@ class Options:
         self.configuration_parser.set(self.configuration_category, preset.exit_dialog_confirmation, str(self.exit_dialog_confirmation))
         with open(preset.configuration_filename, 'w') as configuration_file:
             self.configuration_parser.write(configuration_file)
+        if preset.debug_mode:
+            preset.run_gui = False
 
     def load_settings(self):
         try:
@@ -67,6 +69,9 @@ class Options:
             self.import_urls_from_text_file = False
             self.refresh_folder_name_with_hostname_title = False
             self.exit_dialog_confirmation = True
+
+        if preset.debug_mode:
+            preset.run_gui = False
         preset.set_language(self.system_language)
 
 

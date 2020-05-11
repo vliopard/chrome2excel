@@ -11,6 +11,7 @@ translation_filename = "resources/translation.json"
 def load_translation_file():
     return load(Path(translation_filename).open(encoding="utf-8"))
 
+
 run_gui = False
 
 main_section = 'main'

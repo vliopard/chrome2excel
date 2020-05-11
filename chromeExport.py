@@ -152,9 +152,11 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.SetItem(index, add(position), url[22])                        # 'Hostname',     #21
 
     def update_list(self, url_list):
-        index = 0
         self.url_objects = []
-        for url in url_list:
+        total_items = len(url_list)
+        preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+        utils.update_progress(preset.message["loading_bookmarks"], -1, total_items)
+        for index, url in enumerate(url_list):
             self.update_element(index, url)
             url_object = preset.Header()
             url_object.set_data(url)
@@ -169,8 +171,9 @@ class MainUrlPanel(wx.Panel):
                 self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
             else:
                 self.list_ctrl.SetItemBackgroundColour(index, "#EEEEEE")
-            index += 1
+            utils.update_progress(preset.message["loading_bookmarks"], index, total_items)
         self.update_column_width()
+        preset.gui_progress_dialog = None
 
     def update_column_width(self):
         #######################################################################################
@@ -179,7 +182,6 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl.SetColumnWidth(0, -1)
         self.list_ctrl.SetColumnWidth(1, -1)
         self.list_ctrl.SetColumnWidth(2, -1)
-        self.list_ctrl.SetColumnWidth(7, -1)
 
     def on_save_file(self, save_file_default):
         if save_file_default == "html":
