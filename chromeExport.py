@@ -77,12 +77,12 @@ class MainUrlPanel(wx.Panel):
             if self.save_file_name:
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
-                preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+                start_progress_dialog(True)
                 #######################################################################################
                 # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
                 chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
-                preset.gui_progress_dialog = None
+                start_progress_dialog(False)
 
     def on_xlsx(self, event):
         if self.url_objects:
@@ -90,12 +90,12 @@ class MainUrlPanel(wx.Panel):
             if self.save_file_name:
                 refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
-                preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+                start_progress_dialog(True)
                 #######################################################################################
                 # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
                 chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
-                preset.gui_progress_dialog = None
+                start_progress_dialog(False)
 
     def on_reset(self, event):
         self.header = None
@@ -154,7 +154,7 @@ class MainUrlPanel(wx.Panel):
     def update_list(self, url_list):
         self.url_objects = []
         total_items = len(url_list)
-        preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+        start_progress_dialog(True)
         #######################################################################################
         # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
         #######################################################################################
@@ -176,7 +176,7 @@ class MainUrlPanel(wx.Panel):
                 self.list_ctrl.SetItemBackgroundColour(index, "#EEEEEE")
             utils.update_progress(preset.message["loading_bookmarks"], index, total_items)
         self.update_column_width()
-        preset.gui_progress_dialog = None
+        start_progress_dialog(False)
 
     def update_column_width(self):
         #######################################################################################
@@ -580,6 +580,13 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_label = preset.message["debug_system"] + preset.message["off_label"]
             settings_button_value = False
     return settings_button_label, settings_button_value
+
+
+def start_progress_dialog(start):
+    if start:
+        preset.gui_progress_dialog = wx.GenericProgressDialog("", "", style=wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_CAN_ABORT)
+    else:
+        preset.gui_progress_dialog = None
 
 
 if __name__ == '__main__':
