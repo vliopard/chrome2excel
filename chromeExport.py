@@ -9,7 +9,6 @@ import datetime
 import bookMarks
 import chrome2excel
 
-from utils import add
 from wx.lib.mixins import listctrl
 
 locale.setlocale(locale.LC_ALL, '')
@@ -19,7 +18,7 @@ class ListCtrl(wx.ListCtrl, listctrl.ListCtrlAutoWidthMixin):
     def __init__(self, parent, id_, pos=wx.DefaultPosition, size=wx.DefaultSize, style=0):
         wx.ListCtrl.__init__(self, parent, id_, pos, size, style)
         listctrl.ListCtrlAutoWidthMixin.__init__(self)
-        self.setResizeColumn(6)
+        self.setResizeColumn(19)
 
 
 class MainUrlPanel(wx.Panel):
@@ -125,31 +124,35 @@ class MainUrlPanel(wx.Panel):
             self.list_ctrl.ClearAll()
 
         if self.list_ctrl.GetItemCount() < 1:
-            index = [-1]
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_date_added"], width=115)
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_date_modified"], width=118)
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_date_visited"], width=120)
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_folder_name"], width=150)
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_url_name"], width=150)
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_url_clean"], width=150)
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_original_url"], width=150)
-            self.list_ctrl.InsertColumn(add(index), preset.message["label_url_hostname"], width=150)
+            #######################################################################################
+            # TODO: DYNAMICALLY ADD ALL COLUMNS
+            #######################################################################################
+            for label_element in preset.label_dictionary:
+                self.list_ctrl.InsertColumn(int(label_element), preset.label_dictionary[label_element], width=50)
+                if int(label_element) > 27:
+                    break
 
     def update_url_listing(self, path_to_text_file):
         self.update_url_screen(False)
+        #######################################################################################
+        # FIXME: FIRST IMPORT OF A TEXT FILE SHIFT COLUMNS TO THE RIGHT
+        #######################################################################################
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_text_file(path_to_text_file))
         self.update_list(url_list)
 
     def update_element(self, index, url):
-        position = [0]
-        self.list_ctrl.InsertItem(index, utils.date_to_string(url[13]))              # 'URL Added',    #13
-        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[14]))  # 'URL Modified', #14
-        self.list_ctrl.SetItem(index, add(position), utils.date_to_string(url[15]))  # 'URL Visited',  #15
-        self.list_ctrl.SetItem(index, add(position), url[7])                         # 'Folder Name',  #07
-        self.list_ctrl.SetItem(index, add(position), url[16])                        # 'URL Name',     #16
-        self.list_ctrl.SetItem(index, add(position), url[17])                        # 'URL Clean',    #17
-        self.list_ctrl.SetItem(index, add(position), url[18])                        # 'URL',          #18
-        self.list_ctrl.SetItem(index, add(position), url[22])                        # 'Hostname',     #21
+        #######################################################################################
+        # TODO: DYNAMICALLY ADD ALL COLUMNS
+        #######################################################################################
+        for label_element in preset.label_dictionary:
+            if int(label_element) > 28:
+                break
+            if int(label_element) == 0:
+                self.list_ctrl.InsertItem(index, url[int(label_element)])
+            element = url[int(label_element)]
+            if isinstance(element, datetime.datetime):
+                element = utils.date_to_string(element)
+            self.list_ctrl.SetItem(index, int(label_element), str(element))
 
     def update_list(self, url_list):
         self.url_objects = []
@@ -182,9 +185,12 @@ class MainUrlPanel(wx.Panel):
         #######################################################################################
         # TODO: DATE COLUMNS MUST BE AUTO WIDTH
         #######################################################################################
-        self.list_ctrl.SetColumnWidth(0, -1)
-        self.list_ctrl.SetColumnWidth(1, -1)
-        self.list_ctrl.SetColumnWidth(2, -1)
+        self.list_ctrl.SetColumnWidth(4, -1)
+        self.list_ctrl.SetColumnWidth(5, -1)
+        self.list_ctrl.SetColumnWidth(6, -1)
+        self.list_ctrl.SetColumnWidth(13, -1)
+        self.list_ctrl.SetColumnWidth(14, -1)
+        self.list_ctrl.SetColumnWidth(15, -1)
 
     def on_save_file(self, save_file_default):
         if save_file_default == "html":
@@ -319,8 +325,7 @@ class AboutDialog(wx.Dialog):
         about_application.Version = "1.0"
         about_application.Copyright = "OTDS H Co."
         about_application.Description = preset.message["application_description"]
-        about_application.WebSite = ("https://github.com/vliopard/chrome2excel",
-                                     preset.message["application_website"])
+        about_application.WebSite = ("https://github.com/vliopard/chrome2excel", preset.message["application_website"])
         vincent_liopard = "Vincent Liopard."
         about_application.Developers = [vincent_liopard]
         about_application.License = preset.message["application_licence"]
@@ -333,7 +338,7 @@ class AboutDialog(wx.Dialog):
 
 class EditDialog(wx.Dialog):
     def __init__(self, edit_url):
-        super().__init__(parent=None, title=preset.message["edit_title"] + edit_url.URL_Name, size=(700, 590))
+        super().__init__(parent=None, title=preset.message["edit_title"] + "[" + edit_url.URL_Name + "]", size=(700, 590))
         self.url = edit_url
 
         self.main_box_sizer = wx.BoxSizer(wx.VERTICAL)
