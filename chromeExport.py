@@ -101,6 +101,7 @@ class MainUrlPanel(wx.Panel):
         self.row_obj_dict = {}
         self.url_objects = None
         self.update_url_screen(True)
+        set_total_items(self.parent)
 
     def to_tuple(self):
         bookmarks_data = []
@@ -269,7 +270,7 @@ class MainFrame(wx.Frame):
                                            style=wx.DD_DEFAULT_STYLE)
         if open_folder_dialog.ShowModal() == wx.ID_OK:
             self.main_url_panel.update_url_listing(open_folder_dialog.GetPath())
-            self.set_total_items()
+            set_total_items(self)
 
     def on_open_account(self, event):
         profile_chooser_dialog = ProfileChooser(self, -1)
@@ -279,7 +280,7 @@ class MainFrame(wx.Frame):
             data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected_account))
             self.main_url_panel.update_list(data_table)
             self.main_url_panel.Update()
-            self.set_total_items()
+            set_total_items(self)
         else:
             self.selected_account = -1
 
@@ -310,11 +311,12 @@ class MainFrame(wx.Frame):
         else:
             self.Close()
 
-    def set_total_items(self):
-        #######################################################################################
-        # TODO: self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
-        #######################################################################################
-        self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(self.main_url_panel.list_ctrl.GetItemCount()), 2)
+
+def set_total_items(self):
+    #######################################################################################
+    # TODO: self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
+    #######################################################################################
+    self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(self.main_url_panel.list_ctrl.GetItemCount()), 2)
 
 
 class AboutDialog(wx.Dialog):
