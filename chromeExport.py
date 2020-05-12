@@ -124,10 +124,7 @@ class MainUrlPanel(wx.Panel):
         if reset:
             self.list_ctrl.ClearAll()
 
-        if self.list_ctrl.GetItemCount() < 1:
-            #######################################################################################
-            # TODO: DYNAMICALLY ADD ALL COLUMNS
-            #######################################################################################
+        if self.list_ctrl.GetColumnCount() < 1:
             for label_element in preset.label_dictionary:
                 self.list_ctrl.InsertColumn(int(label_element), preset.label_dictionary[label_element], width=50)
                 if int(label_element) > 27:
@@ -135,16 +132,10 @@ class MainUrlPanel(wx.Panel):
 
     def update_url_listing(self, path_to_text_file):
         self.update_url_screen(False)
-        #######################################################################################
-        # FIXME: FIRST IMPORT OF A TEXT FILE SHIFT COLUMNS TO THE RIGHT
-        #######################################################################################
         url_list = chrome2excel.generate_from_txt(chrome2excel.import_text_file(path_to_text_file))
         self.update_list(url_list)
 
     def update_element(self, index, url):
-        #######################################################################################
-        # TODO: DYNAMICALLY ADD ALL COLUMNS
-        #######################################################################################
         for label_element in preset.label_dictionary:
             if int(label_element) > 28:
                 break
