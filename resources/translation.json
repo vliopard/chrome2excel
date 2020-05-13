@@ -100,7 +100,8 @@
     "application_website": "Chrome Bookmarks to Microsoft Excel",
     "application_description": "This Python Application helps you to convert your Google Bookmarks to a Microsoft Excel Spreadsheet.\n\nHow it works:\n\nThis software access your Google Chrome Bookmarks and dump database to Excel Spreadsheet format.\nIt also has features regarding to clean URLs, stripping tracking tokens.",
     "exit_confirmation": "Don't show exit dialog again.",
-    "parsing_bookmarks": "Parsing bookmarks..."
+    "parsing_bookmarks": "Parsing bookmarks...",
+    "user_has_no_bookmarks": "### User has no bookmarks. ###"
   },
   "pt-br": {
     "about_description": "Sobre o aplicativo",
@@ -203,6 +204,7 @@
     "application_website": "Chrome Bookmarks para Microsoft Excel",
     "application_description": "Esta aplicação em Python permite converter os Favoridos do Browser Google Chrome para uma planilha do Microsoft Excel.\n\nComo funciona:\n\nEste aplicativo acessa os favoritos do Google Chrome e converte os endereços para o formato de planilha do Excel.\nTambém estão disponíveis recursos para limpar endereços, removendo palavras de rastreamento.",
     "exit_confirmation": "Não mostrar esta mensagem novamente.",
-    "parsing_bookmarks": "Analisando bookmarks..."
+    "parsing_bookmarks": "Analisando bookmarks...",
+    "user_has_no_bookmarks": "### Usuário não possui bookmarks. ###"
  }
 }

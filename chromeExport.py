@@ -149,29 +149,33 @@ class MainUrlPanel(wx.Panel):
     def update_list(self, url_list):
         self.url_objects = []
         total_items = len(url_list)
-        start_progress_dialog(True)
-        #######################################################################################
-        # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
-        #######################################################################################
-        utils.update_progress(preset.message["loading_bookmarks"], -1, total_items)
-        for index, url in enumerate(url_list):
-            self.update_element(index, url)
-            url_object = preset.Header()
-            url_object.set_data(url)
-            self.url_objects.append(url_object.to_list())
-            self.row_obj_dict[index] = url_object
+        if total_items:
+            start_progress_dialog(True)
             #######################################################################################
-            # TODO: LET USER CHANGE COLOR IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
-            # TODO: CHANGE COLOR IN POPUP MENU http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
-            # TODO: CHANGE COLOR IN POPUP MENU https://www.daniweb.com/programming/software-development/threads/352474/wxpython-wx-listctrl-and-wx-menu
+            # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
             #######################################################################################
-            if index % 2:
-                self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
-            else:
-                self.list_ctrl.SetItemBackgroundColour(index, "#EEEEEE")
-            utils.update_progress(preset.message["loading_bookmarks"], index, total_items)
-        self.update_column_width()
-        start_progress_dialog(False)
+            utils.update_progress(preset.message["loading_bookmarks"], -1, total_items)
+            for index, url in enumerate(url_list):
+                self.update_element(index, url)
+                url_object = preset.Header()
+                url_object.set_data(url)
+                self.url_objects.append(url_object.to_list())
+                self.row_obj_dict[index] = url_object
+                #######################################################################################
+                # TODO: LET USER CHANGE COLOR IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
+                # TODO: CHANGE COLOR IN POPUP MENU http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
+                # TODO: CHANGE COLOR IN POPUP MENU https://www.daniweb.com/programming/software-development/threads/352474/wxpython-wx-listctrl-and-wx-menu
+                #######################################################################################
+                if index % 2:
+                    self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
+                else:
+                    self.list_ctrl.SetItemBackgroundColour(index, "#EEEEEE")
+                utils.update_progress(preset.message["loading_bookmarks"], index, total_items)
+            self.update_column_width()
+            start_progress_dialog(False)
+        else:
+            set_status_message(self.parent, preset.message["user_has_no_bookmarks"])
+
 
     def update_column_width(self):
         #######################################################################################
@@ -308,6 +312,10 @@ def set_total_items(self):
     # TODO: self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
     #######################################################################################
     self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(self.main_url_panel.list_ctrl.GetItemCount()), 2)
+
+
+def set_status_message(self, message):
+    self.status_bar.SetStatusText(message, 1)
 
 
 class AboutDialog(wx.Dialog):
@@ -457,6 +465,7 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button03.SetValue(settings_button_value)
 
         #######################################################################################
+        # TODO: SHOULD USE THIS ELEMENT AS A BUTTON TO RESET SHOWING EXIT DIALOG
         # TODO: DEPRECATED: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
         # TODO: DEPRECATED: MERGE IS DONE BY SELECTING TXT AND THEN SELECTING PROFILE OR VICE-VERSA
         # TODO: DEPRECATED: IMPORT TXT IS NOT ON/OFF ANYMORE. IT IS ON IF THERE IS A FILENAME, OTHERWISE OFF.
