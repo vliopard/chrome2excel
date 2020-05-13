@@ -176,10 +176,9 @@ class MainUrlPanel(wx.Panel):
         else:
             set_status_message(self.parent, preset.message["user_has_no_bookmarks"])
 
-
     def update_column_width(self):
         #######################################################################################
-        # TODO: DATE COLUMNS MUST BE AUTO WIDTH
+        # TODO: DATE COLUMNS MUST BE AUTO WIDTH (USE AUTO-DETECT INSTEAD OF CONSTANT NUMBERS)
         #######################################################################################
         self.list_ctrl.SetColumnWidth(4, -1)
         self.list_ctrl.SetColumnWidth(5, -1)
@@ -295,9 +294,6 @@ class MainFrame(wx.Frame):
             exit_dialog.ShowCheckBox(preset.message["exit_confirmation"])
             exit_value = exit_dialog.ShowModal()
             if exit_dialog.IsCheckBoxChecked():
-                #######################################################################################
-                # TODO: RECOVER DISPLAYING EXIT DIALOG FROM SETTINGS
-                #######################################################################################
                 self.application_settings.exit_dialog_confirmation = False
                 self.application_settings.save_settings()
 
@@ -361,7 +357,7 @@ class EditDialog(wx.Dialog):
             self.add_widgets(edit_url.get_label(str(index)), self.attribute_list[index], dialog_place)
 
         #######################################################################################
-        # TODO: DEPRECATED: (EDIT IS GOING TO BE INLINE) MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
+        # TODO: MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
         #######################################################################################
         self.horizontal_box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
         self.horizontal_box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
@@ -448,9 +444,12 @@ class SettingsDialog(wx.Dialog):
         self.SetSize((320, 220))
         button_size = (135, 25)
 
-        static_panel = wx.Panel(self, size=(300, 60))
-        wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47))
-        wx.StaticBoxSizer(wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47)))
+        #######################################################################################
+        # FIXME: STATIC BOX IS OVERRIDING CHECKBOXES
+        #######################################################################################
+        # static_panel = wx.Panel(self, size=(300, 60))
+        # wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47))
+        # wx.StaticBoxSizer(wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47)))
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
         self.toggle_button01 = wx.CheckBox(self, id=0, label=settings_button_label, size=button_size, pos=(12, 20), style=wx.BU_LEFT)
@@ -464,13 +463,6 @@ class SettingsDialog(wx.Dialog):
         self.toggle_button03 = wx.ToggleButton(self, id=2, label=settings_button_label, size=button_size, pos=(10, 85), style=wx.BU_LEFT)
         self.toggle_button03.SetValue(settings_button_value)
 
-        #######################################################################################
-        # TODO: SHOULD USE THIS ELEMENT AS A BUTTON TO RESET SHOWING EXIT DIALOG
-        # TODO: DEPRECATED: MERGE TXT ROWS TO CHROME ROWS IF IMPORT TXT OPTION IS SELECTED
-        # TODO: DEPRECATED: MERGE IS DONE BY SELECTING TXT AND THEN SELECTING PROFILE OR VICE-VERSA
-        # TODO: DEPRECATED: IMPORT TXT IS NOT ON/OFF ANYMORE. IT IS ON IF THERE IS A FILENAME, OTHERWISE OFF.
-        # TODO: DEPRECATED: IT DOESNT MAKE SENSE TO KEEP THIS ITEM IN SETTINGS MENU AS IT IS
-        #######################################################################################
         settings_button_label, settings_button_value = set_button_toggle(self, 3, False)
         self.toggle_button04 = wx.CheckBox(self, id=3, label=settings_button_label, size=button_size, pos=(152, 20), style=wx.BU_LEFT)
         self.toggle_button04.SetValue(settings_button_value)
@@ -561,12 +553,12 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = False
     if button_id == 3:
         if toggle_button:
-            self.parent.application_settings.import_urls_from_text_file = not self.parent.application_settings.import_urls_from_text_file
-        if self.parent.application_settings.import_urls_from_text_file:
-            settings_button_label = preset.message["on_label"] + preset.message["import_txt"]
+            self.parent.application_settings.display_exit_dialog = not self.parent.application_settings.display_exit_dialog
+        if self.parent.application_settings.display_exit_dialog:
+            settings_button_label = preset.message["on_label"] + preset.message["display_exit_dialog"]
             settings_button_value = True
         else:
-            settings_button_label = preset.message["off_label"] + preset.message["import_txt"]
+            settings_button_label = preset.message["off_label"] + preset.message["display_exit_dialog"]
             settings_button_value = False
     if button_id == 4:
         if toggle_button:

@@ -17,7 +17,7 @@ class Options:
         self.refresh_url_title = False
         self.remove_duplicated_urls = False
         self.remove_tracking_tokens_from_url = False
-        self.import_urls_from_text_file = False
+        self.display_exit_dialog = False
         self.refresh_folder_name_with_hostname_title = False
         self.exit_dialog_confirmation = True
         self.configuration_category = preset.main_section
@@ -30,6 +30,8 @@ class Options:
         except DuplicateSectionError:
             pass
 
+        self.exit_dialog_confirmation = self.display_exit_dialog
+
         self.configuration_parser.set(self.configuration_category, preset.debug_system, str(preset.debug_mode))
         self.configuration_parser.set(self.configuration_category, preset.load_time_out, str(preset.timeout))
         self.configuration_parser.set(self.configuration_category, preset.system_language, str(self.system_language))
@@ -37,7 +39,7 @@ class Options:
         self.configuration_parser.set(self.configuration_category, preset.refresh_url_title, str(self.refresh_url_title))
         self.configuration_parser.set(self.configuration_category, preset.remove_duplicated_urls, str(self.remove_duplicated_urls))
         self.configuration_parser.set(self.configuration_category, preset.remove_tracking_tokens_from_url, str(self.remove_tracking_tokens_from_url))
-        self.configuration_parser.set(self.configuration_category, preset.import_urls_from_text_file, str(self.import_urls_from_text_file))
+        self.configuration_parser.set(self.configuration_category, preset.display_exit_dialog, str(self.display_exit_dialog))
         self.configuration_parser.set(self.configuration_category, preset.refresh_folder_name_with_hostname_title, str(self.refresh_folder_name_with_hostname_title))
         self.configuration_parser.set(self.configuration_category, preset.exit_dialog_confirmation, str(self.exit_dialog_confirmation))
         with open(preset.configuration_filename, 'w') as configuration_file:
@@ -54,7 +56,7 @@ class Options:
             self.refresh_url_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_url_title)
             self.remove_duplicated_urls = self.configuration_parser.getboolean(self.configuration_category, preset.remove_duplicated_urls)
             self.remove_tracking_tokens_from_url = self.configuration_parser.getboolean(self.configuration_category, preset.remove_tracking_tokens_from_url)
-            self.import_urls_from_text_file = self.configuration_parser.getboolean(self.configuration_category, preset.import_urls_from_text_file)
+            self.display_exit_dialog = self.configuration_parser.getboolean(self.configuration_category, preset.display_exit_dialog)
             self.refresh_folder_name_with_hostname_title = self.configuration_parser.getboolean(self.configuration_category, preset.refresh_folder_name_with_hostname_title)
             self.exit_dialog_confirmation = self.configuration_parser.getboolean(self.configuration_category, preset.exit_dialog_confirmation)
 
@@ -66,7 +68,7 @@ class Options:
             self.refresh_url_title = False
             self.remove_duplicated_urls = False
             self.remove_tracking_tokens_from_url = False
-            self.import_urls_from_text_file = False
+            self.display_exit_dialog = False
             self.refresh_folder_name_with_hostname_title = False
             self.exit_dialog_confirmation = True
 

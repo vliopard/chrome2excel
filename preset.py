@@ -75,7 +75,7 @@ refresh_url_title = "refresh_url_title"
 exit_dialog_confirmation = "exit_confirmation"
 remove_duplicated_urls = "remove_duplicated_urls"
 remove_tracking_tokens_from_url = "remove_tracking_tokens_from_url"
-import_urls_from_text_file = "import_urls_from_text_file"
+display_exit_dialog = "display_exit_dialog"
 refresh_folder_name_with_hostname_title = "refresh_folder_name_with_hostname_title"
 
 general_tracking_tokens = (
