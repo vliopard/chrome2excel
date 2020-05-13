@@ -448,6 +448,9 @@ class SettingsDialog(wx.Dialog):
         # FIXME: 08 STATIC BOX IS OVERRIDING CHECKBOXES
         #######################################################################################
         # wx.StaticBox(wx.Panel(self, size=(300, 60)), id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47))
+        border = wx.BoxSizer()
+        border.Add(wx.StaticBoxSizer(wx.StaticBox(self, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(140, 47))), 0, wx.ALL, 0)
+        self.SetSizer(border)
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
         self.toggle_button01 = wx.CheckBox(self, id=0, label=settings_button_label, size=button_size, pos=(12, 20), style=wx.BU_LEFT)
