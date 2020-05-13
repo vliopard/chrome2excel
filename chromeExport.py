@@ -36,10 +36,10 @@ class MainUrlPanel(wx.Panel):
         self.list_ctrl = ListCtrl(self, wx.ID_ANY, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
 
         #######################################################################################
-        # TODO: AUTO SAVE COLUMNS WIDTH
-        # TODO: SELECT COLUMNS TO SHOW IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
-        # TODO: EDIT ROW ITEMS INPLACE https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
-        # TODO: SORT ROWS BY CLICKING HEADER https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
+        # TODO: 01 AUTO SAVE COLUMNS WIDTH
+        # TODO: 01 SELECT COLUMNS TO SHOW IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
+        # TODO: 01 EDIT ROW ITEMS INPLACE https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
+        # TODO: 01 SORT ROWS BY CLICKING HEADER https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         #######################################################################################
         self.update_url_screen(False)
 
@@ -78,7 +78,7 @@ class MainUrlPanel(wx.Panel):
                 bookmarks_data = self.to_tuple()
                 start_progress_dialog(True)
                 #######################################################################################
-                # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
+                # TODO: 02 CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
                 chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
                 start_progress_dialog(False)
@@ -91,7 +91,7 @@ class MainUrlPanel(wx.Panel):
                 bookmarks_data = self.to_tuple()
                 start_progress_dialog(True)
                 #######################################################################################
-                # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
+                # TODO: 02 CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
                 chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
                 start_progress_dialog(False)
@@ -152,7 +152,7 @@ class MainUrlPanel(wx.Panel):
         if total_items:
             start_progress_dialog(True)
             #######################################################################################
-            # TODO: CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
+            # TODO: 02 CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
             #######################################################################################
             utils.update_progress(preset.message["loading_bookmarks"], -1, total_items)
             for index, url in enumerate(url_list):
@@ -162,9 +162,9 @@ class MainUrlPanel(wx.Panel):
                 self.url_objects.append(url_object.to_list())
                 self.row_obj_dict[index] = url_object
                 #######################################################################################
-                # TODO: LET USER CHANGE COLOR IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
-                # TODO: CHANGE COLOR IN POPUP MENU http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
-                # TODO: CHANGE COLOR IN POPUP MENU https://www.daniweb.com/programming/software-development/threads/352474/wxpython-wx-listctrl-and-wx-menu
+                # TODO: 03 LET USER CHANGE COLOR IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
+                # TODO: 03 CHANGE COLOR IN POPUP MENU http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
+                # TODO: 03 CHANGE COLOR IN POPUP MENU https://www.daniweb.com/programming/software-development/threads/352474/wxpython-wx-listctrl-and-wx-menu
                 #######################################################################################
                 if index % 2:
                     self.list_ctrl.SetItemBackgroundColour(index, "#FFFFFF")
@@ -178,7 +178,7 @@ class MainUrlPanel(wx.Panel):
 
     def update_column_width(self):
         #######################################################################################
-        # TODO: DATE COLUMNS MUST BE AUTO WIDTH (USE AUTO-DETECT INSTEAD OF CONSTANT NUMBERS)
+        # TODO: 04 DATE COLUMNS MUST BE AUTO WIDTH (USE AUTO-DETECT INSTEAD OF CONSTANT NUMBERS)
         #######################################################################################
         self.list_ctrl.SetColumnWidth(4, -1)
         self.list_ctrl.SetColumnWidth(5, -1)
@@ -231,7 +231,7 @@ class MainFrame(wx.Frame):
 
     def create_menu(self):
         #######################################################################################
-        # TODO: http://zetcode.com/wxpython/menustoolbars/
+        # TODO: 05 http://zetcode.com/wxpython/menustoolbars/
         #######################################################################################
         menu_bar = wx.MenuBar()
         options_menu = wx.Menu()
@@ -305,7 +305,7 @@ class MainFrame(wx.Frame):
 
 def set_total_items(self):
     #######################################################################################
-    # TODO: self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
+    # TODO: 06 self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
     #######################################################################################
     self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(self.main_url_panel.list_ctrl.GetItemCount()), 2)
 
@@ -357,7 +357,7 @@ class EditDialog(wx.Dialog):
             self.add_widgets(edit_url.get_label(str(index)), self.attribute_list[index], dialog_place)
 
         #######################################################################################
-        # TODO: MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
+        # TODO: 07 MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
         #######################################################################################
         self.horizontal_box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
         self.horizontal_box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
@@ -445,11 +445,9 @@ class SettingsDialog(wx.Dialog):
         button_size = (135, 25)
 
         #######################################################################################
-        # FIXME: STATIC BOX IS OVERRIDING CHECKBOXES
+        # FIXME: 08 STATIC BOX IS OVERRIDING CHECKBOXES
         #######################################################################################
-        # static_panel = wx.Panel(self, size=(300, 60))
-        # wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47))
-        # wx.StaticBoxSizer(wx.StaticBox(static_panel, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47)))
+        # wx.StaticBox(wx.Panel(self, size=(300, 60)), id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47))
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
         self.toggle_button01 = wx.CheckBox(self, id=0, label=settings_button_label, size=button_size, pos=(12, 20), style=wx.BU_LEFT)
