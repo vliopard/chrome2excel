@@ -476,7 +476,12 @@ class SettingsDialog(wx.Dialog):
         static_box = wx.StaticBox(wx.Panel(self, size=(145, 50)), id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(10, 3), size=(135, 47))
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
-        self.toggle_button01 = wx.CheckBox(static_box, id=0, label=settings_button_label, size=(130, 25), style=wx.BU_LEFT, pos=(4, 17))
+
+        if tools.get_system() == "Windows":
+            self.toggle_button01 = wx.CheckBox(static_box, id=0, label=settings_button_label, size=(130, 25), style=wx.BU_LEFT, pos=(4, 17))
+        else:
+            self.toggle_button01 = wx.CheckBox(static_box, id=0, label=settings_button_label, size=button_size, style=wx.BU_LEFT)
+
         self.toggle_button01.SetValue(settings_button_value)
 
         settings_button_label, settings_button_value = set_button_toggle(self, 1, False)

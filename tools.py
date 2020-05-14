@@ -153,3 +153,7 @@ def list_profiles(profile):
             display(preset.message["user"] + ": {", full_name, "} [" + email + "]")
         except Exception as error:
             display(error)
+
+
+def get_system():
+    return system()
