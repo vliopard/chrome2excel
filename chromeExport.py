@@ -31,7 +31,7 @@ class MainUrlPanel(wx.Panel):
 
         self.row_obj_dict = {}
 
-        self.url_objects = None
+        self.url_objects = []
         self.save_file_name = None
 
         self.list_ctrl = ListCtrl(self, wx.ID_ANY, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
@@ -100,7 +100,7 @@ class MainUrlPanel(wx.Panel):
     def on_reset(self, event):
         self.header = None
         self.row_obj_dict = {}
-        self.url_objects = None
+        self.url_objects = []
         self.update_url_screen(True)
         set_total_items(self.parent)
 
@@ -148,7 +148,6 @@ class MainUrlPanel(wx.Panel):
             self.list_ctrl.SetItem(index, int(label_element), str(element))
 
     def update_list(self, url_list):
-        self.url_objects = []
         total_items = len(url_list)
         if total_items:
             start_progress_dialog(True)
@@ -314,9 +313,6 @@ class MainFrame(wx.Frame):
 
 
 def set_total_items(self):
-    #######################################################################################
-    # TODO: self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
-    #######################################################################################
     self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(self.main_url_panel.list_ctrl.GetItemCount()), 2)
 
 
