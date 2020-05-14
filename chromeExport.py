@@ -10,6 +10,7 @@ import bookMarks
 import chrome2excel
 
 from wx.lib.mixins import listctrl
+from wx.lib.scrolledpanel import ScrolledPanel
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -178,7 +179,7 @@ class MainUrlPanel(wx.Panel):
 
     def update_column_width(self):
         #######################################################################################
-        # TODO: 04 DATE COLUMNS MUST BE AUTO WIDTH (USE AUTO-DETECT INSTEAD OF CONSTANT NUMBERS)
+        # TODO: DATE COLUMNS MUST BE AUTO WIDTH (USE AUTO-DETECT INSTEAD OF CONSTANT NUMBERS)
         #######################################################################################
         self.list_ctrl.SetColumnWidth(4, -1)
         self.list_ctrl.SetColumnWidth(5, -1)
@@ -219,7 +220,8 @@ class MainFrame(wx.Frame):
         self.selected_account = -1
 
         self.status_bar = self.CreateStatusBar(3)
-        self.status_bar.SetStatusWidths([200, 500, -1])
+        self.set_status_bar()
+        self.Bind(wx.EVT_SIZE, self.on_resize, self)
 
         self.status_bar.SetStatusText(preset.message["application_title"])
         self.status_bar.SetStatusText("", 1)
@@ -229,16 +231,24 @@ class MainFrame(wx.Frame):
         self.create_menu()
         self.Show()
 
+    def set_status_bar(self):
+        width, height = self.GetSize()
+        self.status_bar.SetStatusWidths([int(width*0.3), int(width*0.4), -1])
+
+    def on_resize(self, event):
+        self.set_status_bar()
+        event.Skip()
+
     def create_menu(self):
         #######################################################################################
-        # TODO: 05 http://zetcode.com/wxpython/menustoolbars/
+        # TODO: http://zetcode.com/wxpython/menustoolbars/
         #######################################################################################
         menu_bar = wx.MenuBar()
         options_menu = wx.Menu()
 
-        open_account_menu_item = options_menu.Append(wx.ID_ANY, preset.message["import_account_menu"], preset.message["import_account_description"])
+        open_account_menu_item = options_menu.Append(wx.ID_ADD, preset.message["import_account_menu"], preset.message["import_account_description"])
         open_folder_menu_item = options_menu.Append(wx.ID_OPEN, preset.message["open_file_menu"], preset.message["open_file_description"])
-        open_settings_menu_item = options_menu.Append(wx.ID_ANY, preset.message["settings_menu"], preset.message["settings_description"])
+        open_settings_menu_item = options_menu.Append(wx.ID_PREFERENCES, preset.message["settings_menu"], preset.message["settings_description"])
         options_menu.AppendSeparator()
         open_exit_menu_item = options_menu.Append(wx.ID_EXIT, preset.message["exit_menu"], preset.message["exit_description"])
 
@@ -250,7 +260,7 @@ class MainFrame(wx.Frame):
         self.Bind(event=wx.EVT_MENU, handler=self.on_open_exit, source=open_exit_menu_item)
 
         about_menu = wx.Menu()
-        open_about_menu_item = about_menu.Append(wx.ID_ANY, preset.message["about_menu"], preset.message["about_description"])
+        open_about_menu_item = about_menu.Append(wx.ID_ABOUT, preset.message["about_menu"], preset.message["about_description"])
         menu_bar.Append(about_menu, preset.message["about_menu"])
         self.Bind(event=wx.EVT_MENU, handler=self.on_about, source=open_about_menu_item)
 
@@ -305,7 +315,7 @@ class MainFrame(wx.Frame):
 
 def set_total_items(self):
     #######################################################################################
-    # TODO: 06 self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
+    # TODO: self.main_url_panel.url_objects IS NOT IN SYNCH WITH list_ctrl.ItemCount
     #######################################################################################
     self.status_bar.SetStatusText(preset.message["total_items"] + '{:n}'.format(self.main_url_panel.list_ctrl.GetItemCount()), 2)
 
@@ -335,13 +345,20 @@ class AboutDialog(wx.Dialog):
 
 class EditDialog(wx.Dialog):
     def __init__(self, edit_url):
-        super().__init__(parent=None, title=preset.message["edit_title"] + "[" + edit_url.URL_Name + "]", size=(700, 590))
+        super().__init__(parent=None, title=preset.message["edit_title"] + "[" + edit_url.URL_Name + "]", size=(700, 590), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
         self.url = edit_url
 
-        self.main_box_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.horizontal_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.scrolled_panel = ScrolledPanel(self)
+        self.scrolled_panel.SetupScrolling()
+
         self.left_box_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_box_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        max_length = 0
+        for item in preset.label_dictionary:
+            label_length = len(preset.label_dictionary[item])
+            if label_length > max_length:
+                max_length = label_length
 
         self.attribute_list = []
         for index, item in enumerate(edit_url.to_list()):
@@ -350,36 +367,48 @@ class EditDialog(wx.Dialog):
                 item_value = utils.date_to_string(element_value)
             else:
                 item_value = str(element_value)
-            self.attribute_list.append(wx.TextCtrl(self, value=item_value))
+            self.attribute_list.append(wx.TextCtrl(self.scrolled_panel, value=item_value))
             dialog_place = "left"
             if index > 21:
                 dialog_place = "right"
-            self.add_widgets(edit_url.get_label(str(index)), self.attribute_list[index], dialog_place)
+            self.add_widgets(edit_url.get_label(str(index)), self.attribute_list[index], dialog_place, max_length)
 
-        #######################################################################################
-        # TODO: 07 MUST CHANGE DIMENSIONS OF TEXT AND FIELD. WIDTH MUST FIT
-        #######################################################################################
-        self.horizontal_box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
-        self.horizontal_box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
-
-        self.main_box_sizer.Add(self.horizontal_box_sizer, 1, wx.EXPAND, 1)
-
-        button_box_sizer = wx.BoxSizer()
+        cancel_button = wx.Button(self, id=wx.ID_CANCEL, label=preset.message["cancel_button"])
 
         save_button = wx.Button(self, id=wx.ID_OK, label=preset.message["edit_save"])
         save_button.Bind(wx.EVT_BUTTON, self.on_save)
-        button_box_sizer.Add(save_button, 0, wx.ALL, 1)
 
-        cancel_button = wx.Button(self, id=wx.ID_CANCEL, label=preset.message["cancel_button"])
-        button_box_sizer.Add(cancel_button, 0, wx.ALL, 1)
+        horizontal_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        horizontal_box_sizer.Add(self.left_box_sizer, 1, wx.EXPAND, 1)
+        horizontal_box_sizer.Add(self.right_box_sizer, 1, wx.EXPAND, 1)
 
-        self.main_box_sizer.Add(button_box_sizer, 0, wx.CENTER)
-        self.SetSizer(self.main_box_sizer)
+        self.scrolled_panel.SetSizer(horizontal_box_sizer)
+        self.scrolled_panel.SetAutoLayout(1)
 
-    def add_widgets(self, text_label, text_ctrl, dialog_place):
+        button_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        button_box_sizer.Add(save_button, 1)
+        button_box_sizer.Add(cancel_button, 1)
+
+        main_box_sizer = wx.BoxSizer(wx.VERTICAL)
+        main_box_sizer.Add(self.scrolled_panel, 1, wx.EXPAND, 1)
+        main_box_sizer.Add(button_box_sizer, 0, wx.ALL | wx.EXPAND, 0)
+
+        self.SetSizer(main_box_sizer)
+
+    def add_widgets(self, text_label, text_ctrl, dialog_place, max_length):
+        spaces_gap = max_length - len(text_label)
+        text_label = text_label + " "*spaces_gap + ":"
+        static_text = wx.StaticText(self.scrolled_panel, label=text_label, size=(max_length*7, -1))
+        static_text.SetFont(wx.Font(8, wx.TELETYPE, wx.NORMAL, wx.BOLD, underline=True))
+
+        static_bullet = wx.StaticText(self.scrolled_panel, label=" °", size=(14, -1))
+        static_bullet.SetFont(wx.Font(8, wx.TELETYPE, wx.NORMAL, wx.BOLD))
+
         box_sizer_horizontal = wx.BoxSizer(wx.HORIZONTAL)
-        box_sizer_horizontal.Add(wx.StaticText(self, label=text_label, size=(40, -1)), 1, wx.ALL, 1)
-        box_sizer_horizontal.Add(text_ctrl, 1, wx.ALL | wx.EXPAND, 0)
+        box_sizer_horizontal.Add(static_bullet, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        box_sizer_horizontal.Add(static_text, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        box_sizer_horizontal.Add(text_ctrl, 1, wx.ALL, 0)
+
         if dialog_place == "left":
             self.left_box_sizer.Add(box_sizer_horizontal, 1, wx.EXPAND, 1)
         else:
@@ -445,12 +474,9 @@ class SettingsDialog(wx.Dialog):
         button_size = (135, 25)
 
         #######################################################################################
-        # FIXME: 08 STATIC BOX IS OVERRIDING CHECKBOXES
+        # FIXME: STATIC BOX IS OVERRIDING CHECKBOXES
         #######################################################################################
-        # wx.StaticBox(wx.Panel(self, size=(300, 60)), id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(285, 47))
-        border = wx.BoxSizer()
-        border.Add(wx.StaticBoxSizer(wx.StaticBox(self, id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(5, 3), size=(140, 47))), 0, wx.ALL, 0)
-        self.SetSizer(border)
+        wx.StaticBox(wx.Panel(self, size=(145, 50)), id=wx.ID_ANY, label=preset.message["works_only_on_cli"], pos=(10, 3), size=(135, 47))
 
         settings_button_label, settings_button_value = set_button_toggle(self, 0, False)
         self.toggle_button01 = wx.CheckBox(self, id=0, label=settings_button_label, size=button_size, pos=(12, 20), style=wx.BU_LEFT)
