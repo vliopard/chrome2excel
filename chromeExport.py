@@ -394,7 +394,7 @@ class EditDialog(wx.Dialog):
     def add_widgets(self, text_label, text_ctrl, dialog_place, max_length):
         spaces_gap = max_length - len(text_label)
         text_label = text_label + " "*spaces_gap + ":"
-        static_text = wx.StaticText(self.scrolled_panel, label=text_label, size=(max_length*7, -1))
+        static_text = wx.StaticText(self.scrolled_panel, label=text_label, size=(max_length*8, -1))
         static_text.SetFont(wx.Font(8, wx.TELETYPE, wx.NORMAL, wx.BOLD, underline=True))
 
         static_bullet = wx.StaticText(self.scrolled_panel, label=" °", size=(14, -1))
