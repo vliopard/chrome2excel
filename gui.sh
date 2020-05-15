@@ -1,2 +1,2 @@
 #!/bin/sh
-python chromeExport.py
+python chrome2excel.py -x

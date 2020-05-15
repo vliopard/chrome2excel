@@ -43,7 +43,15 @@ class Urls:
 
 def debug(*arguments):
     if preset.debug_mode:
+        print('\n')
+        double_line()
+        double_line("DEBUG MESSAGE START")
+        double_line()
         display(*arguments)
+        double_line()
+        double_line("DEBUG MESSAGE END")
+        double_line()
+        print('\n')
 
 
 def display(*arguments):
@@ -60,12 +68,28 @@ def display(*arguments):
             return 0
 
 
+def highlight(*arguments):
+    print('\n\n')
+    overline()
+    display(*arguments)
+    underline()
+    print('\n\n')
+
+
 def underline():
     display(preset.underline*(screenSupport.get_terminal_width()))
 
 
 def overline():
     display(preset.overline*(screenSupport.get_terminal_width()))
+
+
+def double_line(message=None):
+    if message:
+        message = "== " + message + " "
+        display(message + "="*(screenSupport.get_terminal_width()-len(message)))
+    else:
+        display("="*(screenSupport.get_terminal_width()))
 
 
 def select_profile(profile):
@@ -90,26 +114,6 @@ def get_chrome_element(profile_number, item):
     if os.path.exists(chrome_file):
         return chrome_file
     return None
-
-
-def get_settings(settings):
-    refresh = preset.off
-    if settings.refresh_url_title:
-        refresh = preset.on
-
-    undupe = preset.off
-    if settings.remove_duplicated_urls:
-        undupe = preset.on
-
-    clean = preset.off
-    if settings.remove_tracking_tokens_from_url:
-        clean = preset.on
-
-    get_hostname_title = preset.off
-    if settings.refresh_folder_name_with_hostname_title:
-        get_hostname_title = preset.on
-
-    return refresh, undupe, clean, get_hostname_title
 
 
 def get_user(user_path):

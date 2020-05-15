@@ -75,26 +75,34 @@ class MainUrlPanel(wx.Panel):
         if self.url_objects:
             self.on_save_file("html")
             if self.save_file_name:
-                refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
                 start_progress_dialog(True)
                 #######################################################################################
                 # TODO: 02 CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
-                chrome2excel.generate_web_page(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
+                chrome2excel.generate_web_page(self.save_file_name,
+                                               bookmarks_data,
+                                               self.parent.application_settings.refresh_url_title,
+                                               self.parent.application_settings.remove_duplicated_urls,
+                                               self.parent.application_settings.remove_tracking_tokens_from_url,
+                                               self.parent.application_settings.refresh_folder_name_with_hostname_title)
                 start_progress_dialog(False)
 
     def on_xlsx(self, event):
         if self.url_objects:
             self.on_save_file("xlsx")
             if self.save_file_name:
-                refresh, undupe, clean, get_hostname_title = tools.get_settings(self.parent.application_settings)
                 bookmarks_data = self.to_tuple()
                 start_progress_dialog(True)
                 #######################################################################################
                 # TODO: 02 CANCEL AND RETURN IF PROGRESS BAR CANCEL BUTTON IS PRESSED
                 #######################################################################################
-                chrome2excel.generate_work_book(self.save_file_name, bookmarks_data, refresh, undupe, clean, get_hostname_title)
+                chrome2excel.generate_work_book(self.save_file_name,
+                                                bookmarks_data,
+                                                self.parent.application_settings.refresh_url_title,
+                                                self.parent.application_settings.remove_duplicated_urls,
+                                                self.parent.application_settings.remove_tracking_tokens_from_url,
+                                                self.parent.application_settings.refresh_folder_name_with_hostname_title)
                 start_progress_dialog(False)
 
     def on_reset(self, event):
@@ -613,8 +621,8 @@ def start_progress_dialog(start):
         preset.gui_progress_dialog = None
 
 
-if __name__ == '__main__':
+def main():
     preset.run_gui = True
     application = wx.App(False)
-    application_frame = MainFrame()
+    MainFrame()
     application.MainLoop()

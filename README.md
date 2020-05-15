@@ -20,41 +20,37 @@ Run command:
 
 For running Graphical User Interface:
 
-`python chromeExport.py`
+`python chrome2excel.py -x`
 
 ### Run in CLI:
 
-For running default profile in Command Line Interface:
+For running a profile in Command Line Interface:
 
-`python chrome2excel.py`
-
+`python chrome2excel.py -p <ProfileNumber>`
 
 
 **To identify local profiles:**
 
-`python chrome2excel.py -l ['all' | <ProfileNumber>]`
+`python chrome2excel.py -l [ProfileNumber]`
 
-For choosing an specific profile:
-
-`python chrome2excel.py -p <ProfileNumber>`
 
 ## Features:
 
 **To turn on remove duplicate entries:**
 
-`python chrome2excel.py -p <ProfileNumber> -u [on, off]`
+`python chrome2excel.py -p <ProfileNumber> -u`
 
 **To turn on refresh URL Title:**
 
-`python chrome2excel.py -p <ProfileNumber> -r [on, off]`
+`python chrome2excel.py -p <ProfileNumber> -r`
 
 **To turn on get Hostname:**
 
-`python chrome2excel.py -p <ProfileNumber> -g [on, off]`
+`python chrome2excel.py -p <ProfileNumber> -g`
 
 **To turn on clean URL from tracking**
 
-`python chrome2excel.py -p <ProfileNumber> -c [on, off]`
+`python chrome2excel.py -p <ProfileNumber> -c`
 
 **To set output file type as HTML or XLSX:**
 

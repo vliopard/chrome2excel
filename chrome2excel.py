@@ -52,13 +52,18 @@ def generate_from_txt(url_list):
 
 
 def generate_web_page(web_page_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
+    tools.debug("filename    [", str(web_page_filename),
+                "]\nreload_title[", str(reload_url_title),
+                "]\nremove_dupes[", str(remove_duplicated_urls),
+                "]\nremove_track[", str(remove_tracking_from_url),
+                "]\nget_hostname[", str(get_hostname_title), "]")
     tools.display(preset.message["generating_html"] + " [" + web_page_filename + "]")
 
     visited_hostname_title = set()
     visited_url_address = set()
     folder_list = []
     data_table_without_duplicates = []
-    if remove_duplicated_urls == preset.on:
+    if remove_duplicated_urls:
         tools.underline()
         tools.display(preset.message["removing_duplicates"])
         tools.overline()
@@ -77,7 +82,7 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
                 if utils.update_progress(preset.message["removing_duplicates"], index, total_items):
                     break
 
-                if remove_tracking_from_url == preset.on:
+                if remove_tracking_from_url:
                     url_address = header.get_name(preset.url_clean_attr)
                 else:
                     url_address = header.get_name(preset.url_attr)
@@ -107,7 +112,7 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
 
             url_title = header.get_name(preset.url_name_attr)
 
-            if remove_tracking_from_url == preset.on:
+            if remove_tracking_from_url:
                 url_address = header.get_name(preset.url_clean_attr)
             else:
                 url_address = header.get_name(preset.url_attr)
@@ -115,12 +120,12 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
             hostname_title = header.get_name(preset.hostname_attr)
             original_hostname = header.get_name(preset.hostname_attr)
 
-            if reload_url_title == preset.on:
+            if reload_url_title:
                 status_number, url_title = htmlSupport.get_title(url_address)
                 if status_number != 0:
                     url_title = "[ " + url_title + " " + str(status_number) + " - " + header.get_name(preset.url_name_attr) + " ]"
 
-            if get_hostname_title == preset.on:
+            if get_hostname_title:
                 status_number, hostname_title = htmlSupport.get_title(preset.protocol + original_hostname)
                 if status_number != 0:
                     hostname_title = "[ " + hostname_title + " " + str(status_number) + " - " + original_hostname + " ]"
@@ -144,19 +149,24 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
 
 
 def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
+    tools.debug("filename    [", str(spreadsheet_filename),
+                "]\nreload_title[", str(reload_url_title),
+                "]\nremove_dupes[", str(remove_duplicated_urls),
+                "]\nremove_track[", str(remove_tracking_from_url),
+                "]\nget_hostname[", str(get_hostname_title), "]")
     tools.display(preset.message["generating_workbook"] + " [" + spreadsheet_filename + "]")
     excel_workbook = Workbook()
     excel_worksheet = excel_workbook.active
     excel_worksheet.title = preset.message["chrome_urls"]
 
     reload_url_title_disabled = True
-    if reload_url_title != preset.off:
+    if reload_url_title:
         tools.underline()
         tools.display(preset.message["get_url_status"])
         tools.overline()
         reload_url_title_disabled = False
 
-    if get_hostname_title != preset.off:
+    if get_hostname_title:
         tools.underline()
         tools.display(preset.message["resolving_hostnames"])
         tools.overline()
@@ -191,7 +201,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
 
             header = preset.Header()
             header.set_data(data_row)
-            if remove_tracking_from_url == preset.on:
+            if remove_tracking_from_url:
                 url_address = header.get_name(preset.url_clean_attr)
             else:
                 url_address = header.get_name(preset.url_attr)
@@ -201,7 +211,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
             if url_address not in visited_url_address:
                 visited_url_address.add(url_address)
                 data_table_without_duplicates.append(("MAIN", get_title_conditional(progress_bar, reload_url_title_disabled, url_name, url_address)) + data_row)
-            elif remove_duplicated_urls == preset.off:
+            elif not remove_duplicated_urls:
                 data_table_without_duplicates.append(("DUPE", get_title_conditional(progress_bar, reload_url_title_disabled, url_name, url_address)) + data_row)
 
     tools.display(preset.message["writing_spreadsheet"])
@@ -292,17 +302,20 @@ def get_profile(profile):
     return tools.get_user(user_data)
 
 
-def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name, list_profile):
-    tools.debug("profile[", str(profile),
-                "]\noutput[", str(output),
-                "]\nrefresh[", str(refresh),
-                "]\nundupe[", str(undupe),
-                "]\nclean[", str(clean),
-                "]\nimport_txt[", str(import_txt),
-                "]\nget_hostname[", str(get_hostname),
-                "]\noutput_name[", str(output_name),
-                "]\nlist_profiles[" + str(list_profile) + "]")
-    if list_profile:
+def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name, list_profile, x_org_gui):
+    tools.debug("profile       [", str(profile),
+                "]\noutput        [", str(output),
+                "]\nrefresh       [", str(refresh),
+                "]\nundupe        [", str(undupe),
+                "]\nclean         [", str(clean),
+                "]\nimport_txt    [", str(import_txt),
+                "]\nget_hostname  [", str(get_hostname),
+                "]\noutput_name   [", str(output_name),
+                "]\nlist_profiles [" + str(list_profile) + "]")
+    if x_org_gui:
+        import chromeExport
+        chromeExport.main()
+    elif list_profile:
         if not list_profile.isdigit():
             list_profile = preset.all_profiles
         tools.list_profiles(list_profile)
@@ -316,7 +329,7 @@ def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname
             tools.underline()
             tools.display(preset.message["starting_export"])
 
-            if profile != preset.none:
+            if profile:
                 email, full, name = get_profile(profile)
                 bookmarks = bookMarks.generate_bookmarks(profile)
                 tools.underline()
@@ -326,19 +339,36 @@ def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname
             else:
                 bookmarks_data = []
 
-            if import_txt != preset.none:
+            if import_txt:
                 bookmarks_data = append_data_table(bookmarks_data, import_text_file(import_txt))
 
-            if output_name == preset.none:
+            if not output_name:
                 if output == "xlsx":
                     output_name = preset.xlsx_filename
                 else:
                     output_name = preset.html_filename
 
+            refresh = normalize(refresh)
+            undupe = normalize(undupe)
+            clean = normalize(clean)
+            get_hostname = normalize(get_hostname)
+
             if output == "xlsx":
                 generate_work_book(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
             else:
                 generate_web_page(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
+
+
+def normalize(parameter):
+    if parameter == preset.on or parameter == preset.true:
+        return True
+    return False
+
+
+def default(default_value):
+    if default_value:
+        return preset.message["enabled"]
+    return preset.message["disabled"]
 
 
 if __name__ == "__main__":
@@ -349,64 +379,77 @@ if __name__ == "__main__":
     if settings.export_file_type:
         default_output = "html"
 
-    default_refresh, default_undupe, default_clean, default_hostname = tools.get_settings(settings)
-
     argument_parser = ArgumentParser(
         description=preset.message["main_description"]
     )
     argument_parser.add_argument(
-        "--profile",
         "-p",
+        dest='profile',
         help=preset.message["main_profile_help"],
         default=preset.none
     )
     argument_parser.add_argument(
-        "--output",
         "-o",
-        help=preset.message["main_output_help"] + default_output + preset.message["default"],
+        dest='output',
+        help=preset.message["main_output_help"] + preset.message["default"] + default_output + ".",
         default=default_output
     )
     argument_parser.add_argument(
-        "--refresh",
         "-r",
-        help=preset.message["main_refresh_help"] + default_refresh + preset.message["default"],
-        default=default_refresh
+        dest='refresh',
+        help=preset.message["main_refresh_help"] + preset.message["default"] + default(settings.refresh_url_title),
+        nargs="?",
+        const=preset.true,
+        default=settings.refresh_url_title
     )
     argument_parser.add_argument(
-        "--undupe",
         "-u",
-        help=preset.message["main_undupe_help"] + default_undupe + preset.message["default"],
-        default=default_undupe
+        dest='undupe',
+        help=preset.message["main_undupe_help"] + preset.message["default"] + default(settings.remove_duplicated_urls),
+        nargs="?",
+        const=preset.true,
+        default=settings.remove_duplicated_urls
     )
     argument_parser.add_argument(
-        "--clean",
         "-c",
-        help=preset.message["main_clean_help"] + default_clean + preset.message["default"],
-        default=default_clean
+        dest='clean',
+        help=preset.message["main_clean_help"] + preset.message["default"] + default(settings.remove_tracking_tokens_from_url),
+        nargs="?",
+        const=preset.true,
+        default=settings.remove_tracking_tokens_from_url
     )
     argument_parser.add_argument(
-        "--import_txt",
         "-i",
+        dest='import_txt',
         help=preset.message["main_import_help"],
         default=preset.none
     )
     argument_parser.add_argument(
-        "--get_hostname",
         "-g",
-        help=preset.message["main_hostname_help"] + default_hostname + preset.message["default"],
-        default=default_hostname
+        dest='get_hostname',
+        help=preset.message["main_hostname_help"] + preset.message["default"] + default(settings.refresh_folder_name_with_hostname_title),
+        nargs="?",
+        const=preset.true,
+        default=settings.refresh_folder_name_with_hostname_title
     )
     argument_parser.add_argument(
-        "--output_name",
         "-n",
+        dest="output_name",
         help=preset.message["main_filename_help"],
         default=preset.none
     )
     argument_parser.add_argument(
-        "--list_profile",
         "-l",
-        help=preset.message["profile_help"],
-        default=preset.none
+        dest="list_profile",
+        help=preset.message["profile_help"] + preset.message["default"] + preset.message["all_profiles"],
+        nargs="?",
+        const=preset.all_profiles
+    )
+    argument_parser.add_argument(
+        "-x",
+        dest='x_org_gui',
+        help=preset.message["open_gui"],
+        action='store_true'
     )
     arguments = vars(argument_parser.parse_args())
     run_chrome(**arguments)
