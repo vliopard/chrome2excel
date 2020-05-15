@@ -30,8 +30,8 @@ class MainUrlPanel(wx.Panel):
         self.header = preset.Header()
 
         self.row_obj_dict = {}
-
         self.url_objects = []
+
         self.save_file_name = None
 
         self.list_ctrl = ListCtrl(self, wx.ID_ANY, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
@@ -124,9 +124,10 @@ class MainUrlPanel(wx.Panel):
             edit_dialog = EditDialog(self.row_obj_dict[selected_item])
             return_value = edit_dialog.ShowModal()
             if return_value == wx.ID_OK:
-                self.row_obj_dict[selected_item] = edit_dialog.url
+                new_url = edit_dialog.url.to_list()
+                self.url_objects[selected_item] = new_url
                 self.list_ctrl.DeleteItem(selected_item)
-                self.update_element(selected_item, edit_dialog.url.to_list())
+                self.update_element(selected_item, new_url)
                 self.update_column_width()
 
     def update_url_screen(self, reset):
