@@ -29,10 +29,6 @@ class MainUrlPanel(wx.Panel):
 
         self.header = preset.Header()
 
-        #######################################################################################
-        # TODO: MUST UNIFY DICT, LIST AND LISTCTRL IN A SINGLE OBJECT
-        #######################################################################################
-        self.row_obj_dict = {}
         self.url_objects = []
         self.list_ctrl = ListCtrl(self, wx.ID_ANY, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
 
@@ -110,7 +106,6 @@ class MainUrlPanel(wx.Panel):
 
     def on_reset(self, event):
         self.header = None
-        self.row_obj_dict = {}
         self.url_objects = []
         self.update_url_screen(True)
         set_total_items(self.parent)
@@ -118,19 +113,17 @@ class MainUrlPanel(wx.Panel):
     def to_tuple(self):
         bookmarks_data = []
         for row in self.url_objects:
-            bookmarks_data.append(tuple(row))
+            bookmarks_data.append(row.to_tuple())
         return bookmarks_data
 
     def on_edit(self, event):
         selected_item = self.list_ctrl.GetFocusedItem()
         if selected_item >= 0:
-            edit_dialog = EditDialog(self.row_obj_dict[selected_item])
+            edit_dialog = EditDialog(self.url_objects[selected_item])
             return_value = edit_dialog.ShowModal()
             if return_value == wx.ID_OK:
-                new_url = edit_dialog.url.to_list()
-                self.url_objects[selected_item] = new_url
                 self.list_ctrl.DeleteItem(selected_item)
-                self.update_element(selected_item, new_url)
+                self.update_element(selected_item, edit_dialog.url.to_list())
                 self.update_column_width()
 
     def update_url_screen(self, reset):
@@ -171,8 +164,7 @@ class MainUrlPanel(wx.Panel):
                 self.update_element(index, url)
                 url_object = preset.Header()
                 url_object.set_data(url)
-                self.url_objects.append(url_object.to_list())
-                self.row_obj_dict[index] = url_object
+                self.url_objects.append(url_object)
                 #######################################################################################
                 # TODO: 03 LET USER CHANGE COLOR IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
                 # TODO: 03 CHANGE COLOR IN POPUP MENU http://revxatlarge.blogspot.com/2011/06/wxpython-listbox-popupmenu.html
@@ -223,8 +215,7 @@ class MainFrame(wx.Frame):
                           parent=None,
                           title=preset.message["bookmarks_editor"],
                           size=(1200, 600))
-        self.__close_callback = None
-        self.Bind(wx.EVT_CLOSE, self._when_closed)
+        self.Bind(wx.EVT_CLOSE, self.frame_button_close)
 
         application_icon = wx.Icon()
         application_icon.CopyFromBitmap(wx.Bitmap(preset.main_icon, wx.BITMAP_TYPE_ANY))
@@ -326,12 +317,8 @@ class MainFrame(wx.Frame):
         else:
             self.Close()
 
-    def register_close_callback(self, callback):
-        self.__close_callback = callback
-
-    def _when_closed(self, event):
-        if True if not self.__close_callback else self.__close_callback():
-            event.Skip()
+    def frame_button_close(self, event):
+        self.Destroy()
 
 
 def set_total_items(self):
@@ -638,7 +625,5 @@ def start_progress_dialog(start):
 def main():
     preset.run_gui = True
     application = wx.App(False)
-    main_frame = MainFrame()
-    main_frame.Show()
-    main_frame.register_close_callback(lambda: True)
+    MainFrame()
     application.MainLoop()
