@@ -29,15 +29,18 @@ class MainUrlPanel(wx.Panel):
 
         self.header = preset.Header()
 
+        #######################################################################################
+        # TODO: MUST UNIFY DICT, LIST AND LISTCTRL IN A SINGLE OBJECT
+        #######################################################################################
         self.row_obj_dict = {}
         self.url_objects = []
+        self.list_ctrl = ListCtrl(self, wx.ID_ANY, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
 
         self.save_file_name = None
 
-        self.list_ctrl = ListCtrl(self, wx.ID_ANY, size=(100, -1), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
-
         #######################################################################################
         # TODO: 01 AUTO SAVE COLUMNS WIDTH
+        # TODO: 01 DELETE SELECTED ROW (OR EVEN MULTIPLE SELECTED ROWS)
         # TODO: 01 SELECT COLUMNS TO SHOW IN POPUP MENU https://wiki.wxpython.org/PopupMenuOnRightClick
         # TODO: 01 EDIT ROW ITEMS INPLACE https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
         # TODO: 01 SORT ROWS BY CLICKING HEADER https://www.blog.pythonlibrary.org/2011/01/04/wxpython-wx-listctrl-tips-and-tricks/
@@ -220,6 +223,9 @@ class MainFrame(wx.Frame):
                           parent=None,
                           title=preset.message["bookmarks_editor"],
                           size=(1200, 600))
+        self.__close_callback = None
+        self.Bind(wx.EVT_CLOSE, self._when_closed)
+
         application_icon = wx.Icon()
         application_icon.CopyFromBitmap(wx.Bitmap(preset.main_icon, wx.BITMAP_TYPE_ANY))
         self.SetIcon(application_icon)
@@ -319,6 +325,13 @@ class MainFrame(wx.Frame):
                 self.Destroy()
         else:
             self.Close()
+
+    def register_close_callback(self, callback):
+        self.__close_callback = callback
+
+    def _when_closed(self, event):
+        if True if not self.__close_callback else self.__close_callback():
+            event.Skip()
 
 
 def set_total_items(self):
@@ -625,5 +638,7 @@ def start_progress_dialog(start):
 def main():
     preset.run_gui = True
     application = wx.App(False)
-    MainFrame()
+    main_frame = MainFrame()
+    main_frame.Show()
+    main_frame.register_close_callback(lambda: True)
     application.MainLoop()
