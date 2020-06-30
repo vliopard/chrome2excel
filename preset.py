@@ -115,7 +115,10 @@ general_tracking_tokens = (
         "utm_content",
         "utm_medium",
         "utm_source",
-        "utm_term"
+        "utm_term",
+        "ocid",
+        "SThisFB",
+        "ref_"
 )
 
 youtube_parameters = (
@@ -126,7 +129,8 @@ youtube_parameters = (
         "bpctr",
         "1c",
         "sns",
-        "a"
+        "a",
+        "pbjreload"
 )
 
 facebook_tracking_tokens = (
