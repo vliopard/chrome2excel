@@ -125,7 +125,8 @@ youtube_parameters = (
         "app",
         "bpctr",
         "1c",
-        "sns"
+        "sns",
+        "a"
 )
 
 facebook_tracking_tokens = (
