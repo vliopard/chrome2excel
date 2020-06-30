@@ -20,49 +20,49 @@ Run command:
 
 For running Graphical User Interface:
 
-`python chrome2excel.py -x`
+`py -3 chrome2excel.py -x`
 
 ### Run in CLI:
 
 For running a profile in Command Line Interface:
 
-`python chrome2excel.py -p <ProfileNumber>`
+`py -3 chrome2excel.py -p <ProfileNumber>`
 
 
 **To identify local profiles:**
 
-`python chrome2excel.py -l [ProfileNumber]`
+`py -3 chrome2excel.py -l [ProfileNumber]`
 
 
 ## Features:
 
 **To turn on remove duplicate entries:**
 
-`python chrome2excel.py -p <ProfileNumber> -u`
+`py -3 chrome2excel.py -p <ProfileNumber> -u`
 
 **To turn on refresh URL Title:**
 
-`python chrome2excel.py -p <ProfileNumber> -r`
+`py -3 chrome2excel.py -p <ProfileNumber> -r`
 
 **To turn on get Hostname:**
 
-`python chrome2excel.py -p <ProfileNumber> -g`
+`py -3 chrome2excel.py -p <ProfileNumber> -g`
 
 **To turn on clean URL from tracking**
 
-`python chrome2excel.py -p <ProfileNumber> -c`
+`py -3 chrome2excel.py -p <ProfileNumber> -c`
 
 **To set output file type as HTML or XLSX:**
 
-`python chrome2excel.py -p <ProfileNumber> -o [html, xlsx]`
+`py -3 chrome2excel.py -p <ProfileNumber> -o [html, xlsx]`
 
 **To set input text file name:**
 
-`python chrome2excel.py -i <FileName>`
+`py -3 chrome2excel.py -i <FileName>`
 
 **To set output file name:**
 
-`python chrome2excel.py -p <ProfileNumber> -n <FileName>`
+`py -3 chrome2excel.py -p <ProfileNumber> -n <FileName>`
 
 ## About
 *This is an **Open Source Project** that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
