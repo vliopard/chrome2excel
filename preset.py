@@ -118,7 +118,28 @@ general_tracking_tokens = (
         "utm_term",
         "ocid",
         "SThisFB",
-        "ref_"
+        "ref_",
+        "quantity",
+        "variation",
+        "tracking_id",
+        "position",
+        "onAttributesExp",
+        "type",
+        "source_impression_id",
+        "versao",
+        "reco_item_pos",
+        "reco_backend",
+        "reco_backend_type",
+        "reco_client",
+        "reco_id",
+        "c_id",
+        "c_element_order",
+        "c_uid",
+        "ref",
+        "is_advertising",
+        "ad_domain",
+        "ad_position",
+        "ad_click_id"
 )
 
 youtube_parameters = (
@@ -130,7 +151,9 @@ youtube_parameters = (
         "1c",
         "sns",
         "a",
-        "pbjreload"
+        "pbjreload",
+        "index",
+        "list"
 )
 
 facebook_tracking_tokens = (
@@ -155,7 +178,8 @@ facebook_tracking_tokens = (
         "lst",
         "__nodl",
         "permPage",
-        "notif_id"
+        "notif_id",
+        "force_theater"
 )
 
 cli_progress_dialog = None
