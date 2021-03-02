@@ -2,3 +2,4 @@ tqdm
 public
 openpyxl
 wxpython
+tldextract

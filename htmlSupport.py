@@ -1,5 +1,6 @@
 import utils
 import preset
+import tldextract
 
 from socket import timeout
 from html.parser import HTMLParser
@@ -79,8 +80,10 @@ def clean_url(url_address):
         url_parsed.fragment
     ])
 
-
 def get_title(url_address):
+    ext = tldextract.extract(url_address)
+    url_address = "http://" + ext.domain + "." + ext.suffix
+
     try:
         with urlopen(url_address, timeout=preset.timeout) as stream:
             url_data = stream.read()
@@ -107,7 +110,7 @@ def get_title(url_address):
         if len(url_value) > 0:
             return 0, url_value
         else:
-            return -2, "NONAME - " + url_value
+            return -2, "NONAME - " + url_address
     except NotImplementedError as error:
         return -2, str(error) + " - " + url_address
     except Exception as error:
