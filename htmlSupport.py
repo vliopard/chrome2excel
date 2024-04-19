@@ -5,6 +5,8 @@ import tldextract
 from socket import timeout
 from html.parser import HTMLParser
 
+from preset import parameters_dict, general_parameters
+
 from urllib import parse
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
@@ -79,6 +81,36 @@ def clean_url(url_address):
         urlencode(filtered_parameters, doseq=True),
         url_parsed.fragment
     ])
+
+
+def parse_url_clean(url_value):
+    if not url_value.startswith('java'):
+        parsed_url = urlparse(url_value)
+        dictionary = dict(parse.parse_qsl(parse.urlsplit(url_value).query))
+
+        url_parameters = [
+                        utils.check_is_none(parsed_url.scheme),
+                        "://",
+                        utils.check_is_none(parsed_url.netloc.replace('m.youtube.com', 'www.youtube.com')),
+                        utils.check_is_none(parsed_url.path),
+                        utils.check_is_none(parsed_url.port),
+                        utils.check_is_none(parsed_url.params),
+                        utils.check_fragment(parsed_url.fragment, parsed_url.netloc.replace('m.youtube.com', 'www.youtube.com')),
+                        utils.check_is_none(parsed_url.username),
+                        utils.check_is_none(parsed_url.password)
+                      ]
+
+        qsl_parameters = []
+        for element in dictionary:
+            if not utils.contains(element, parameters_dict[utils.get_dict_key_from_substring(parameters_dict, parsed_url.netloc)] + general_parameters if utils.get_dict_key_from_substring(parameters_dict, parsed_url.netloc) else general_parameters):
+                qsl_parameters.append(element + "=" + dictionary[element])
+
+        qsl = "&".join(qsl_parameters)
+        if qsl:
+            qsl = '?' + qsl
+        return "".join(url_parameters).replace('//youtube.com', '//www.youtube.com') + qsl
+    return None
+
 
 def get_title(url_address):
     ext = tldextract.extract(url_address)

@@ -404,6 +404,7 @@ class EditDialog(wx.Dialog):
         spaces_gap = max_length - len(text_label)
         text_label = text_label + " "*spaces_gap + ":"
         static_text = wx.StaticText(self.scrolled_panel, label=text_label, size=(max_length*8, -1))
+        # noinspection PyUnresolvedReferences
         static_text.SetFont(wx.Font(8, wx.TELETYPE, wx.NORMAL, wx.BOLD, underline=True))
 
         static_bullet = wx.StaticText(self.scrolled_panel, label=" °", size=(14, -1))
@@ -454,6 +455,7 @@ class ProfileChooser(wx.Dialog):
             horizontal_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_OK, preset.message["ok_button"]), 1)
         else:
             vertical_box_sizer.Add(wx.StaticText(profile_chooser_panel, wx.ID_ANY, label=preset.message["no_account"]))
+
         horizontal_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_CANCEL, preset.message["cancel_button"]), 1)
 
         main_box_sizer = wx.BoxSizer(wx.VERTICAL)

@@ -47,8 +47,7 @@ def append_data_table(data_table, url_list):
 
 def generate_from_txt(url_list):
     tools.display(preset.message["generating_from_text"])
-    txt_header = []
-    return append_data_table(txt_header, url_list)
+    return append_data_table([], url_list)
 
 
 def generate_web_page(web_page_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
@@ -360,15 +359,11 @@ def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname
 
 
 def normalize(parameter):
-    if parameter == preset.on or parameter == preset.true:
-        return True
-    return False
+    return parameter == preset.on or parameter == preset.true
 
 
 def default(default_value):
-    if default_value:
-        return preset.message["enabled"]
-    return preset.message["disabled"]
+    return preset.message["enabled" if default_value else "disabled"]
 
 
 if __name__ == "__main__":

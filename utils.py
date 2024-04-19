@@ -12,9 +12,7 @@ def get(value):
 
 
 def check_is_none(value):
-    if value is None:
-        return preset.empty_string
-    return str(value)
+    return preset.empty_string if value is None else str(value)
 
 
 def to_number(value):
@@ -88,3 +86,26 @@ def count_urls(items):
         if "children" in value:
             count = process_tree(value["children"], count)
     return count
+
+
+def get_dict_key_from_substring(dictionary_data, text_substring):
+    for dictionary_key in dictionary_data:
+        if dictionary_key in text_substring:
+            return dictionary_key
+    return None
+
+
+def contains(single_element, list_of_elements):
+    return any(element in single_element for element in list_of_elements)
+
+
+def check_fragment(in_string, url):
+    return_list = []
+    string_list = in_string.split('&')
+    for string_item in string_list:
+        token = string_item.split('=')[0]
+        if token.startswith('D['):
+            token = 'D['
+        if not contains(token, preset.parameters_dict[get_dict_key_from_substring(preset.parameters_dict, url)] + preset.general_parameters if get_dict_key_from_substring(preset.parameters_dict, url) else preset.general_parameters):
+            return_list.append(string_item)
+    return "&".join(return_list)
