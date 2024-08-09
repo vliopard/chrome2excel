@@ -90,7 +90,7 @@ def parse_url_clean(url_value):
 
         url_parameters = [
                         utils.check_is_none(parsed_url.scheme),
-                        '://',
+                        f':{preset.FORWARD_SLASHES}',
                         utils.check_is_none(parsed_url.netloc.replace(preset.YOUTUBE_M, preset.YOUTUBE_WWW)),
                         utils.check_is_none(parsed_url.path),
                         utils.check_is_none(parsed_url.port),
@@ -108,7 +108,7 @@ def parse_url_clean(url_value):
         qsl = '&'.join(qsl_parameters)
         if qsl:
             qsl = f'?{qsl}'
-        return ''.join(url_parameters).replace(f'//{preset.YOUTUBE_COM}', f'//{preset.YOUTUBE_WWW}') + qsl
+        return ''.join(url_parameters).replace(f'{preset.FORWARD_SLASHES}{preset.YOUTUBE_COM}', f'{preset.FORWARD_SLASHES}{preset.YOUTUBE_WWW}') + qsl
     return None
 
 
@@ -138,7 +138,7 @@ def get_title(url_address):
         url_parser = Parser()
         url_decoded = url_data.decode(preset.UTF8, errors='ignore')
         url_parser.feed(url_decoded)
-        url_value = url_parser.title.replace('\n', '¬').replace('\t', '§').strip()
+        url_value = url_parser.title.replace(preset.NEW_LINE, '¬').replace(preset.TAB, '§').strip()
         if len(url_value) > 0:
             return 0, url_value
         else:

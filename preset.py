@@ -58,6 +58,7 @@ UNKNOWN = 'unknown_exception'
 
 TAB = '\t'
 NEW_LINE = '\n'
+FORWARD_SLASHES = '//'
 
 UNDERLINE = '_'
 OVERLINE = '‾'
