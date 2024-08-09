@@ -1,7 +1,8 @@
+import preset
 from htmlSupport import parse_url_clean
 
 if __name__ == "__main__":
-    with open('links.txt', 'r', encoding='utf-8') as file_lines:
+    with open('links.txt', 'r', encoding=preset.UTF8) as file_lines:
         paramz = []
         lines = file_lines.readlines()
         for line in lines:

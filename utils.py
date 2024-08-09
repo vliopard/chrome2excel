@@ -12,11 +12,11 @@ def get(value):
 
 
 def check_is_none(value):
-    return preset.empty_string if value is None else str(value)
+    return preset.EMPTY_STRING if value is None else str(value)
 
 
 def to_number(value):
-    if value != preset.empty_string and value != preset.empty and value != preset.blank and value != preset.no_date:
+    if value != preset.EMPTY_STRING and value != preset.EMPTY and value != preset.BLANK and value != preset.NO_DATE:
         return int(value)
     return None
 
@@ -28,15 +28,15 @@ def to_date(value):
         seconds, microseconds = divmod(microseconds, 1000000)
         days, seconds = divmod(seconds, 86400)
         return datetime(1601, 1, 1) + timedelta(days, seconds, microseconds)
-    return preset.no_date
+    return preset.NO_DATE
 
 
 def date_to_string(date_value):
     if isinstance(date_value, str):
         return date_value
     if isinstance(date_value, datetime):
-        return date_value.strftime(preset.date_format)
-    return preset.no_date
+        return date_value.strftime(preset.DATE_FORMAT)
+    return preset.NO_DATE
 
 
 def epoch_to_date(epoch_value):
@@ -49,7 +49,7 @@ def date_to_epoch(date_value):
         seconds_in_day = 60 * 60 * 24
         value = '{:<010d}'.format(difference.days * seconds_in_day + difference.seconds + difference.microseconds)
         return str(value)
-    return preset.empty
+    return preset.EMPTY
 
 
 def update_tuple(tuple_object, value, position):
@@ -88,7 +88,7 @@ def count_urls(items):
     return count
 
 
-def get_dict_key_from_substring(dictionary_data, text_substring):
+def key_on_substring(dictionary_data, text_substring):
     for dictionary_key in dictionary_data:
         if dictionary_key in text_substring:
             return dictionary_key
@@ -106,6 +106,6 @@ def check_fragment(in_string, url):
         token = string_item.split('=')[0]
         if token.startswith('D['):
             token = 'D['
-        if not contains(token, preset.parameters_dict[get_dict_key_from_substring(preset.parameters_dict, url)] + preset.general_parameters if get_dict_key_from_substring(preset.parameters_dict, url) else preset.general_parameters):
+        if not contains(token, preset.dict_params[key_on_substring(preset.dict_params, url)] + preset.general_params if key_on_substring(preset.dict_params, url) else preset.general_params):
             return_list.append(string_item)
     return "&".join(return_list)

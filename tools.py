@@ -41,26 +41,26 @@ class Urls:
         return str(self.__dict__)
 
 
-def debug(*arguments):
-    if preset.debug_mode:
+def print_debug(*arguments):
+    if preset.DEBUG_MODE:
         print('\n')
         double_line()
         double_line("DEBUG MESSAGE START")
         double_line()
-        display(*arguments)
+        print_display(*arguments)
         double_line()
         double_line("DEBUG MESSAGE END")
         double_line()
         print('\n')
 
 
-def display(*arguments):
-    if not preset.run_gui:
+def print_display(*arguments):
+    if not preset.RUN_GUI:
         argument_count = len(arguments)
         if argument_count > 0:
-            display_text = preset.empty
+            display_text = preset.EMPTY
             for element in arguments:
-                display_text = display_text + str(element) + preset.blank
+                display_text = display_text + str(element) + preset.BLANK
             display_text = display_text.rstrip()
             if display_text != "default":
                 print(display_text)
@@ -70,26 +70,26 @@ def display(*arguments):
 
 def highlight(*arguments):
     print('\n\n')
-    overline()
-    display(*arguments)
-    underline()
+    print_overline()
+    print_display(*arguments)
+    print_underline()
     print('\n\n')
 
 
-def underline():
-    display(preset.underline*(screenSupport.get_terminal_width()))
+def print_underline():
+    print_display(preset.UNDERLINE * (screenSupport.get_terminal_width()))
 
 
-def overline():
-    display(preset.overline*(screenSupport.get_terminal_width()))
+def print_overline():
+    print_display(preset.OVERLINE * (screenSupport.get_terminal_width()))
 
 
 def double_line(message=None):
     if message:
         message = "== " + message + " "
-        display(message + "="*(screenSupport.get_terminal_width()-len(message)))
+        print_display(message + "=" * (screenSupport.get_terminal_width() - len(message)))
     else:
-        display("="*(screenSupport.get_terminal_width()))
+        print_display("=" * (screenSupport.get_terminal_width()))
 
 
 def select_profile(profile):
@@ -104,7 +104,7 @@ def select_profile(profile):
 def get_chrome_element(profile_number, item):
     computer = system()
     profile_name = select_profile(profile_number)
-    chrome_file = preset.empty
+    chrome_file = preset.EMPTY
     if computer == "Windows":
         chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile_name + "\\" + item)
     if computer == "Linux":
@@ -117,12 +117,12 @@ def get_chrome_element(profile_number, item):
 
 
 def get_user(user_path):
-    user_name = json.loads(open(user_path, encoding='utf-8').read())["account_info"][0]
+    user_name = json.loads(open(user_path, encoding=preset.UTF8).read())["account_info"][0]
     return user_name['email'], user_name['full_name'], user_name['given_name']
 
 
 def retrieve_profile(profile):
-    user_data = get_chrome_element(profile, preset.preferences)
+    user_data = get_chrome_element(profile, preset.PREFERENCES)
     if not user_data:
         raise Exception(preset.message["invalid_profile"])
     return get_user(user_data)
@@ -139,24 +139,29 @@ def get_profile_list():
     return user_list
 
 
+def get_display(number):
+    dig = False
+    if str(number).isdigit():
+        dig = True
+
+    try:
+        email, full_name, display_name = retrieve_profile(number)
+        left_justified_name = f'({full_name})'
+        show_var = f' [{str(number)}]' if dig else ''
+        print_display(f'{preset.message["user"]}{show_var}: {left_justified_name.ljust(35)} [{email}]')
+    except Exception as error:
+        if not dig:
+            print_display(error)
+        else:
+            pass
+
+
 def list_profiles(profile):
-    if profile == preset.all_profiles:
+    if profile == preset.PROFILES:
         for number in range(0, 100):
-            try:
-                email, full_name, display_name = retrieve_profile(number)
-                if len(full_name) < 20:
-                    tab = preset.tab
-                else:
-                    tab = preset.empty
-                display(preset.message["user"] + "[" + str(number) + "]: {", full_name, "}" + preset.tab + tab + " [", email, "]")
-            except Exception:
-                pass
+            get_display(number)
     else:
-        try:
-            email, full_name, display_name = retrieve_profile(profile)
-            display(preset.message["user"] + ": {", full_name, "} [" + email + "]")
-        except Exception as error:
-            display(error)
+        get_display(profile)
 
 
 def get_system():

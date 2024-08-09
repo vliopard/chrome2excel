@@ -3,195 +3,213 @@ from pathlib import Path
 
 from utils import add, to_date
 
-main_icon = "resources/blue.ico"
-configuration_filename = "resources/config.ini"
-translation_filename = "resources/translation.json"
+main_icon = 'resources/blue.ico'
+configuration_filename = 'resources/config.ini'
+translation_filename = 'resources/translation.json'
 
 
 def load_translation_file():
-    return load(Path(translation_filename).open(encoding="utf-8"))
+    return load(Path(translation_filename).open(encoding=UTF8))
 
 
-run_gui = False
+RUN_GUI = False
 
-main_section = 'main'
+MAIN_SECTION = 'main'
 
-debug_mode = False
-text_filename = "chrome.txt"
-html_filename = "chrome.html"
-xlsx_filename = "chrome.xlsx"
+DEBUG_MODE = False
+TEXT_FILENAME = 'chrome.txt'
+HTML_FILENAME = 'chrome.html'
+XLSX_FILENAME = 'chrome.xlsx'
 
-english = 'en-us'
-message = load_translation_file()[english]
+TXT = 'txt'
+HTML = 'html'
+XLSX = 'xlsx'
+UTF8 = 'utf-8'
 
-timeout = 120
+TITLE = 'title'
+ENABLED = 'enabled'
+DISABLED = 'disabled'
 
-on = 'on'
-off = 'off'
-none = None
-true = True
-false = False
-empty = ""
-blank = " "
-all_profiles = "all"
+YOUTUBE_WWW = 'www.youtube.com'
+YOUTUBE_M = 'm.youtube.com'
+YOUTUBE_COM = 'youtube.com'
+YOUTUBE = 'youtu.be'
+FACEBOOK_COM = 'facebook.com'
 
-protocol = "http://"
+ENGLISH = 'en-us'
+message = load_translation_file()[ENGLISH]
 
-preferences = "Preferences"
-bookmarks = "Bookmarks"
+TIMEOUT = 120
 
-tab = "\t"
-new_line = "\n"
+ON = 'on'
+OFF = 'off'
+NONE = None
+TRUE = True
+FALSE = False
+EMPTY = ''
+BLANK = ' '
+PROFILES = 'all'
 
-underline = "\u2017"
-overline = "\u203e"
+PROTOCOL = 'http://'
 
-no_host_name = "[no hostname]"
-no_site_name = "[no site name]"
-no_clean_url = "[no clean URL]"
-no_url_address = "[no URL address]"
+PREFERENCES = 'Preferences'
+BOOKMARKS = 'Bookmarks'
+UNKNOWN = 'unknown_exception'
 
-children = 'children'
-meta_info = 'meta_info'
-last_visited = 'last_visited'
-date_added = 'date_added'
-date_modified = 'date_modified'
-guid = 'guid'
-icon = 'icon'
-item_id = 'id'
-item_name = 'name'
-sync_transaction_version = 'sync_transaction_version'
-item_type = 'type'
-url = 'url'
+TAB = '\t'
+NEW_LINE = '\n'
 
-no_date = "No Date"
-empty_string = '[Empty]'
-date_format = "%Y/%m/%d %H:%M:%S"
-number_format = "YYYY/MM/DD hh:mm:ss"
+UNDERLINE = '_'
+OVERLINE = '‾'
 
-debug_system = "debug_system"
-load_time_out = "load_time_out"
-system_language = "system_language"
-export_file_type = "export_file_type"
-refresh_url_title = "refresh_url_title"
-exit_dialog_confirmation = "exit_confirmation"
-remove_duplicated_urls = "remove_duplicated_urls"
-remove_tracking_tokens_from_url = "remove_tracking_tokens_from_url"
-display_exit_dialog = "display_exit_dialog"
-refresh_folder_name_with_hostname_title = "refresh_folder_name_with_hostname_title"
+NO_HOST_NAME = '[no hostname]'
+NO_SITE_NAME = '[no site name]'
+NO_CLEAN_url = '[no clean url]'
+NO_url_ADDRESS = '[no url address]'
+
+CHILDREN = 'children'
+META_INFO = 'meta_info'
+LAST_VISITED = 'last_visited'
+DATE_ADDED = 'date_added'
+DATE_MODIFIED = 'date_modified'
+GUID = 'guid'
+ICON = 'icon'
+ITEM_ID = 'id'
+ITEM_NAME = 'name'
+SYNC_TRANSACTION_VERSION = 'sync_transaction_version'
+ITEM_TYPE = 'type'
+URL = 'url'
+
+NONAME = 'NONAME'
+
+NO_DATE = 'No Date'
+EMPTY_STRING = '[Empty]'
+DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
+NUMBER_FORMAT = 'YYYY/MM/DD hh:mm:ss'
+
+DEBUG_SYSTEM = 'debug_system'
+LOAD_TIME_OUT = 'load_time_out'
+system_language = 'system_language'
+export_file_type = 'export_file_type'
+refresh_url_title = 'refresh_url_title'
+exit_dialog_confirmation = 'exit_confirmation'
+remove_duplicated_urls = 'remove_duplicated_urls'
+remove_tracking_tokens_from_url = 'remove_tracking_tokens_from_url'
+display_exit_dialog = 'display_exit_dialog'
+refresh_folder_name_with_hostname_title = 'refresh_folder_name_with_hostname_title'
 
 general_tracking_tokens = (
-        "__twitter_impression",
-        "bffb",
-        "client_id",
-        "cmpid",
-        "comment_id",
-        "fb_action_ids",
-        "fb_action_types",
-        "fb_comment_id",
-        "fbclid",
-        "fbid",
-        "notif_id",
-        "notif_t",
-        "reply_comment_id",
-        "story_fbid",
-        "total_comments",
-        "campaign",
-        "campanha",
-        "gws_rd",
-        "mkt_tok",
-        "offset",
-        "sc_campaign",
-        "sc_category",
-        "sc_channel",
-        "sc_content",
-        "sc_country",
-        "sc_funnel",
-        "sc_medium",
-        "sc_publisher",
-        "sc_segment",
-        "utm_",
-        "utm_campaign",
-        "utm_content",
-        "utm_medium",
-        "utm_source",
-        "utm_term",
-        "ocid",
-        "SThisFB",
-        "ref_",
-        "quantity",
-        "variation",
-        "tracking_id",
-        "position",
-        "onAttributesExp",
-        "type",
-        "source_impression_id",
-        "versao",
-        "reco_item_pos",
-        "reco_backend",
-        "reco_backend_type",
-        "reco_client",
-        "reco_id",
-        "c_id",
-        "c_element_order",
-        "c_uid",
-        "ref",
-        "is_advertising",
-        "ad_domain",
-        "ad_position",
-        "ad_click_id"
+        '__twitter_impression',
+        'bffb',
+        'client_id',
+        'cmpid',
+        'comment_id',
+        'fb_action_ids',
+        'fb_action_types',
+        'fb_comment_id',
+        'fbclid',
+        'fbid',
+        'notif_id',
+        'notif_t',
+        'reply_comment_id',
+        'story_fbid',
+        'total_comments',
+        'campaign',
+        'campanha',
+        'gws_rd',
+        'mkt_tok',
+        'offset',
+        'sc_campaign',
+        'sc_category',
+        'sc_channel',
+        'sc_content',
+        'sc_country',
+        'sc_funnel',
+        'sc_medium',
+        'sc_publisher',
+        'sc_segment',
+        'utm_',
+        'utm_campaign',
+        'utm_content',
+        'utm_medium',
+        'utm_source',
+        'utm_term',
+        'ocid',
+        'SThisFB',
+        'ref_',
+        'quantity',
+        'variation',
+        'tracking_id',
+        'position',
+        'onAttributesExp',
+        'type',
+        'source_impression_id',
+        'versao',
+        'reco_item_pos',
+        'reco_backend',
+        'reco_backend_type',
+        'reco_client',
+        'reco_id',
+        'c_id',
+        'c_element_order',
+        'c_uid',
+        'ref',
+        'is_advertising',
+        'ad_domain',
+        'ad_position',
+        'ad_click_id'
 )
 
 youtube_parameters = (
-        "sm",
-        "time_continue",
-        "feature",
-        "app",
-        "bpctr",
-        "1c",
-        "sns",
-        "a",
-        "pbjreload",
-        "index",
-        "list"
+        'sm',
+        'time_continue',
+        'feature',
+        'app',
+        'bpctr',
+        '1c',
+        'sns',
+        'a',
+        'pbjreload',
+        'index',
+        'list'
 )
 
 facebook_tracking_tokens = (
-        "_rdc",
-        "_rdr",
-        "rc",
-        "comment_tracking",
-        "__tn__",
-        "__xts__[0]",
-        "__xts__",
-        "sns",
-        "hc_location",
-        "pnref",
-        "entry_point",
-        "tab",
-        "source_ref",
-        "hc_ref",
-        "__mref",
-        "ref",
-        "eid",
-        "fref",
-        "lst",
-        "__nodl",
-        "permPage",
-        "notif_id",
-        "force_theater"
+        '_rdc',
+        '_rdr',
+        'rc',
+        'comment_tracking',
+        '__tn__',
+        '__xts__[0]',
+        '__xts__',
+        'sns',
+        'hc_location',
+        'pnref',
+        'entry_point',
+        'tab',
+        'source_ref',
+        'hc_ref',
+        '__mref',
+        'ref',
+        'eid',
+        'fref',
+        'lst',
+        '__nodl',
+        'permPage',
+        'notif_id',
+        'force_theater'
 )
 
-symb = [ '?', '#', '&' ]
+SYMBOLS = ['?', '#', '&']
 
-parameters_dict = {
-            'youtube.com':[ 'list', 'index', 'feature', 'lc', 'inf_contact_key', 'app', 'time_continue', 'reload' ],
-            'facebook.com':[],
-            'instagram':[ 'hl' ],
-            'uol':[ 'cmpid', 'uf', 'fbclid', '__twitter_impression' ],
-            'folha.uol':[ 'cmpid', 'pnref' ],
-            'globo.com':[ 'versao', '?origem', 'origem', 'fbclid', '__twitter_impression'],
-            'mercadolivre.com':[ 'pdp_filters',
+dict_params = {
+            'youtube.com': ['list', 'index', 'feature', 'lc', 'inf_contact_key', 'app', 'time_continue', 'reload'],
+            'facebook.com': [],
+            'instagram': ['hl'],
+            'uol': ['cmpid', 'uf', 'fbclid', '__twitter_impression'],
+            'folha.uol': ['cmpid', 'pnref'],
+            'globo.com': ['versao', '?origem', 'origem', 'fbclid', '__twitter_impression'],
+            'mercadolivre.com': ['pdp_filters',
                                  'product_trigger_id',
                                  'quantity',
                                  'source',
@@ -262,11 +280,10 @@ parameters_dict = {
                                  'max',
                                  'offset',
                                  'noIndex',
-                                 'D['
-                               ],
+                                 'D['],
           }
 
-general_parameters = [
+general_params = [
         '?utm_source',
         'utm_campaign',
         'utm_cid',
@@ -280,7 +297,7 @@ general_parameters = [
         'fbclid',
         '__twitter_impression',
         ':~:text'
-        ]
+       ]
 
 cli_progress_dialog = None
 gui_progress_dialog = None
@@ -298,56 +315,56 @@ def get_languages():
     return language_list
 
 
-folder_guid_attr = "Folder_GUID"
-folder_id_attr = "Folder_ID"
-folder_sync_attr = "Folder_Sync"
-folder_type_attr = "Folder_Type"
+folder_guid_attr = 'folder_guid'
+folder_id_attr = 'folder_id'
+folder_sync_attr = 'folder_sync'
+folder_type_attr = 'folder_type'
 
-folder_added_attr = "Folder_Added"
-folder_modified_attr = "Folder_Modified"
-folder_visited_attr = "Folder_visited"
+folder_added_attr = 'folder_added'
+folder_modified_attr = 'folder_modified'
+folder_visited_attr = 'folder_visited'
 
-folder_name_attr = "Folder_Name"
-folder_url_attr = "Folder_URL"
+folder_name_attr = 'folder_name'
+folder_url_attr = 'folder_url'
 
-url_guid_attr = "URL_GUID"
-url_id_attr = "URL_ID"
-url_sync_attr = "URL_Sync"
-url_type_attr = "URL_Type"
+url_guid_attr = 'url_guid'
+url_id_attr = 'url_id'
+url_sync_attr = 'url_sync'
+url_type_attr = 'url_type'
 
-url_added_attr = "URL_Added"
-url_modified_attr = "URL_Modified"
-url_visited_attr = "URL_Visited"
+url_added_attr = 'url_added'
+url_modified_attr = 'url_modified'
+url_visited_attr = 'url_visited'
 
-url_name_attr = "URL_Name"
-url_clean_attr = "URL_Clean"
-url_attr = "URL"
-scheme_attr = "Scheme"
-netloc_attr = "Netloc"
-hostname_attr = "Hostname"
-path_attr = "Path"
-port_attr = "Port"
-param_attr = "Param"
-fragment_attr = "Fragment"
-username_attr = "Username"
-password_attr = "Password"
+url_name_attr = 'url_name'
+url_clean_attr = 'url_clean'
+url_attr = 'url'
+scheme_attr = 'scheme'
+netloc_attr = 'netloc'
+hostname_attr = 'hostname'
+path_attr = 'path'
+port_attr = 'port'
+param_attr = 'param'
+fragment_attr = 'fragment'
+username_attr = 'username'
+password_attr = 'password'
 
-parama_attr = "ParamA"
-paramb_attr = "ParamB"
-paramc_attr = "ParamC"
-paramd_attr = "ParamD"
-parame_attr = "ParamE"
-paramf_attr = "ParamF"
-paramg_attr = "ParamG"
-paramh_attr = "ParamH"
-parami_attr = "ParamI"
-paramj_attr = "ParamJ"
-paramk_attr = "ParamK"
-paraml_attr = "ParamL"
-paramm_attr = "ParamM"
-paramn_attr = "ParamN"
-paramo_attr = "ParamO"
-paramp_attr = "ParamP"
+param_a_attr = 'param_a'
+param_b_attr = 'param_b'
+param_c_attr = 'param_c'
+param_d_attr = 'param_d'
+param_e_attr = 'param_e'
+param_f_attr = 'param_f'
+param_g_attr = 'param_g'
+param_h_attr = 'param_h'
+param_i_attr = 'param_i'
+param_j_attr = 'param_j'
+param_k_attr = 'param_k'
+param_l_attr = 'param_l'
+param_m_attr = 'param_m'
+param_n_attr = 'param_n'
+param_o_attr = 'param_o'
+param_p_attr = 'param_p'
 
 
 class Header:
@@ -355,112 +372,112 @@ class Header:
         index = [-1]
         stub_date = to_date(13231709218000000)
 
-        self._Folder_GUID = (empty, add(index))
-        self._Folder_ID = (empty, add(index))
-        self._Folder_Sync = (empty, add(index))
-        self._Folder_Type = (empty, add(index))
+        self._folder_guid = (EMPTY, add(index))
+        self._folder_id = (EMPTY, add(index))
+        self._folder_sync = (EMPTY, add(index))
+        self._folder_type = (EMPTY, add(index))
 
-        self._Folder_Added = (stub_date, add(index))
-        self._Folder_Modified = (stub_date, add(index))
-        self._Folder_visited = (stub_date, add(index))
+        self._folder_added = (stub_date, add(index))
+        self._folder_modified = (stub_date, add(index))
+        self._folder_visited = (stub_date, add(index))
 
-        self._Folder_Name = (empty, add(index))
-        self._Folder_URL = (empty, add(index))
+        self._folder_name = (EMPTY, add(index))
+        self._folder_url = (EMPTY, add(index))
 
-        self._URL_GUID = (empty, add(index))
-        self._URL_ID = (empty, add(index))
-        self._URL_Sync = (empty, add(index))
-        self._URL_Type = (empty, add(index))
+        self._url_guid = (EMPTY, add(index))
+        self._url_id = (EMPTY, add(index))
+        self._url_sync = (EMPTY, add(index))
+        self._url_type = (EMPTY, add(index))
 
-        self._URL_Added = (stub_date, add(index))
-        self._URL_Modified = (stub_date, add(index))
-        self._URL_Visited = (stub_date, add(index))
+        self._url_added = (stub_date, add(index))
+        self._url_modified = (stub_date, add(index))
+        self._url_visited = (stub_date, add(index))
 
-        self._URL_Name = (no_site_name, add(index))
-        self._URL_Clean = (no_clean_url, add(index))
-        self._URL = (no_url_address, add(index))
-        self._Icon = (empty, add(index))
-        self._Scheme = (empty, add(index))
-        self._Netloc = (empty, add(index))
-        self._Hostname = (no_host_name, add(index))
-        self._Path = (empty, add(index))
-        self._Port = (empty, add(index))
-        self._Param = (empty, add(index))
-        self._Fragment = (empty, add(index))
-        self._Username = (empty, add(index))
-        self._Password = (empty, add(index))
+        self._url_name = (NO_SITE_NAME, add(index))
+        self._url_clean = (NO_CLEAN_url, add(index))
+        self._url = (NO_url_ADDRESS, add(index))
+        self._icon = (EMPTY, add(index))
+        self._scheme = (EMPTY, add(index))
+        self._netloc = (EMPTY, add(index))
+        self._hostname = (NO_HOST_NAME, add(index))
+        self._path = (EMPTY, add(index))
+        self._port = (EMPTY, add(index))
+        self._param = (EMPTY, add(index))
+        self._fragment = (EMPTY, add(index))
+        self._username = (EMPTY, add(index))
+        self._password = (EMPTY, add(index))
 
-        self._ParamA = (empty, add(index))
-        self._ParamB = (empty, add(index))
-        self._ParamC = (empty, add(index))
-        self._ParamD = (empty, add(index))
-        self._ParamE = (empty, add(index))
-        self._ParamF = (empty, add(index))
-        self._ParamG = (empty, add(index))
-        self._ParamH = (empty, add(index))
-        self._ParamI = (empty, add(index))
-        self._ParamJ = (empty, add(index))
-        self._ParamK = (empty, add(index))
-        self._ParamL = (empty, add(index))
-        self._ParamM = (empty, add(index))
-        self._ParamN = (empty, add(index))
-        self._ParamO = (empty, add(index))
-        self._ParamP = (empty, add(index))
+        self._param_a = (EMPTY, add(index))
+        self._param_b = (EMPTY, add(index))
+        self._param_c = (EMPTY, add(index))
+        self._param_d = (EMPTY, add(index))
+        self._param_e = (EMPTY, add(index))
+        self._param_f = (EMPTY, add(index))
+        self._param_g = (EMPTY, add(index))
+        self._param_h = (EMPTY, add(index))
+        self._param_i = (EMPTY, add(index))
+        self._param_j = (EMPTY, add(index))
+        self._param_k = (EMPTY, add(index))
+        self._param_l = (EMPTY, add(index))
+        self._param_m = (EMPTY, add(index))
+        self._param_n = (EMPTY, add(index))
+        self._param_o = (EMPTY, add(index))
+        self._param_p = (EMPTY, add(index))
 
     def set_data(self, url_element):
         index = [-1]
 
-        self._Folder_GUID = (url_element[add(index)], index[0])
-        self._Folder_ID = (url_element[add(index)], index[0])
-        self._Folder_Sync = (url_element[add(index)], index[0])
-        self._Folder_Type = (url_element[add(index)], index[0])
+        self._folder_guid = (url_element[add(index)], index[0])
+        self._folder_id = (url_element[add(index)], index[0])
+        self._folder_sync = (url_element[add(index)], index[0])
+        self._folder_type = (url_element[add(index)], index[0])
 
-        self._Folder_Added = (url_element[add(index)], index[0])
-        self._Folder_Modified = (url_element[add(index)], index[0])
-        self._Folder_visited = (url_element[add(index)], index[0])
+        self._folder_added = (url_element[add(index)], index[0])
+        self._folder_modified = (url_element[add(index)], index[0])
+        self._folder_visited = (url_element[add(index)], index[0])
 
-        self._Folder_Name = (url_element[add(index)], index[0])
-        self._Folder_URL = (url_element[add(index)], index[0])
+        self._folder_name = (url_element[add(index)], index[0])
+        self._folder_url = (url_element[add(index)], index[0])
 
-        self._URL_GUID = (url_element[add(index)], index[0])
-        self._URL_ID = (url_element[add(index)], index[0])
-        self._URL_Sync = (url_element[add(index)], index[0])
-        self._URL_Type = (url_element[add(index)], index[0])
+        self._url_guid = (url_element[add(index)], index[0])
+        self._url_id = (url_element[add(index)], index[0])
+        self._url_sync = (url_element[add(index)], index[0])
+        self._url_type = (url_element[add(index)], index[0])
 
-        self._URL_Added = (url_element[add(index)], index[0])
-        self._URL_Modified = (url_element[add(index)], index[0])
-        self._URL_Visited = (url_element[add(index)], index[0])
+        self._url_added = (url_element[add(index)], index[0])
+        self._url_modified = (url_element[add(index)], index[0])
+        self._url_visited = (url_element[add(index)], index[0])
 
-        self._URL_Name = (url_element[add(index)], index[0])
-        self._URL_Clean = (url_element[add(index)], index[0])
-        self._URL = (url_element[add(index)], index[0])
-        self._Icon = (url_element[add(index)], index[0])
-        self._Scheme = (url_element[add(index)], index[0])
-        self._Netloc = (url_element[add(index)], index[0])
-        self._Hostname = (url_element[add(index)], index[0])
-        self._Path = (url_element[add(index)], index[0])
-        self._Port = (url_element[add(index)], index[0])
-        self._Param = (url_element[add(index)], index[0])
-        self._Fragment = (url_element[add(index)], index[0])
-        self._Username = (url_element[add(index)], index[0])
-        self._Password = (url_element[add(index)], index[0])
+        self._url_name = (url_element[add(index)], index[0])
+        self._url_clean = (url_element[add(index)], index[0])
+        self._url = (url_element[add(index)], index[0])
+        self._icon = (url_element[add(index)], index[0])
+        self._scheme = (url_element[add(index)], index[0])
+        self._netloc = (url_element[add(index)], index[0])
+        self._hostname = (url_element[add(index)], index[0])
+        self._path = (url_element[add(index)], index[0])
+        self._port = (url_element[add(index)], index[0])
+        self._param = (url_element[add(index)], index[0])
+        self._fragment = (url_element[add(index)], index[0])
+        self._username = (url_element[add(index)], index[0])
+        self._password = (url_element[add(index)], index[0])
 
-        self._ParamA = (url_element[add(index)], index[0])
-        self._ParamB = (url_element[add(index)], index[0])
-        self._ParamC = (url_element[add(index)], index[0])
-        self._ParamD = (url_element[add(index)], index[0])
-        self._ParamE = (url_element[add(index)], index[0])
-        self._ParamF = (url_element[add(index)], index[0])
-        self._ParamG = (url_element[add(index)], index[0])
-        self._ParamH = (url_element[add(index)], index[0])
-        self._ParamI = (url_element[add(index)], index[0])
-        self._ParamJ = (url_element[add(index)], index[0])
-        self._ParamK = (url_element[add(index)], index[0])
-        self._ParamL = (url_element[add(index)], index[0])
-        self._ParamM = (url_element[add(index)], index[0])
-        self._ParamN = (url_element[add(index)], index[0])
-        self._ParamO = (url_element[add(index)], index[0])
-        self._ParamP = (url_element[add(index)], index[0])
+        self._param_a = (url_element[add(index)], index[0])
+        self._param_b = (url_element[add(index)], index[0])
+        self._param_c = (url_element[add(index)], index[0])
+        self._param_d = (url_element[add(index)], index[0])
+        self._param_e = (url_element[add(index)], index[0])
+        self._param_f = (url_element[add(index)], index[0])
+        self._param_g = (url_element[add(index)], index[0])
+        self._param_h = (url_element[add(index)], index[0])
+        self._param_i = (url_element[add(index)], index[0])
+        self._param_j = (url_element[add(index)], index[0])
+        self._param_k = (url_element[add(index)], index[0])
+        self._param_l = (url_element[add(index)], index[0])
+        self._param_m = (url_element[add(index)], index[0])
+        self._param_n = (url_element[add(index)], index[0])
+        self._param_o = (url_element[add(index)], index[0])
+        self._param_p = (url_element[add(index)], index[0])
 
     def get_position(self, index):
         item = self.to_tuple()
@@ -468,7 +485,7 @@ class Header:
 
     def get_name(self, name):
         item = self.to_dict()
-        return item["_" + name]
+        return item['_' + name]
 
     def to_list(self):
         dictionary = self.__dict__
@@ -499,6 +516,7 @@ class Header:
             tuple_list.append(item[0])
         return tuple(tuple_list)
 
+    @staticmethod
     def get_label(self, index):
         return label_dictionary[index]
 
@@ -509,617 +527,617 @@ class Header:
         return str(self.__dict__)
 
     @property
-    def Folder_GUID(self):
-        return self._Folder_GUID
+    def folder_guid(self):
+        return self._folder_guid
 
-    @Folder_GUID.setter
-    def Folder_GUID(self, folder_guid):
-        self._Folder_GUID = (folder_guid, self._Folder_GUID[1])
+    @folder_guid.setter
+    def folder_guid(self, folder_guid):
+        self._folder_guid = (folder_guid, self._folder_guid[1])
 
-    @Folder_GUID.getter
-    def Folder_GUID(self):
-        return self._Folder_GUID[0]
-
-    @property
-    def Folder_ID(self):
-        return self._Folder_ID
-
-    @Folder_ID.setter
-    def Folder_ID(self, folder_id):
-        self._Folder_ID = (folder_id, self._Folder_ID[1])
-
-    @Folder_ID.getter
-    def Folder_ID(self):
-        return self._Folder_ID[0]
+    @folder_guid.getter
+    def folder_guid(self):
+        return self._folder_guid[0]
 
     @property
-    def Folder_Sync(self):
-        return self._Folder_Sync
+    def folder_id(self):
+        return self._folder_id
 
-    @Folder_Sync.setter
-    def Folder_Sync(self, folder_sync):
-        self._Folder_Sync = (folder_sync, self._Folder_Sync[1])
+    @folder_id.setter
+    def folder_id(self, folder_id):
+        self._folder_id = (folder_id, self._folder_id[1])
 
-    @Folder_Sync.getter
-    def Folder_Sync(self):
-        return self._Folder_Sync[0]
-
-    @property
-    def Folder_Type(self):
-        return self._Folder_Type
-
-    @Folder_Type.setter
-    def Folder_Type(self, folder_type):
-        self._Folder_Type = (folder_type, self._Folder_Type[1])
-
-    @Folder_Type.getter
-    def Folder_Type(self):
-        return self._Folder_Type[0]
+    @folder_id.getter
+    def folder_id(self):
+        return self._folder_id[0]
 
     @property
-    def Folder_Added(self):
-        return self._Folder_Added
+    def folder_sync(self):
+        return self._folder_sync
 
-    @Folder_Added.setter
-    def Folder_Added(self, folder_added):
-        self._Folder_Added = (folder_added, self._Folder_Added[1])
+    @folder_sync.setter
+    def folder_sync(self, folder_sync):
+        self._folder_sync = (folder_sync, self._folder_sync[1])
 
-    @Folder_Added.getter
-    def Folder_Added(self):
-        return self._Folder_Added[0]
-
-    @property
-    def Folder_Modified(self):
-        return self._Folder_Modified
-
-    @Folder_Modified.setter
-    def Folder_Modified(self, folder_modified):
-        self._Folder_Modified = (folder_modified, self._Folder_Modified[1])
-
-    @Folder_Modified.getter
-    def Folder_Modified(self):
-        return self._Folder_Modified[0]
+    @folder_sync.getter
+    def folder_sync(self):
+        return self._folder_sync[0]
 
     @property
-    def Folder_visited(self):
-        return self._Folder_visited
+    def folder_type(self):
+        return self._folder_type
 
-    @Folder_visited.setter
-    def Folder_visited(self, folder_visited):
-        self._Folder_visited = (folder_visited, self._Folder_visited[1])
+    @folder_type.setter
+    def folder_type(self, folder_type):
+        self._folder_type = (folder_type, self._folder_type[1])
 
-    @Folder_visited.getter
-    def Folder_visited(self):
-        return self._Folder_visited[0]
-
-    @property
-    def Folder_Name(self):
-        return self._Folder_Name
-
-    @Folder_Name.setter
-    def Folder_Name(self, folder_name):
-        self._Folder_Name = (folder_name, self._Folder_Name[1])
-
-    @Folder_Name.getter
-    def Folder_Name(self):
-        return self._Folder_Name[0]
+    @folder_type.getter
+    def folder_type(self):
+        return self._folder_type[0]
 
     @property
-    def Folder_URL(self):
-        return self._Folder_URL
+    def folder_added(self):
+        return self._folder_added
 
-    @Folder_URL.setter
-    def Folder_URL(self, folder_url):
-        self._Folder_URL = (folder_url, self._Folder_URL[1])
+    @folder_added.setter
+    def folder_added(self, folder_added):
+        self._folder_added = (folder_added, self._folder_added[1])
 
-    @Folder_URL.getter
-    def Folder_URL(self):
-        return self._Folder_URL[0]
-
-    @property
-    def URL_GUID(self):
-        return self._URL_GUID
-
-    @URL_GUID.setter
-    def URL_GUID(self, url_guid):
-        self._URL_GUID = (url_guid, self._URL_GUID[1])
-
-    @URL_GUID.getter
-    def URL_GUID(self):
-        return self._URL_GUID[0]
+    @folder_added.getter
+    def folder_added(self):
+        return self._folder_added[0]
 
     @property
-    def URL_ID(self):
-        return self._URL_ID
+    def folder_modified(self):
+        return self._folder_modified
 
-    @URL_ID.setter
-    def URL_ID(self, url_id):
-        self._URL_ID = (url_id, self._URL_ID[1])
+    @folder_modified.setter
+    def folder_modified(self, folder_modified):
+        self._folder_modified = (folder_modified, self._folder_modified[1])
 
-    @URL_ID.getter
-    def URL_ID(self):
-        return self._URL_ID[0]
-
-    @property
-    def URL_Sync(self):
-        return self._URL_Sync
-
-    @URL_Sync.setter
-    def URL_Sync(self, url_sync):
-        self._URL_Sync = (url_sync, self._URL_Sync[1])
-
-    @URL_Sync.getter
-    def URL_Sync(self):
-        return self._URL_Sync[0]
+    @folder_modified.getter
+    def folder_modified(self):
+        return self._folder_modified[0]
 
     @property
-    def URL_Type(self):
-        return self._URL_Type
+    def folder_visited(self):
+        return self._folder_visited
 
-    @URL_Type.setter
-    def URL_Type(self, url_type):
-        self._URL_Type = (url_type, self._URL_Type[1])
+    @folder_visited.setter
+    def folder_visited(self, folder_visited):
+        self._folder_visited = (folder_visited, self._folder_visited[1])
 
-    @URL_Type.getter
-    def URL_Type(self):
-        return self._URL_Type[0]
-
-    @property
-    def URL_Added(self):
-        return self._URL_Added
-
-    @URL_Added.setter
-    def URL_Added(self, url_added):
-        self._URL_Added = (url_added, self._URL_Added[1])
-
-    @URL_Added.getter
-    def URL_Added(self):
-        return self._URL_Added[0]
+    @folder_visited.getter
+    def folder_visited(self):
+        return self._folder_visited[0]
 
     @property
-    def URL_Modified(self):
-        return self._URL_Modified
+    def folder_name(self):
+        return self._folder_name
 
-    @URL_Modified.setter
-    def URL_Modified(self, url_modified):
-        self._URL_Modified = (url_modified, self._URL_Modified[1])
+    @folder_name.setter
+    def folder_name(self, folder_name):
+        self._folder_name = (folder_name, self._folder_name[1])
 
-    @URL_Modified.getter
-    def URL_Modified(self):
-        return self._URL_Modified[0]
-
-    @property
-    def URL_Visited(self):
-        return self._URL_Visited
-
-    @URL_Visited.setter
-    def URL_Visited(self, url_visited):
-        self._URL_Visited = (url_visited, self._URL_Visited[1])
-
-    @URL_Visited.getter
-    def URL_Visited(self):
-        return self._URL_Visited[0]
+    @folder_name.getter
+    def folder_name(self):
+        return self._folder_name[0]
 
     @property
-    def URL_Name(self):
-        return self._URL_Name
+    def folder_url(self):
+        return self._folder_url
 
-    @URL_Name.setter
-    def URL_Name(self, url_name):
-        self._URL_Name = (url_name, self._URL_Name[1])
+    @folder_url.setter
+    def folder_url(self, folder_url):
+        self._folder_url = (folder_url, self._folder_url[1])
 
-    @URL_Name.getter
-    def URL_Name(self):
-        return self._URL_Name[0]
-
-    @property
-    def URL_Clean(self):
-        return self._URL_Clean
-
-    @URL_Clean.setter
-    def URL_Clean(self, url_clean):
-        self._URL_Clean = (url_clean, self._URL_Clean[1])
-
-    @URL_Clean.getter
-    def URL_Clean(self):
-        return self._URL_Clean[0]
+    @folder_url.getter
+    def folder_url(self):
+        return self._folder_url[0]
 
     @property
-    def URL(self):
-        return self._URL
+    def url_guid(self):
+        return self._url_guid
 
-    @URL.setter
-    def URL(self, url):
-        self._URL = (url, self._URL[1])
+    @url_guid.setter
+    def url_guid(self, url_guid):
+        self._url_guid = (url_guid, self._url_guid[1])
 
-    @URL.getter
-    def URL(self):
-        return self._URL[0]
-
-    @property
-    def Icon(self):
-        return self._Icon
-
-    @Icon.setter
-    def Icon(self, icon):
-        self._Icon = (icon, self._Icon[1])
-
-    @Icon.getter
-    def Icon(self):
-        return self._Icon[0]
+    @url_guid.getter
+    def url_guid(self):
+        return self._url_guid[0]
 
     @property
-    def Scheme(self):
-        return self._Scheme
+    def url_id(self):
+        return self._url_id
 
-    @Scheme.setter
-    def Scheme(self, scheme):
-        self._Scheme = (scheme, self._Scheme[1])
+    @url_id.setter
+    def url_id(self, url_id):
+        self._url_id = (url_id, self._url_id[1])
 
-    @Scheme.getter
-    def Scheme(self):
-        return self._Scheme[0]
-
-    @property
-    def Netloc(self):
-        return self._Netloc
-
-    @Netloc.setter
-    def Netloc(self, netloc):
-        self._Netloc = (netloc, self._Netloc[1])
-
-    @Netloc.getter
-    def Netloc(self):
-        return self._Netloc[0]
+    @url_id.getter
+    def url_id(self):
+        return self._url_id[0]
 
     @property
-    def Hostname(self):
-        return self._Hostname
+    def url_sync(self):
+        return self._url_sync
 
-    @Hostname.setter
-    def Hostname(self, hostname):
-        self._Hostname = (hostname, self._Hostname[1])
+    @url_sync.setter
+    def url_sync(self, url_sync):
+        self._url_sync = (url_sync, self._url_sync[1])
 
-    @Hostname.getter
-    def Hostname(self):
-        return self._Hostname[0]
-
-    @property
-    def Path(self):
-        return self._Path
-
-    @Path.setter
-    def Path(self, path):
-        self._Path = (path, self._Path[1])
-
-    @Path.getter
-    def Path(self):
-        return self._Path[0]
+    @url_sync.getter
+    def url_sync(self):
+        return self._url_sync[0]
 
     @property
-    def Port(self):
-        return self._Port
+    def url_type(self):
+        return self._url_type
 
-    @Port.setter
-    def Port(self, port):
-        self._Port = (port, self._Port[1])
+    @url_type.setter
+    def url_type(self, url_type):
+        self._url_type = (url_type, self._url_type[1])
 
-    @Port.getter
-    def Port(self):
-        return self._Port[0]
-
-    @property
-    def Param(self):
-        return self._Param
-
-    @Param.setter
-    def Param(self, param):
-        self._Param = (param, self._Param[1])
-
-    @Param.getter
-    def Param(self):
-        return self._Param[0]
+    @url_type.getter
+    def url_type(self):
+        return self._url_type[0]
 
     @property
-    def Fragment(self):
-        return self._Fragment
+    def url_added(self):
+        return self._url_added
 
-    @Fragment.setter
-    def Fragment(self, fragment):
-        self._Fragment = (fragment, self._Fragment[1])
+    @url_added.setter
+    def url_added(self, url_added):
+        self._url_added = (url_added, self._url_added[1])
 
-    @Fragment.getter
-    def Fragment(self):
-        return self._Fragment[0]
-
-    @property
-    def Username(self):
-        return self._Username
-
-    @Username.setter
-    def Username(self, Username):
-        self._Username = (Username, self._Username[1])
-
-    @Username.getter
-    def Username(self):
-        return self._Username[0]
+    @url_added.getter
+    def url_added(self):
+        return self._url_added[0]
 
     @property
-    def Password(self):
-        return self._Password
+    def url_modified(self):
+        return self._url_modified
 
-    @Password.setter
-    def Password(self, Password):
-        self._Password = (Password, self._Password[1])
+    @url_modified.setter
+    def url_modified(self, url_modified):
+        self._url_modified = (url_modified, self._url_modified[1])
 
-    @Password.getter
-    def Password(self):
-        return self._Password[0]
-
-    @property
-    def ParamA(self):
-        return self._ParamA
-
-    @ParamA.setter
-    def ParamA(self, ParamA):
-        self._ParamA = (ParamA, self._ParamA[1])
-
-    @ParamA.getter
-    def ParamA(self):
-        return self._ParamA[0]
+    @url_modified.getter
+    def url_modified(self):
+        return self._url_modified[0]
 
     @property
-    def ParamB(self):
-        return self._ParamB
+    def url_visited(self):
+        return self._url_visited
 
-    @ParamB.setter
-    def ParamB(self, ParamB):
-        self._ParamB = (ParamB, self._ParamB[1])
+    @url_visited.setter
+    def url_visited(self, url_visited):
+        self._url_visited = (url_visited, self._url_visited[1])
 
-    @ParamB.getter
-    def ParamB(self):
-        return self._ParamB[0]
-
-    @property
-    def ParamC(self):
-        return self._ParamC
-
-    @ParamC.setter
-    def ParamC(self, ParamC):
-        self._ParamC = (ParamC, self._ParamC[1])
-
-    @ParamC.getter
-    def ParamC(self):
-        return self._ParamC[0]
+    @url_visited.getter
+    def url_visited(self):
+        return self._url_visited[0]
 
     @property
-    def ParamD(self):
-        return self._ParamD
+    def url_name(self):
+        return self._url_name
 
-    @ParamD.setter
-    def ParamD(self, ParamD):
-        self._ParamD = (ParamD, self._ParamD[1])
+    @url_name.setter
+    def url_name(self, url_name):
+        self._url_name = (url_name, self._url_name[1])
 
-    @ParamD.getter
-    def ParamD(self):
-        return self._ParamD[0]
-
-    @property
-    def ParamE(self):
-        return self._ParamE
-
-    @ParamE.setter
-    def ParamE(self, ParamE):
-        self._ParamE = (ParamE, self._ParamE[1])
-
-    @ParamE.getter
-    def ParamE(self):
-        return self._ParamE[0]
+    @url_name.getter
+    def url_name(self):
+        return self._url_name[0]
 
     @property
-    def ParamF(self):
-        return self._ParamF
+    def url_clean(self):
+        return self._url_clean
 
-    @ParamF.setter
-    def ParamF(self, ParamF):
-        self._ParamF = (ParamF, self._ParamF[1])
+    @url_clean.setter
+    def url_clean(self, url_clean):
+        self._url_clean = (url_clean, self._url_clean[1])
 
-    @ParamF.getter
-    def ParamF(self):
-        return self._ParamF[0]
-
-    @property
-    def ParamG(self):
-        return self._ParamG
-
-    @ParamG.setter
-    def ParamG(self, ParamG):
-        self._ParamG = (ParamG, self._ParamG[1])
-
-    @ParamG.getter
-    def ParamG(self):
-        return self._ParamG[0]
+    @url_clean.getter
+    def url_clean(self):
+        return self._url_clean[0]
 
     @property
-    def ParamH(self):
-        return self._ParamH
+    def url(self):
+        return self._url
 
-    @ParamH.setter
-    def ParamH(self, ParamH):
-        self._ParamH = (ParamH, self._ParamH[1])
+    @url.setter
+    def url(self, yurl):
+        self._url = (yurl, self._url[1])
 
-    @ParamH.getter
-    def ParamH(self):
-        return self._ParamH[0]
-
-    @property
-    def ParamI(self):
-        return self._ParamI
-
-    @ParamI.setter
-    def ParamI(self, ParamI):
-        self._ParamI = (ParamI, self._ParamI[1])
-
-    @ParamI.getter
-    def ParamI(self):
-        return self._ParamI[0]
+    @url.getter
+    def url(self):
+        return self._url[0]
 
     @property
-    def ParamJ(self):
-        return self._ParamJ
+    def icon(self):
+        return self._icon
 
-    @ParamJ.setter
-    def ParamJ(self, ParamJ):
-        self._ParamJ = (ParamJ, self._ParamJ[1])
+    @icon.setter
+    def icon(self, y_icon):
+        self._icon = (y_icon, self._icon[1])
 
-    @ParamJ.getter
-    def ParamJ(self):
-        return self._ParamJ[0]
-
-    @property
-    def ParamK(self):
-        return self._ParamK
-
-    @ParamK.setter
-    def ParamK(self, ParamK):
-        self._ParamK = (ParamK, self._ParamK[1])
-
-    @ParamK.getter
-    def ParamK(self):
-        return self._ParamK[0]
+    @icon.getter
+    def icon(self):
+        return self._icon[0]
 
     @property
-    def ParamL(self):
-        return self._ParamL
+    def scheme(self):
+        return self._scheme
 
-    @ParamL.setter
-    def ParamL(self, ParamL):
-        self._ParamL = (ParamL, self._ParamL[1])
+    @scheme.setter
+    def scheme(self, scheme):
+        self._scheme = (scheme, self._scheme[1])
 
-    @ParamL.getter
-    def ParamL(self):
-        return self._ParamL[0]
-
-    @property
-    def ParamM(self):
-        return self._ParamM
-
-    @ParamM.setter
-    def ParamM(self, ParamM):
-        self._ParamM = (ParamM, self._ParamM[1])
-
-    @ParamM.getter
-    def ParamM(self):
-        return self._ParamM[0]
+    @scheme.getter
+    def scheme(self):
+        return self._scheme[0]
 
     @property
-    def ParamN(self):
-        return self._ParamN
+    def netloc(self):
+        return self._netloc
 
-    @ParamN.setter
-    def ParamN(self, ParamN):
-        self._ParamN = (ParamN, self._ParamN[1])
+    @netloc.setter
+    def netloc(self, netloc):
+        self._netloc = (netloc, self._netloc[1])
 
-    @ParamN.getter
-    def ParamN(self):
-        return self._ParamN[0]
-
-    @property
-    def ParamO(self):
-        return self._ParamO
-
-    @ParamO.setter
-    def ParamO(self, ParamO):
-        self._ParamO = (ParamO, self._ParamO[1])
-
-    @ParamO.getter
-    def ParamO(self):
-        return self._ParamO[0]
+    @netloc.getter
+    def netloc(self):
+        return self._netloc[0]
 
     @property
-    def ParamP(self):
-        return self._ParamP
+    def hostname(self):
+        return self._hostname
 
-    @ParamP.setter
-    def ParamP(self, ParamP):
-        self._ParamP = (ParamP, self._ParamP[1])
+    @hostname.setter
+    def hostname(self, hostname):
+        self._hostname = (hostname, self._hostname[1])
 
-    @ParamP.getter
-    def ParamP(self):
-        return self._ParamP[0]
+    @hostname.getter
+    def hostname(self):
+        return self._hostname[0]
+
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, path):
+        self._path = (path, self._path[1])
+
+    @path.getter
+    def path(self):
+        return self._path[0]
+
+    @property
+    def port(self):
+        return self._port
+
+    @port.setter
+    def port(self, port):
+        self._port = (port, self._port[1])
+
+    @port.getter
+    def port(self):
+        return self._port[0]
+
+    @property
+    def param(self):
+        return self._param
+
+    @param.setter
+    def param(self, param):
+        self._param = (param, self._param[1])
+
+    @param.getter
+    def param(self):
+        return self._param[0]
+
+    @property
+    def fragment(self):
+        return self._fragment
+
+    @fragment.setter
+    def fragment(self, fragment):
+        self._fragment = (fragment, self._fragment[1])
+
+    @fragment.getter
+    def fragment(self):
+        return self._fragment[0]
+
+    @property
+    def username(self):
+        return self._username
+
+    @username.setter
+    def username(self, user_name):
+        self._username = (user_name, self._username[1])
+
+    @username.getter
+    def username(self):
+        return self._username[0]
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, user_password):
+        self._password = (user_password, self._password[1])
+
+    @password.getter
+    def password(self):
+        return self._password[0]
+
+    @property
+    def param_a(self):
+        return self._param_a
+
+    @param_a.setter
+    def param_a(self, a_param):
+        self._param_a = (a_param, self._param_a[1])
+
+    @param_a.getter
+    def param_a(self):
+        return self._param_a[0]
+
+    @property
+    def param_b(self):
+        return self._param_b
+
+    @param_b.setter
+    def param_b(self, b_param):
+        self._param_b = (b_param, self._param_b[1])
+
+    @param_b.getter
+    def param_b(self):
+        return self._param_b[0]
+
+    @property
+    def param_c(self):
+        return self._param_c
+
+    @param_c.setter
+    def param_c(self, c_param):
+        self._param_c = (c_param, self._param_c[1])
+
+    @param_c.getter
+    def param_c(self):
+        return self._param_c[0]
+
+    @property
+    def param_d(self):
+        return self._param_d
+
+    @param_d.setter
+    def param_d(self, d_param):
+        self._param_d = (d_param, self._param_d[1])
+
+    @param_d.getter
+    def param_d(self):
+        return self._param_d[0]
+
+    @property
+    def param_e(self):
+        return self._param_e
+
+    @param_e.setter
+    def param_e(self, e_param):
+        self._param_e = (e_param, self._param_e[1])
+
+    @param_e.getter
+    def param_e(self):
+        return self._param_e[0]
+
+    @property
+    def param_f(self):
+        return self._param_f
+
+    @param_f.setter
+    def param_f(self, f_param):
+        self._param_f = (f_param, self._param_f[1])
+
+    @param_f.getter
+    def param_f(self):
+        return self._param_f[0]
+
+    @property
+    def param_g(self):
+        return self._param_g
+
+    @param_g.setter
+    def param_g(self, g_param):
+        self._param_g = (g_param, self._param_g[1])
+
+    @param_g.getter
+    def param_g(self):
+        return self._param_g[0]
+
+    @property
+    def param_h(self):
+        return self._param_h
+
+    @param_h.setter
+    def param_h(self, h_param):
+        self._param_h = (h_param, self._param_h[1])
+
+    @param_h.getter
+    def param_h(self):
+        return self._param_h[0]
+
+    @property
+    def param_i(self):
+        return self._param_i
+
+    @param_i.setter
+    def param_i(self, i_param):
+        self._param_i = (i_param, self._param_i[1])
+
+    @param_i.getter
+    def param_i(self):
+        return self._param_i[0]
+
+    @property
+    def param_j(self):
+        return self._param_j
+
+    @param_j.setter
+    def param_j(self, j_param):
+        self._param_j = (j_param, self._param_j[1])
+
+    @param_j.getter
+    def param_j(self):
+        return self._param_j[0]
+
+    @property
+    def param_k(self):
+        return self._param_k
+
+    @param_k.setter
+    def param_k(self, k_param):
+        self._param_k = (k_param, self._param_k[1])
+
+    @param_k.getter
+    def param_k(self):
+        return self._param_k[0]
+
+    @property
+    def param_l(self):
+        return self._param_l
+
+    @param_l.setter
+    def param_l(self, l_param):
+        self._param_l = (l_param, self._param_l[1])
+
+    @param_l.getter
+    def param_l(self):
+        return self._param_l[0]
+
+    @property
+    def param_m(self):
+        return self._param_m
+
+    @param_m.setter
+    def param_m(self, m_param):
+        self._param_m = (m_param, self._param_m[1])
+
+    @param_m.getter
+    def param_m(self):
+        return self._param_m[0]
+
+    @property
+    def param_n(self):
+        return self._param_n
+
+    @param_n.setter
+    def param_n(self, n_param):
+        self._param_n = (n_param, self._param_n[1])
+
+    @param_n.getter
+    def param_n(self):
+        return self._param_n[0]
+
+    @property
+    def param_o(self):
+        return self._param_o
+
+    @param_o.setter
+    def param_o(self, o_param):
+        self._param_o = (o_param, self._param_o[1])
+
+    @param_o.getter
+    def param_o(self):
+        return self._param_o[0]
+
+    @property
+    def param_p(self):
+        return self._param_p
+
+    @param_p.setter
+    def param_p(self, p_param):
+        self._param_p = (p_param, self._param_p[1])
+
+    @param_p.getter
+    def param_p(self):
+        return self._param_p[0]
 
 
 position = [-1]
 label_dictionary = {
-                    str(add(position)): "Folder GUID",
-                    str(add(position)): "Folder ID",
-                    str(add(position)): "Folder Sync",
-                    str(add(position)): "Type",
+                    str(add(position)): 'Folder GUID',
+                    str(add(position)): 'Folder ID',
+                    str(add(position)): 'Folder Sync',
+                    str(add(position)): 'Type',
 
-                    str(add(position)): "Folder Added",
-                    str(add(position)): "Folder Modified",
-                    str(add(position)): "Folder visited",
+                    str(add(position)): 'Folder Added',
+                    str(add(position)): 'Folder Modified',
+                    str(add(position)): 'Folder visited',
 
-                    str(add(position)): "Folder Name",
-                    str(add(position)): "Folder URL",
+                    str(add(position)): 'Folder Name',
+                    str(add(position)): 'Folder url',
 
-                    str(add(position)): "URL GUID",
-                    str(add(position)): "URL ID",
-                    str(add(position)): "URL Sync",
-                    str(add(position)): "Type",
+                    str(add(position)): 'url GUID',
+                    str(add(position)): 'url ID',
+                    str(add(position)): 'url Sync',
+                    str(add(position)): 'Type',
 
-                    str(add(position)): "URL Added",
-                    str(add(position)): "URL Modified",
-                    str(add(position)): "URL Visited",
+                    str(add(position)): 'url Added',
+                    str(add(position)): 'url Modified',
+                    str(add(position)): 'url Visited',
 
-                    str(add(position)): "URL Name",
-                    str(add(position)): "URL Clean",
-                    str(add(position)): "URL",
-                    str(add(position)): "Icon",
+                    str(add(position)): 'url Name',
+                    str(add(position)): 'url Clean',
+                    str(add(position)): 'url',
+                    str(add(position)): 'icon',
 
-                    str(add(position)): "Scheme",
-                    str(add(position)): "Netloc",
-                    str(add(position)): "Hostname",
-                    str(add(position)): "Path",
-                    str(add(position)): "Port",
-                    str(add(position)): "Param",
-                    str(add(position)): "Fragment",
-                    str(add(position)): "Username",
-                    str(add(position)): "Password",
+                    str(add(position)): 'scheme',
+                    str(add(position)): 'netloc',
+                    str(add(position)): 'hostname',
+                    str(add(position)): 'path',
+                    str(add(position)): 'port',
+                    str(add(position)): 'param',
+                    str(add(position)): 'fragment',
+                    str(add(position)): 'username',
+                    str(add(position)): 'password',
 
-                    str(add(position)): "ParamA",
-                    str(add(position)): "ParamB",
-                    str(add(position)): "ParamC",
-                    str(add(position)): "ParamD",
-                    str(add(position)): "ParamE",
-                    str(add(position)): "ParamF",
-                    str(add(position)): "ParamG",
-                    str(add(position)): "ParamH",
-                    str(add(position)): "ParamI",
-                    str(add(position)): "ParamJ",
-                    str(add(position)): "ParamK",
-                    str(add(position)): "ParamL",
-                    str(add(position)): "ParamM",
-                    str(add(position)): "ParamN",
-                    str(add(position)): "ParamO",
-                    str(add(position)): "ParamP"
+                    str(add(position)): 'param_a',
+                    str(add(position)): 'param_b',
+                    str(add(position)): 'param_c',
+                    str(add(position)): 'param_d',
+                    str(add(position)): 'param_e',
+                    str(add(position)): 'param_f',
+                    str(add(position)): 'param_g',
+                    str(add(position)): 'param_h',
+                    str(add(position)): 'param_i',
+                    str(add(position)): 'param_j',
+                    str(add(position)): 'param_k',
+                    str(add(position)): 'param_l',
+                    str(add(position)): 'param_m',
+                    str(add(position)): 'param_n',
+                    str(add(position)): 'param_o',
+                    str(add(position)): 'param_p'
     }
 
 trail = (
-            blank,  # 29
-            blank,  # 30
-            blank,  # 31
-            blank,  # 32
-            blank,  # 33
-            blank,  # 34
-            blank,  # 35
-            blank,  # 36
-            blank,  # 37
-            blank,  # 38
-            blank,  # 39
-            blank,  # 40
-            blank,  # 41
-            blank,  # 42
-            blank,  # 43
-            blank   # 44
+    BLANK,  # 29
+    BLANK,  # 30
+    BLANK,  # 31
+    BLANK,  # 32
+    BLANK,  # 33
+    BLANK,  # 34
+    BLANK,  # 35
+    BLANK,  # 36
+    BLANK,  # 37
+    BLANK,  # 38
+    BLANK,  # 39
+    BLANK,  # 40
+    BLANK,  # 41
+    BLANK,  # 42
+    BLANK,  # 43
+    BLANK   # 44
         )

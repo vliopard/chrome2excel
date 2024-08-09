@@ -274,7 +274,7 @@ class MainFrame(wx.Frame):
     def on_open_folder(self, event):
         open_folder_dialog = wx.FileDialog(self,
                                            message=preset.message["choose_file"],
-                                           defaultFile=preset.text_filename,
+                                           defaultFile=preset.TEXT_FILENAME,
                                            wildcard=preset.message["text_file_filter"],
                                            style=wx.DD_DEFAULT_STYLE)
         if open_folder_dialog.ShowModal() == wx.ID_OK:
@@ -285,7 +285,7 @@ class MainFrame(wx.Frame):
         profile_chooser_dialog = ProfileChooser(self, -1)
         button_pressed = profile_chooser_dialog.ShowModal()
         if button_pressed == wx.ID_OK:
-            tools.display(preset.message["loading_bookmarks"])
+            tools.print_display(preset.message["loading_bookmarks"])
             data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected_account))
             self.main_url_panel.update_list(data_table)
             self.main_url_panel.Update()
@@ -437,13 +437,10 @@ class ProfileChooser(wx.Dialog):
                 maximum_length = len(profile[1])
         chooser_width = maximum_length * 7
         chooser_height = len(chrome_profile_list) * 45 + 60
-
         wx.Dialog.__init__(self, parent, id_, title, size=(chooser_width, chooser_height))
         profile_chooser_panel = wx.Panel(self, size=(chooser_width, chooser_height))
-
         self.parent = parent
         self.parent.selected_account = 0
-
         vertical_box_sizer = wx.BoxSizer(wx.VERTICAL)
         horizontal_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -457,12 +454,13 @@ class ProfileChooser(wx.Dialog):
             vertical_box_sizer.Add(wx.StaticText(profile_chooser_panel, wx.ID_ANY, label=preset.message["no_account"]))
 
         horizontal_box_sizer.Add(wx.Button(profile_chooser_panel, wx.ID_CANCEL, preset.message["cancel_button"]), 1)
-
+        combined_sizer = wx.BoxSizer(wx.VERTICAL)
+        combined_sizer.Add(vertical_box_sizer, 1, wx.EXPAND)
+        combined_sizer.Add(horizontal_box_sizer, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.TOP, 10)
+        profile_chooser_panel.SetSizer(combined_sizer)
         main_box_sizer = wx.BoxSizer(wx.VERTICAL)
         main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
-        main_box_sizer.Add(vertical_box_sizer, 2, wx.ALL | wx.EXPAND, 8)
-        main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
-        main_box_sizer.Add(horizontal_box_sizer, 0, wx.ALL | wx.EXPAND, 1)
+        main_box_sizer.Add(profile_chooser_panel, 2, wx.ALL | wx.EXPAND, 8)
         main_box_sizer.Add(wx.StaticLine(self, wx.HORIZONTAL), 0, wx.EXPAND, 0)
         self.SetSizerAndFit(main_box_sizer)
 
@@ -518,7 +516,7 @@ class SettingsDialog(wx.Dialog):
         self.language_combo_box = wx.ComboBox(self, id=7, value=parent.application_settings.system_language, pos=(10, 115), size=(135, 25), choices=preset.get_languages(), style=0)
 
         wx.StaticText(self, id=wx.ID_ANY, label=preset.message["timeout_label"], pos=(150, 120), size=(50, 25), style=0)
-        self.time_out = wx.SpinCtrl(self, id=8, value=str(preset.timeout), pos=(205, 115), size=(80, 25), style=wx.SP_ARROW_KEYS, min=10, max=9000, initial=120)
+        self.time_out = wx.SpinCtrl(self, id=8, value=str(preset.TIMEOUT), pos=(205, 115), size=(80, 25), style=wx.SP_ARROW_KEYS, min=10, max=9000, initial=120)
 
         self.Bind(wx.EVT_CHECKBOX, self.on_radio_group)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.on_radio_group)
@@ -544,7 +542,7 @@ class SettingsDialog(wx.Dialog):
 
     def on_spin_control(self, event):
         event_object = event.GetEventObject()
-        preset.timeout = event_object.GetValue()
+        preset.TIMEOUT = event_object.GetValue()
         self.parent.application_settings.save_settings()
 
 
@@ -607,8 +605,8 @@ def set_button_toggle(self, button_id, toggle_button):
             settings_button_value = False
     if button_id == 6:
         if toggle_button:
-            preset.debug_mode = not preset.debug_mode
-        if preset.debug_mode:
+            preset.DEBUG_MODE = not preset.DEBUG_MODE
+        if preset.DEBUG_MODE:
             settings_button_label = preset.message["debug_system"] + preset.message["on_label"]
             settings_button_value = True
         else:
@@ -625,7 +623,7 @@ def start_progress_dialog(start):
 
 
 def main():
-    preset.run_gui = True
+    preset.RUN_GUI = True
     application = wx.App(False)
     MainFrame()
     application.MainLoop()

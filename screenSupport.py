@@ -20,7 +20,7 @@ def get_terminal_size():
     if current_os in ['Linux', 'Darwin'] or current_os.startswith('CYGWIN'):
         tuple_xy = _get_terminal_size_linux()
     if tuple_xy is None:
-        tools.display("default")
+        tools.print_display("default")
         tuple_xy = (80, 25)
     return tuple_xy
 
@@ -49,11 +49,11 @@ def _get_terminal_size_tput():
 
 
 def _get_terminal_size_linux():
-    def ioctl_GWINSZ(file_descriptor):
+    def ioctl_GWINSZ(local_file_descriptor):
         try:
             import fcntl
             import termios
-            return struct.unpack('hh', fcntl.ioctl(file_descriptor, termios.TIOCGWINSZ, '1234'))
+            return struct.unpack('hh', fcntl.ioctl(local_file_descriptor, termios.TIOCGWINSZ, '1234'))
         except Exception:
             pass
     coordinates = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
