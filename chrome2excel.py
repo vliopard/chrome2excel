@@ -267,7 +267,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
                 progress_bar.update(1)
                 if utils.update_progress(preset.message["format_dates"], index, total_items):
                     break
-                worksheet_column.NUMBER_FORMAT = preset.NUMBER_FORMAT
+                worksheet_column.number_format = preset.NUMBER_FORMAT
 
     tools.print_underline()
     tools.print_display(preset.message["hide_columns"])

@@ -107,7 +107,7 @@ def parse_url_clean(url_value):
 
         qsl = '&'.join(qsl_parameters)
         if qsl:
-            qsl = '?' + qsl
+            qsl = f'?{qsl}'
         return ''.join(url_parameters).replace(f'//{preset.YOUTUBE_COM}', f'//{preset.YOUTUBE_WWW}') + qsl
     return None
 
