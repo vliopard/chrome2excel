@@ -148,10 +148,10 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
 
 def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
     tools.print_debug(f'filename    [{str(spreadsheet_filename)}]',
-                      f'\nreload_title[{str(reload_url_title)}]',
-                      f'\nremove_dupes[{str(remove_duplicated_urls)}]',
-                      f'\nremove_track[{str(remove_tracking_from_url)}]',
-                      f'\nget_hostname[{str(get_hostname_title)}]')
+                      f'{preset.NEW_LINE}reload_title[{str(reload_url_title)}]',
+                      f'{preset.NEW_LINE}remove_dupes[{str(remove_duplicated_urls)}]',
+                      f'{preset.NEW_LINE}remove_track[{str(remove_tracking_from_url)}]',
+                      f'{preset.NEW_LINE}get_hostname[{str(get_hostname_title)}]')
     tools.print_display(f'{preset.message["generating_workbook"]} [{spreadsheet_filename}]')
     excel_workbook = Workbook()
     excel_worksheet = excel_workbook.active
@@ -302,7 +302,7 @@ def get_profile(profile):
 def run_chrome(dic_parameters):
     display_dic = ''
     for key in dic_parameters:
-        display_dic += f'{key.ljust(15)}[{str(dic_parameters[key]).ljust(6)}]\n'
+        display_dic += f'{key.ljust(15)}[{str(dic_parameters[key]).ljust(6)}]{preset.NEW_LINE}'
     tools.print_debug(display_dic)
 
     if dic_parameters['x_org_gui']:
