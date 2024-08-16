@@ -70,6 +70,8 @@ def soup_wrapper(response, method, encode=None):
 
 def clean_title(title):
     if title:
+        if title == '- YouTube':
+            return None
         new_title = ' '.join(title.replace(preset.NEW_LINE, ' ').replace(preset.TAB, ' ').replace(preset.RECURSE, ' ').strip().split())
         if new_title.endswith('.'):
             new_title = new_title[:-1]
