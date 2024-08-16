@@ -28,6 +28,15 @@ def get_stored_name(stored):
     return new_item
 
 
+def get_stored_link(stored):
+    item = database.get_name(stored)
+    if item:
+        return item['url_name']
+    new_item = title_master.get_title_master(stored)
+    database.insert_name({'_id': stored, 'url_name': new_item})
+    return new_item
+
+
 def parse_url(url_value):
     parsed_url = urlparse(url_value)
     dictionary = dict(parse.parse_qsl(parse.urlsplit(url_value).query))

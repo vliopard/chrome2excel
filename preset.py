@@ -33,6 +33,7 @@ MAIN_SECTION = 'main'
 DATABASE_URL = 'mongodb://localhost:27017/'
 DATABASE_NAME = 'ChromeBookMarks'
 DATABASE_COLLECTION = 'BookMarksLinks'
+DATABASE_COLLECTION_NAMES = 'BookMarksNames'
 DATABASE_COLLECTION_FOLDERS = 'BookMarksFolders'
 
 DEBUG_MODE = False

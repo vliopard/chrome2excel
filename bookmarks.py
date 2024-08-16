@@ -212,7 +212,12 @@ def read_content(folder_items):
         clean_url = html_support.parse_url_clean(url_address)
         parsed_url['url_info_parse_address'] = clean_url
         parsed_url['url_info_prime_address'] = preset.EMPTY if url_address.strip() == clean_url.strip() else url_address
-        parsed_url['url_info_name'] = url_name if len(url_name.strip()) > 5 and not url_name.startswith('https://www.youtube.com/watch') else title_master.get_title_master(clean_url)
+
+        if len(url_name.strip()) > 5 and not url_name.startswith('https://www.youtube.com/watch'):
+            parsed_url['url_info_name'] = url_name
+        else:
+            parsed_url['url_info_name'] = html_support.get_stored_link(clean_url)
+
         parsed_url['url_info_icon'] = url_icon
         parsed_url1 = html_support.parse_url(url_address)
         parsed_url = parsed_url | parsed_url1
