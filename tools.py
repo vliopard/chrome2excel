@@ -1,7 +1,7 @@
 import os
 import json
 import preset
-import screenSupport
+import screen_support
 
 from platform import system
 
@@ -43,15 +43,15 @@ class Urls:
 
 def print_debug(*arguments):
     if preset.DEBUG_MODE:
-        print('\n')
+        print(preset.NEW_LINE)
         double_line()
-        double_line("DEBUG MESSAGE START")
+        double_line('DEBUG MESSAGE START')
         double_line()
         print_display(*arguments)
         double_line()
-        double_line("DEBUG MESSAGE END")
+        double_line('DEBUG MESSAGE END')
         double_line()
-        print('\n')
+        print(preset.NEW_LINE)
 
 
 def print_display(*arguments):
@@ -62,42 +62,34 @@ def print_display(*arguments):
             for element in arguments:
                 display_text = display_text + str(element) + preset.BLANK
             display_text = display_text.rstrip()
-            if display_text != "default":
+            if display_text != 'default':
                 print(display_text)
         else:
             return 0
 
 
-def highlight(*arguments):
-    print('\n\n')
-    print_overline()
-    print_display(*arguments)
-    print_underline()
-    print('\n\n')
-
-
 def print_underline():
-    print_display(preset.UNDERLINE * (screenSupport.get_terminal_width()))
+    print_display(preset.UNDERLINE * (screen_support.get_terminal_width()))
 
 
 def print_overline():
-    print_display(preset.OVERLINE * (screenSupport.get_terminal_width()))
+    print_display(preset.OVERLINE * (screen_support.get_terminal_width()))
 
 
 def double_line(message=None):
     if message:
-        message = "== " + message + " "
-        print_display(message + "=" * (screenSupport.get_terminal_width() - len(message)))
+        message = f'== {message} '
+        print_display(message + '=' * (screen_support.get_terminal_width() - len(message)))
     else:
-        print_display("=" * (screenSupport.get_terminal_width()))
+        print_display('=' * (screen_support.get_terminal_width()))
 
 
 def select_profile(profile):
     profile = str(profile)
-    if profile == "0":
-        profile = "Default"
+    if profile == '0':
+        profile = 'Default'
     else:
-        profile = "Profile " + profile
+        profile = f'Profile {profile}'
     return profile
 
 
@@ -105,26 +97,26 @@ def get_chrome_element(profile_number, item):
     computer = system()
     profile_name = select_profile(profile_number)
     chrome_file = preset.EMPTY
-    if computer == "Windows":
-        chrome_file = os.path.expanduser("~\\AppData\\Local\\Google\\Chrome\\User Data\\" + profile_name + "\\" + item)
-    if computer == "Linux":
-        chrome_file = os.path.expanduser("~/.config/google-chrome/" + profile_name + "/" + item)
-    if computer == "Darwin":
-        chrome_file = os.path.expanduser("~/Library/Application Support/Google/Chrome/" + profile_name + "/" + item)
+    if computer == 'Windows':
+        chrome_file = os.path.expanduser(f'~\\AppData\\Local\\Google\\Chrome\\User Data\\{profile_name}\\{item}')
+    if computer == 'Linux':
+        chrome_file = os.path.expanduser(f'~/.config/google-chrome/{profile_name}/{item}')
+    if computer == 'Darwin':
+        chrome_file = os.path.expanduser(f'~/Library/Application Support/Google/Chrome/{profile_name}/{item}')
     if os.path.exists(chrome_file):
         return chrome_file
     return None
 
 
 def get_user(user_path):
-    user_name = json.loads(open(user_path, encoding=preset.UTF8).read())["account_info"][0]
+    user_name = json.loads(open(user_path, encoding=preset.UTF8).read())['account_info'][0]
     return user_name['email'], user_name['full_name'], user_name['given_name']
 
 
 def retrieve_profile(profile):
     user_data = get_chrome_element(profile, preset.PREFERENCES)
     if not user_data:
-        raise Exception(preset.message["invalid_profile"])
+        raise Exception(preset.message['invalid_profile'])
     return get_user(user_data)
 
 
@@ -133,7 +125,7 @@ def get_profile_list():
     for number in range(0, 100):
         try:
             email, full_name, display_name = retrieve_profile(number)
-            user_list.append([number, full_name + " - " + email])
+            user_list.append([number, f'{full_name} - {email}'])
         except Exception:
             pass
     return user_list

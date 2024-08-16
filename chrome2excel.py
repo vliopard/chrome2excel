@@ -2,10 +2,10 @@ import tqdm
 import tools
 import utils
 import preset
-import bookMarks
-
-import htmlExport
-import htmlSupport
+import bookmarks
+import html_export
+import title_master
+import html_support
 
 from openpyxl import Workbook
 from openpyxl.styles import Font
@@ -16,9 +16,8 @@ from argparse import ArgumentParser
 def get_title_conditional(progress_bar, get_title_disabled, url_name, url_address):
     if not get_title_disabled:
         progress_bar.update(1)
-        status_number, url_title = htmlSupport.get_title(url_address)
-        if status_number != 0:
-            return f'[ {url_title} {str(status_number)} - {url_name} ]'
+        url_title = title_master.get_title_master(url_address)
+        return f'[ {url_title} - {url_name} ]'
     return url_name
 
 
@@ -37,8 +36,8 @@ def append_data_table(data_table, url_list):
     tools.print_display(preset.message['appending_data_table'])
     for url_item in url_list:
         head = preset.Header()
-        head.Hostname = htmlSupport.parse_url(url_item)[2]
-        head.URL_Clean = htmlSupport.clean_url(url_item)
+        head.Hostname = html_support.parse_url(url_item)[2]
+        head.URL_Clean = html_support.parse_url_clean(url_item)
         head.URL = url_item
         data_table.append(head.to_tuple())
     return data_table
@@ -119,14 +118,12 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
             original_hostname = header.get_name(preset.hostname_attr)
 
             if reload_url_title:
-                status_number, url_title = htmlSupport.get_title(url_address)
-                if status_number != 0:
-                    url_title = f'[{url_title} {str(status_number)} - {header.get_name(preset.url_name_attr)}]'
+                url_title = title_master.get_title_master(url_address)
+                url_title = f'[{url_title} - {header.get_name(preset.url_name_attr)}]'
 
             if get_hostname_title:
-                status_number, hostname_title = htmlSupport.get_title(f'{preset.PROTOCOL}{original_hostname}')
-                if status_number != 0:
-                    hostname_title = f'[{hostname_title} {str(status_number)} - {original_hostname}]'
+                hostname_title = title_master.get_title_master(f'{preset.PROTOCOL}{original_hostname}')
+                hostname_title = f'[{hostname_title} - {original_hostname}]'
 
             if hostname_title not in visited_hostname_title:
                 url_data = tools.Urls(url_address, header.get_name(preset.url_added_attr), url_title)
@@ -141,7 +138,7 @@ def generate_web_page(web_page_filename, data_table, reload_url_title, remove_du
     tools.print_underline()
     tools.print_display(preset.message['saving_html'])
     tools.print_overline()
-    htmlExport.write_html(web_page_filename, folder_list)
+    html_export.write_html(web_page_filename, folder_list)
     tools.print_display(preset.message['done'])
     tools.print_overline()
 
@@ -176,7 +173,7 @@ def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remov
             temporary_table = []
             utils.update_progress(preset.message['resolving_hostnames'], -1, total_items)
             for index, data_row in enumerate(data_table):
-                temporary_table.append(utils.update_tuple(data_row, htmlSupport.get_title(preset.PROTOCOL + data_row[22])[1], 2))
+                temporary_table.append(utils.update_tuple(data_row, title_master.get_title_master(preset.PROTOCOL + data_row[22]), 2))
                 progress_bar.update(1)
                 if utils.update_progress(preset.message['resolving_hostnames'], index, total_items):
                     break
@@ -306,8 +303,8 @@ def run_chrome(dic_parameters):
     tools.print_debug(display_dic)
 
     if dic_parameters['x_org_gui']:
-        import chromeExport
-        chromeExport.main()
+        import chrome_export
+        chrome_export.main()
     elif dic_parameters['list_profile']:
         if dic_parameters['list_profile'].isdigit():
             list_profile = dic_parameters['list_profile']
@@ -327,11 +324,11 @@ def run_chrome(dic_parameters):
             bookmarks_data = []
             if dic_parameters['profile']:
                 email, full, name = get_profile(dic_parameters['profile'])
-                bookmarks = bookMarks.generate_bookmarks(dic_parameters['profile'])
+                bookmarks_list = bookmarks.generate_bookmarks(dic_parameters['profile'])
                 tools.print_underline()
                 tools.print_display(f'{preset.message["process_user"]}: ({full}) [{email}]')
                 tools.print_overline()
-                bookmarks_data = bookMarks.generate_data(bookmarks)
+                bookmarks_data = bookmarks.generate_data(bookmarks_list)
 
             if dic_parameters['import_txt']:
                 bookmarks_data = append_data_table(bookmarks_data, import_text_file(dic_parameters['import_txt']))
@@ -364,7 +361,7 @@ def default(default_value):
 
 
 if __name__ == '__main__':
-    settings = bookMarks.Options()
+    settings = bookmarks.Options()
     settings.load_settings()
     default_output = preset.XLSX if settings.export_file_type else preset.HTML
 

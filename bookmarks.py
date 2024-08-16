@@ -3,7 +3,8 @@ import tools
 import utils
 import public
 import preset
-import htmlSupport
+import html_support
+import title_master
 
 from configparser import ConfigParser, DuplicateSectionError
 
@@ -199,29 +200,28 @@ def read_content(folder_items):
             elif item == preset.URL:
                 url_address = folder_item[item]
             else:
-                tools.print_debug(preset.message["warning"] + str(item))
-        url_data = (
-                url_guid,
-                utils.to_number(url_item_id),
-                utils.to_number(url_sync_transaction_version),
-                url_item_type,
-
-                utils.to_date(url_date_added),
-                utils.to_date(url_date_modified),
-                utils.to_date(url_last_visited),
-
-                url_name,
-                htmlSupport.clean_url(url_address),
-                url_address,
-                url_icon
-        )
-        parsed_url = htmlSupport.parse_url(url_address)
-        url_list.append(url_data + parsed_url)
+                tools.print_debug(preset.message['warning'] + str(item))
+        parsed_url = dict()
+        parsed_url['url_info_guid'] = url_guid
+        parsed_url['url_info_item_id'] = url_item_id
+        parsed_url['url_info_sync_transaction_version'] = url_sync_transaction_version
+        parsed_url['url_info_item_type'] = url_item_type
+        parsed_url['url_info_date_added'] = utils.to_date(url_date_added)
+        parsed_url['url_info_date_modified'] = utils.to_date(url_date_modified)
+        parsed_url['url_info_last_visited'] = utils.to_date(url_last_visited)
+        clean_url = html_support.parse_url_clean(url_address)
+        parsed_url['url_info_parse_address'] = clean_url
+        parsed_url['url_info_prime_address'] = preset.EMPTY if url_address.strip() == clean_url.strip() else url_address
+        parsed_url['url_info_name'] = url_name if len(url_name.strip()) > 5 and not url_name.startswith('https://www.youtube.com/watch') else title_master.get_title_master(clean_url)
+        parsed_url['url_info_icon'] = url_icon
+        parsed_url1 = html_support.parse_url(url_address)
+        parsed_url = parsed_url | parsed_url1
+        url_list.append(parsed_url)
     return url_list
 
 
 def generate_bookmarks(profile):
-    tools.print_display(preset.message["generating_bookmarks"])
+    tools.print_display(preset.message['generating_bookmarks'])
     bookmarks_file = tools.get_chrome_element(profile, preset.BOOKMARKS)
     if bookmarks_file:
         return Bookmarks(bookmarks_file)
@@ -230,9 +230,7 @@ def generate_bookmarks(profile):
 
 def generate_data(instance):
     data_header = []
-
     for folder in instance.folders:
-
         folder_item = None
         folder_date_added = preset.NO_DATE
         folder_date_modified = preset.NO_DATE
@@ -243,7 +241,6 @@ def generate_data(instance):
         folder_sync_transaction_version = preset.EMPTY
         folder_type = preset.EMPTY
         folder_url = preset.EMPTY
-
         for item in folder:
             if item == preset.CHILDREN:
                 folder_item = read_content(folder[item])
@@ -268,21 +265,19 @@ def generate_data(instance):
             elif item == preset.URL:
                 folder_url = folder[item]
             else:
-                tools.print_debug(preset.message["warning"] + str(item))
-
-        folder_data = (
-                folder_guid,
-                utils.to_number(folder_id),
-                utils.to_number(folder_sync_transaction_version),
-                folder_type,
-
-                utils.to_date(folder_date_added),
-                utils.to_date(folder_date_modified),
-                utils.to_date(folder_last_visited),
-
-                folder_name,
-                folder_url
-        )
+                tools.print_debug(preset.message['warning'] + str(item))
+        folder_data = {
+                'folder_info_guid': folder_guid,
+                'folder_info_id': folder_id,
+                'folder_info_sync_transaction_version': folder_sync_transaction_version,
+                'folder_info_type': folder_type,
+                'folder_info_date_added': utils.to_date(folder_date_added),
+                'folder_info_date_modified': utils.to_date(folder_date_modified),
+                'folder_info_last_visited': utils.to_date(folder_last_visited),
+                'folder_info_name': folder_name,
+                'folder_info_url': folder_url
+        }
         for item in folder_item:
-            data_header.append(folder_data + item + preset.trail)
+            folder_data_complete = folder_data | item
+            data_header.append(folder_data_complete)
     return data_header

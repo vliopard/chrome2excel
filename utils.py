@@ -2,19 +2,6 @@ import preset
 from datetime import datetime, timezone, timedelta
 
 
-def add(value):
-    value[0] = value[0] + 1
-    return value[0]
-
-
-def get(value):
-    return value[0]
-
-
-def check_is_none(value):
-    return preset.EMPTY_STRING if value is None else str(value)
-
-
 def to_number(value):
     if value != preset.EMPTY_STRING and value != preset.EMPTY and value != preset.BLANK and value != preset.NO_DATE:
         return int(value)
@@ -28,7 +15,7 @@ def to_date(value):
         seconds, microseconds = divmod(microseconds, 1000000)
         days, seconds = divmod(seconds, 86400)
         return datetime(1601, 1, 1) + timedelta(days, seconds, microseconds)
-    return preset.NO_DATE
+    return preset.EMPTY
 
 
 def date_to_string(date_value):
@@ -96,7 +83,7 @@ def key_on_substring(dictionary_data, text_substring):
 
 
 def contains(single_element, list_of_elements):
-    return any(element in single_element for element in list_of_elements)
+    return any(element == single_element for element in list_of_elements)
 
 
 def check_fragment(in_string, url):
@@ -106,6 +93,7 @@ def check_fragment(in_string, url):
         token = string_item.split('=')[0]
         if token.startswith('D['):
             token = 'D['
-        if not contains(token, preset.dict_params[key_on_substring(preset.dict_params, url)] + preset.general_params if key_on_substring(preset.dict_params, url) else preset.general_params):
+        key_res = key_on_substring(preset.dict_params, url)
+        if not contains(token, preset.dict_params[key_res] + preset.dict_params['tracking_module'] if key_res else preset.dict_params['general'] + preset.dict_params['tracking_module']):
             return_list.append(string_item)
     return "&".join(return_list)

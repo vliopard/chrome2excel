@@ -1,20 +1,39 @@
+import utils
 from json import load
 from pathlib import Path
-
-from utils import add, to_date
 
 main_icon = 'resources/blue.ico'
 configuration_filename = 'resources/config.ini'
 translation_filename = 'resources/translation.json'
 
 
+def add_value(value):
+    value[0] = value[0] + 1
+    return value[0]
+
+
 def load_translation_file():
     return load(Path(translation_filename).open(encoding=UTF8))
+
+
+def read_tokens(category):
+    cat_list = []
+    with open('tokens.txt', 'r', encoding=UTF8) as tks:
+        lines = tks.readlines()
+        for line in lines:
+            if line.startswith(category):
+                cat_list.append(line.split('|')[1].strip())
+    return cat_list
 
 
 RUN_GUI = False
 
 MAIN_SECTION = 'main'
+
+DATABASE_URL = 'mongodb://localhost:27017/'
+DATABASE_NAME = 'ChromeBookMarks'
+DATABASE_COLLECTION = 'BookMarksLinks'
+DATABASE_COLLECTION_FOLDERS = 'BookMarksFolders'
 
 DEBUG_MODE = False
 TEXT_FILENAME = 'chrome.txt'
@@ -24,8 +43,8 @@ XLSX_FILENAME = 'chrome.xlsx'
 TXT = 'txt'
 HTML = 'html'
 XLSX = 'xlsx'
-UTF8 = 'utf-8'
-
+UTF8 = 'UTF8'
+LATIN = 'latin1'
 TITLE = 'title'
 ENABLED = 'enabled'
 DISABLED = 'disabled'
@@ -39,7 +58,7 @@ FACEBOOK_COM = 'facebook.com'
 ENGLISH = 'en-us'
 message = load_translation_file()[ENGLISH]
 
-TIMEOUT = 120
+TIMEOUT = 5
 
 ON = 'on'
 OFF = 'off'
@@ -58,8 +77,12 @@ UNKNOWN = 'unknown_exception'
 
 TAB = '\t'
 NEW_LINE = '\n'
+RECURSE = '\r'
 FORWARD_SLASHES = '//'
 
+NO_TITLE = '[NO_TITLE]'
+
+QUOTE = "'"
 UNDERLINE = '_'
 OVERLINE = '‾'
 
@@ -83,8 +106,8 @@ URL = 'url'
 
 NONAME = 'NONAME'
 
-NO_DATE = 'No Date'
-EMPTY_STRING = '[Empty]'
+NO_DATE = 'no_date'
+EMPTY_STRING = 'empty'
 DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
 NUMBER_FORMAT = 'YYYY/MM/DD hh:mm:ss'
 
@@ -99,206 +122,24 @@ remove_tracking_tokens_from_url = 'remove_tracking_tokens_from_url'
 display_exit_dialog = 'display_exit_dialog'
 refresh_folder_name_with_hostname_title = 'refresh_folder_name_with_hostname_title'
 
-general_tracking_tokens = (
-        '__twitter_impression',
-        'bffb',
-        'client_id',
-        'cmpid',
-        'comment_id',
-        'fb_action_ids',
-        'fb_action_types',
-        'fb_comment_id',
-        'fbclid',
-        'fbid',
-        'notif_id',
-        'notif_t',
-        'reply_comment_id',
-        'story_fbid',
-        'total_comments',
-        'campaign',
-        'campanha',
-        'gws_rd',
-        'mkt_tok',
-        'offset',
-        'sc_campaign',
-        'sc_category',
-        'sc_channel',
-        'sc_content',
-        'sc_country',
-        'sc_funnel',
-        'sc_medium',
-        'sc_publisher',
-        'sc_segment',
-        'utm_',
-        'utm_campaign',
-        'utm_content',
-        'utm_medium',
-        'utm_source',
-        'utm_term',
-        'ocid',
-        'SThisFB',
-        'ref_',
-        'quantity',
-        'variation',
-        'tracking_id',
-        'position',
-        'onAttributesExp',
-        'type',
-        'source_impression_id',
-        'versao',
-        'reco_item_pos',
-        'reco_backend',
-        'reco_backend_type',
-        'reco_client',
-        'reco_id',
-        'c_id',
-        'c_element_order',
-        'c_uid',
-        'ref',
-        'is_advertising',
-        'ad_domain',
-        'ad_position',
-        'ad_click_id'
-)
-
-youtube_parameters = (
-        'sm',
-        'time_continue',
-        'feature',
-        'app',
-        'bpctr',
-        '1c',
-        'sns',
-        'a',
-        'pbjreload',
-        'index',
-        'list'
-)
-
-facebook_tracking_tokens = (
-        '_rdc',
-        '_rdr',
-        'rc',
-        'comment_tracking',
-        '__tn__',
-        '__xts__[0]',
-        '__xts__',
-        'sns',
-        'hc_location',
-        'pnref',
-        'entry_point',
-        'tab',
-        'source_ref',
-        'hc_ref',
-        '__mref',
-        'ref',
-        'eid',
-        'fref',
-        'lst',
-        '__nodl',
-        'permPage',
-        'notif_id',
-        'force_theater'
-)
-
 SYMBOLS = ['?', '#', '&']
 
 dict_params = {
-            'youtube.com': ['list', 'index', 'feature', 'lc', 'inf_contact_key', 'app', 'time_continue', 'reload'],
-            'facebook.com': [],
-            'instagram': ['hl'],
-            'uol': ['cmpid', 'uf', 'fbclid', '__twitter_impression'],
-            'folha.uol': ['cmpid', 'pnref'],
-            'globo.com': ['versao', '?origem', 'origem', 'fbclid', '__twitter_impression'],
-            'mercadolivre.com': ['pdp_filters',
-                                 'product_trigger_id',
-                                 'quantity',
-                                 'source',
-                                 'variation',
-                                 'searchVariation',
-                                 'onAttributesExp',
-                                 'hide_psmb',
-                                 'vip_filters',
-                                 'position',
-                                 'type',
-                                 'tracking_id',
-                                 'backend',
-                                 'backend_type',
-                                 'polycard_client',
-                                 'search_layout',
-                                 'client',
-                                 'reco_id',
-                                 'c_id',
-                                 'c_uid',
-                                 'da_id',
-                                 'reco_item_pos',
-                                 'deal_print_id',
-                                 'model_version',
-                                 'ad_domain',
-                                 'ad_click_id',
-                                 'is_advertising',
-                                 'sid',
-                                 'wid',
-                                 'cart_referer',
-                                 'c_element_order',
-                                 'reco_product_pos',
-                                 'gid',
-                                 'pid',
-                                 'id_origin',
-                                 'da_sort_algorithm',
-                                 'reviews',
-                                 'redirectedFromSimilar',
-                                 'redirectedFromParent',
-                                 'feedbacks-list',
-                                 'questions',
-                                 'redirectedFromVip',
-                                 'nav-header',
-                                 'component_id',
-                                 'origin',
-                                 'flash',
-                                 'attributes',
-                                 'attribute',
-                                 'matt_tool',
-                                 'matt_campaign_id',
-                                 'matt_ad_group_id',
-                                 'matt_network',
-                                 'cq_cmp',
-                                 'cq_med',
-                                 'cq_net',
-                                 'cq_plt',
-                                 'cq_src',
-                                 'matt_creative',
-                                 'matt_device',
-                                 'matt_merchant_id',
-                                 'matt_product_id',
-                                 'matt_product_partition_id',
-                                 'matt_target_id',
-                                 'redirectedFromSearch',
-                                 'shippingOptionId',
-                                 'page',
-                                 'id',
-                                 'role',
-                                 'max',
-                                 'offset',
-                                 'noIndex',
-                                 'D['],
+            'facebook.com': read_tokens('facebook'),
+            'folha.uol': read_tokens('folha'),
+            'general': read_tokens('general'),
+            'globo.com': read_tokens('globo'),
+            'instagram': read_tokens('instagram'),
+            'magazineluiza.com.br': read_tokens('magazine'),
+            'mercadolivre.com': read_tokens('mercadolivre'),
+            'mercadoshops.com': read_tokens('mercadoshops'),
+            'minds.com': read_tokens('minds'),
+            'savefrom.net': read_tokens('savefrom'),
+            'submarino.com': read_tokens('submarino'),
+            'tracking_module': read_tokens('tracking_module'),
+            'uol': read_tokens('uol'),
+            'youtube.com': read_tokens('youtube')
           }
-
-general_params = [
-        '?utm_source',
-        'utm_campaign',
-        'utm_cid',
-        'utm_content',
-        'utm_id',
-        'utm_medium',
-        'utm_source',
-        'utm_status',
-        'utm_term',
-        'campaign',
-        'fbclid',
-        '__twitter_impression',
-        ':~:text'
-       ]
 
 cli_progress_dialog = None
 gui_progress_dialog = None
@@ -371,114 +212,114 @@ param_p_attr = 'param_p'
 class Header:
     def __init__(self):
         index = [-1]
-        stub_date = to_date(13231709218000000)
+        stub_date = utils.to_date(13231709218000000)
 
-        self._folder_guid = (EMPTY, add(index))
-        self._folder_id = (EMPTY, add(index))
-        self._folder_sync = (EMPTY, add(index))
-        self._folder_type = (EMPTY, add(index))
+        self._folder_guid = (EMPTY, add_value(index))
+        self._folder_id = (EMPTY, add_value(index))
+        self._folder_sync = (EMPTY, add_value(index))
+        self._folder_type = (EMPTY, add_value(index))
 
-        self._folder_added = (stub_date, add(index))
-        self._folder_modified = (stub_date, add(index))
-        self._folder_visited = (stub_date, add(index))
+        self._folder_added = (stub_date, add_value(index))
+        self._folder_modified = (stub_date, add_value(index))
+        self._folder_visited = (stub_date, add_value(index))
 
-        self._folder_name = (EMPTY, add(index))
-        self._folder_url = (EMPTY, add(index))
+        self._folder_name = (EMPTY, add_value(index))
+        self._folder_url = (EMPTY, add_value(index))
 
-        self._url_guid = (EMPTY, add(index))
-        self._url_id = (EMPTY, add(index))
-        self._url_sync = (EMPTY, add(index))
-        self._url_type = (EMPTY, add(index))
+        self._url_guid = (EMPTY, add_value(index))
+        self._url_id = (EMPTY, add_value(index))
+        self._url_sync = (EMPTY, add_value(index))
+        self._url_type = (EMPTY, add_value(index))
 
-        self._url_added = (stub_date, add(index))
-        self._url_modified = (stub_date, add(index))
-        self._url_visited = (stub_date, add(index))
+        self._url_added = (stub_date, add_value(index))
+        self._url_modified = (stub_date, add_value(index))
+        self._url_visited = (stub_date, add_value(index))
 
-        self._url_name = (NO_SITE_NAME, add(index))
-        self._url_clean = (NO_CLEAN_url, add(index))
-        self._url = (NO_url_ADDRESS, add(index))
-        self._icon = (EMPTY, add(index))
-        self._scheme = (EMPTY, add(index))
-        self._netloc = (EMPTY, add(index))
-        self._hostname = (NO_HOST_NAME, add(index))
-        self._path = (EMPTY, add(index))
-        self._port = (EMPTY, add(index))
-        self._param = (EMPTY, add(index))
-        self._fragment = (EMPTY, add(index))
-        self._username = (EMPTY, add(index))
-        self._password = (EMPTY, add(index))
+        self._url_name = (NO_SITE_NAME, add_value(index))
+        self._url_clean = (NO_CLEAN_url, add_value(index))
+        self._url = (NO_url_ADDRESS, add_value(index))
+        self._icon = (EMPTY, add_value(index))
+        self._scheme = (EMPTY, add_value(index))
+        self._netloc = (EMPTY, add_value(index))
+        self._hostname = (NO_HOST_NAME, add_value(index))
+        self._path = (EMPTY, add_value(index))
+        self._port = (EMPTY, add_value(index))
+        self._param = (EMPTY, add_value(index))
+        self._fragment = (EMPTY, add_value(index))
+        self._username = (EMPTY, add_value(index))
+        self._password = (EMPTY, add_value(index))
 
-        self._param_a = (EMPTY, add(index))
-        self._param_b = (EMPTY, add(index))
-        self._param_c = (EMPTY, add(index))
-        self._param_d = (EMPTY, add(index))
-        self._param_e = (EMPTY, add(index))
-        self._param_f = (EMPTY, add(index))
-        self._param_g = (EMPTY, add(index))
-        self._param_h = (EMPTY, add(index))
-        self._param_i = (EMPTY, add(index))
-        self._param_j = (EMPTY, add(index))
-        self._param_k = (EMPTY, add(index))
-        self._param_l = (EMPTY, add(index))
-        self._param_m = (EMPTY, add(index))
-        self._param_n = (EMPTY, add(index))
-        self._param_o = (EMPTY, add(index))
-        self._param_p = (EMPTY, add(index))
+        self._param_a = (EMPTY, add_value(index))
+        self._param_b = (EMPTY, add_value(index))
+        self._param_c = (EMPTY, add_value(index))
+        self._param_d = (EMPTY, add_value(index))
+        self._param_e = (EMPTY, add_value(index))
+        self._param_f = (EMPTY, add_value(index))
+        self._param_g = (EMPTY, add_value(index))
+        self._param_h = (EMPTY, add_value(index))
+        self._param_i = (EMPTY, add_value(index))
+        self._param_j = (EMPTY, add_value(index))
+        self._param_k = (EMPTY, add_value(index))
+        self._param_l = (EMPTY, add_value(index))
+        self._param_m = (EMPTY, add_value(index))
+        self._param_n = (EMPTY, add_value(index))
+        self._param_o = (EMPTY, add_value(index))
+        self._param_p = (EMPTY, add_value(index))
 
     def set_data(self, url_element):
         index = [-1]
 
-        self._folder_guid = (url_element[add(index)], index[0])
-        self._folder_id = (url_element[add(index)], index[0])
-        self._folder_sync = (url_element[add(index)], index[0])
-        self._folder_type = (url_element[add(index)], index[0])
+        self._folder_guid = (url_element[add_value(index)], index[0])
+        self._folder_id = (url_element[add_value(index)], index[0])
+        self._folder_sync = (url_element[add_value(index)], index[0])
+        self._folder_type = (url_element[add_value(index)], index[0])
 
-        self._folder_added = (url_element[add(index)], index[0])
-        self._folder_modified = (url_element[add(index)], index[0])
-        self._folder_visited = (url_element[add(index)], index[0])
+        self._folder_added = (url_element[add_value(index)], index[0])
+        self._folder_modified = (url_element[add_value(index)], index[0])
+        self._folder_visited = (url_element[add_value(index)], index[0])
 
-        self._folder_name = (url_element[add(index)], index[0])
-        self._folder_url = (url_element[add(index)], index[0])
+        self._folder_name = (url_element[add_value(index)], index[0])
+        self._folder_url = (url_element[add_value(index)], index[0])
 
-        self._url_guid = (url_element[add(index)], index[0])
-        self._url_id = (url_element[add(index)], index[0])
-        self._url_sync = (url_element[add(index)], index[0])
-        self._url_type = (url_element[add(index)], index[0])
+        self._url_guid = (url_element[add_value(index)], index[0])
+        self._url_id = (url_element[add_value(index)], index[0])
+        self._url_sync = (url_element[add_value(index)], index[0])
+        self._url_type = (url_element[add_value(index)], index[0])
 
-        self._url_added = (url_element[add(index)], index[0])
-        self._url_modified = (url_element[add(index)], index[0])
-        self._url_visited = (url_element[add(index)], index[0])
+        self._url_added = (url_element[add_value(index)], index[0])
+        self._url_modified = (url_element[add_value(index)], index[0])
+        self._url_visited = (url_element[add_value(index)], index[0])
 
-        self._url_name = (url_element[add(index)], index[0])
-        self._url_clean = (url_element[add(index)], index[0])
-        self._url = (url_element[add(index)], index[0])
-        self._icon = (url_element[add(index)], index[0])
-        self._scheme = (url_element[add(index)], index[0])
-        self._netloc = (url_element[add(index)], index[0])
-        self._hostname = (url_element[add(index)], index[0])
-        self._path = (url_element[add(index)], index[0])
-        self._port = (url_element[add(index)], index[0])
-        self._param = (url_element[add(index)], index[0])
-        self._fragment = (url_element[add(index)], index[0])
-        self._username = (url_element[add(index)], index[0])
-        self._password = (url_element[add(index)], index[0])
+        self._url_name = (url_element[add_value(index)], index[0])
+        self._url_clean = (url_element[add_value(index)], index[0])
+        self._url = (url_element[add_value(index)], index[0])
+        self._icon = (url_element[add_value(index)], index[0])
+        self._scheme = (url_element[add_value(index)], index[0])
+        self._netloc = (url_element[add_value(index)], index[0])
+        self._hostname = (url_element[add_value(index)], index[0])
+        self._path = (url_element[add_value(index)], index[0])
+        self._port = (url_element[add_value(index)], index[0])
+        self._param = (url_element[add_value(index)], index[0])
+        self._fragment = (url_element[add_value(index)], index[0])
+        self._username = (url_element[add_value(index)], index[0])
+        self._password = (url_element[add_value(index)], index[0])
 
-        self._param_a = (url_element[add(index)], index[0])
-        self._param_b = (url_element[add(index)], index[0])
-        self._param_c = (url_element[add(index)], index[0])
-        self._param_d = (url_element[add(index)], index[0])
-        self._param_e = (url_element[add(index)], index[0])
-        self._param_f = (url_element[add(index)], index[0])
-        self._param_g = (url_element[add(index)], index[0])
-        self._param_h = (url_element[add(index)], index[0])
-        self._param_i = (url_element[add(index)], index[0])
-        self._param_j = (url_element[add(index)], index[0])
-        self._param_k = (url_element[add(index)], index[0])
-        self._param_l = (url_element[add(index)], index[0])
-        self._param_m = (url_element[add(index)], index[0])
-        self._param_n = (url_element[add(index)], index[0])
-        self._param_o = (url_element[add(index)], index[0])
-        self._param_p = (url_element[add(index)], index[0])
+        self._param_a = (url_element[add_value(index)], index[0])
+        self._param_b = (url_element[add_value(index)], index[0])
+        self._param_c = (url_element[add_value(index)], index[0])
+        self._param_d = (url_element[add_value(index)], index[0])
+        self._param_e = (url_element[add_value(index)], index[0])
+        self._param_f = (url_element[add_value(index)], index[0])
+        self._param_g = (url_element[add_value(index)], index[0])
+        self._param_h = (url_element[add_value(index)], index[0])
+        self._param_i = (url_element[add_value(index)], index[0])
+        self._param_j = (url_element[add_value(index)], index[0])
+        self._param_k = (url_element[add_value(index)], index[0])
+        self._param_l = (url_element[add_value(index)], index[0])
+        self._param_m = (url_element[add_value(index)], index[0])
+        self._param_n = (url_element[add_value(index)], index[0])
+        self._param_o = (url_element[add_value(index)], index[0])
+        self._param_p = (url_element[add_value(index)], index[0])
 
     def get_position(self, index):
         item = self.to_tuple()
@@ -1070,61 +911,61 @@ class Header:
 
 position = [-1]
 label_dictionary = {
-                    str(add(position)): 'Folder GUID',
-                    str(add(position)): 'Folder ID',
-                    str(add(position)): 'Folder Sync',
-                    str(add(position)): 'Type',
+                    str(add_value(position)): 'Folder GUID',
+                    str(add_value(position)): 'Folder ID',
+                    str(add_value(position)): 'Folder Sync',
+                    str(add_value(position)): 'Type',
 
-                    str(add(position)): 'Folder Added',
-                    str(add(position)): 'Folder Modified',
-                    str(add(position)): 'Folder visited',
+                    str(add_value(position)): 'Folder Added',
+                    str(add_value(position)): 'Folder Modified',
+                    str(add_value(position)): 'Folder visited',
 
-                    str(add(position)): 'Folder Name',
-                    str(add(position)): 'Folder url',
+                    str(add_value(position)): 'Folder Name',
+                    str(add_value(position)): 'Folder url',
 
-                    str(add(position)): 'url GUID',
-                    str(add(position)): 'url ID',
-                    str(add(position)): 'url Sync',
-                    str(add(position)): 'Type',
+                    str(add_value(position)): 'url GUID',
+                    str(add_value(position)): 'url ID',
+                    str(add_value(position)): 'url Sync',
+                    str(add_value(position)): 'Type',
 
-                    str(add(position)): 'url Added',
-                    str(add(position)): 'url Modified',
-                    str(add(position)): 'url Visited',
+                    str(add_value(position)): 'url Added',
+                    str(add_value(position)): 'url Modified',
+                    str(add_value(position)): 'url Visited',
 
-                    str(add(position)): 'url Name',
-                    str(add(position)): 'url Clean',
-                    str(add(position)): 'url',
-                    str(add(position)): 'icon',
+                    str(add_value(position)): 'url Name',
+                    str(add_value(position)): 'url Clean',
+                    str(add_value(position)): 'url',
+                    str(add_value(position)): 'icon',
 
-                    str(add(position)): 'scheme',
-                    str(add(position)): 'netloc',
-                    str(add(position)): 'hostname',
-                    str(add(position)): 'path',
-                    str(add(position)): 'port',
-                    str(add(position)): 'param',
-                    str(add(position)): 'fragment',
-                    str(add(position)): 'username',
-                    str(add(position)): 'password',
+                    str(add_value(position)): 'scheme',
+                    str(add_value(position)): 'netloc',
+                    str(add_value(position)): 'hostname',
+                    str(add_value(position)): 'path',
+                    str(add_value(position)): 'port',
+                    str(add_value(position)): 'param',
+                    str(add_value(position)): 'fragment',
+                    str(add_value(position)): 'username',
+                    str(add_value(position)): 'password',
 
-                    str(add(position)): 'param_a',
-                    str(add(position)): 'param_b',
-                    str(add(position)): 'param_c',
-                    str(add(position)): 'param_d',
-                    str(add(position)): 'param_e',
-                    str(add(position)): 'param_f',
-                    str(add(position)): 'param_g',
-                    str(add(position)): 'param_h',
-                    str(add(position)): 'param_i',
-                    str(add(position)): 'param_j',
-                    str(add(position)): 'param_k',
-                    str(add(position)): 'param_l',
-                    str(add(position)): 'param_m',
-                    str(add(position)): 'param_n',
-                    str(add(position)): 'param_o',
-                    str(add(position)): 'param_p'
+                    str(add_value(position)): 'param_a',
+                    str(add_value(position)): 'param_b',
+                    str(add_value(position)): 'param_c',
+                    str(add_value(position)): 'param_d',
+                    str(add_value(position)): 'param_e',
+                    str(add_value(position)): 'param_f',
+                    str(add_value(position)): 'param_g',
+                    str(add_value(position)): 'param_h',
+                    str(add_value(position)): 'param_i',
+                    str(add_value(position)): 'param_j',
+                    str(add_value(position)): 'param_k',
+                    str(add_value(position)): 'param_l',
+                    str(add_value(position)): 'param_m',
+                    str(add_value(position)): 'param_n',
+                    str(add_value(position)): 'param_o',
+                    str(add_value(position)): 'param_p'
     }
 
-trail = (
+TRAIL = (
     BLANK,  # 29
     BLANK,  # 30
     BLANK,  # 31

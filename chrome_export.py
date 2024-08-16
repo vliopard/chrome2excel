@@ -6,7 +6,7 @@ import utils
 import preset
 import locale
 import datetime
-import bookMarks
+import bookmarks
 import chrome2excel
 
 from wx.lib.mixins import listctrl
@@ -220,7 +220,7 @@ class MainFrame(wx.Frame):
         application_icon = wx.Icon()
         application_icon.CopyFromBitmap(wx.Bitmap(preset.main_icon, wx.BITMAP_TYPE_ANY))
         self.SetIcon(application_icon)
-        self.application_settings = bookMarks.Options()
+        self.application_settings = bookmarks.Options()
         self.application_settings.load_settings()
         self.selected_account = -1
 
@@ -286,7 +286,7 @@ class MainFrame(wx.Frame):
         button_pressed = profile_chooser_dialog.ShowModal()
         if button_pressed == wx.ID_OK:
             tools.print_display(preset.message["loading_bookmarks"])
-            data_table = bookMarks.generate_data(bookMarks.generate_bookmarks(self.selected_account))
+            data_table = bookmarks.generate_data(bookmarks.generate_bookmarks(self.selected_account))
             self.main_url_panel.update_list(data_table)
             self.main_url_panel.Update()
             set_total_items(self)
