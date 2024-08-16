@@ -36,7 +36,7 @@ if __name__ == '__main__':
         bookmarks_list = []
         bookmarks_data_dedupe = set()
 
-        print('Removing duplicates...')
+        print('Removing duplicates...')  # TODO: SAVE A BACKUP WITHOUT REMOVING DUPLICATES BEFORE APPLY TO CHROME
         for bookmark_item in sorted_bookmarks:
             main_url = bookmark_item[URL_CLEAN].strip()
             if main_url and main_url not in bookmarks_data_dedupe:

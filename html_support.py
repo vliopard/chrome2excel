@@ -169,7 +169,7 @@ def parse_url_clean(url_value):
                                 parsed_url.params,
                                 qsl,
                                 frags))
-        url_return = str(url_value)
+        url_return = str(url_value).strip()
         """
         quick_split = qsl.split('&')
         qv = {}
@@ -207,7 +207,7 @@ def parse_url_clean(url_value):
             print(f'frags     [{frags}]')
         """
         return url_return
-    return url_value
+    return url_value.strip()
 
 
 '''
