@@ -142,7 +142,10 @@ def get_title_bs4_requests_encode(url_address):
     try:
         response = request_wrapper(url_address, encode=True)
         soup = soup_wrapper(response.text, 'html.parser')
-        return clean_title(soup.title.string)
+        value = clean_title(soup.title.string)
+        if value == 'Error':
+            return None
+        return value
     except Exception:
         return None
 
@@ -228,40 +231,68 @@ def get_title_bs4_requests_headers_encode_status(url_address):
 
 
 def get_title_master(url_address):
+    debug = False
+    print(f'get_title_master[{url_address}]') if debug else None
+
     answer = get_title_from_chrome_pages(url_address)
     if answer:
+        print(f'get_title_from_chrome_pages[{answer}]') if debug else None
         return answer
-    answer = get_title_bs4_urlopen_encoded(url_address)
-    if answer:
-        return answer
-    answer = get_title_bs4_urlopen_get_encode(url_address)
-    if answer:
-        return answer
-    answer = get_title_bs4_requests_headers_encode_status(url_address)
-    if answer:
-        return answer
+
     answer = get_title_bs4_apparent(url_address)
     if answer:
+        print(f'get_title_bs4_apparent[{answer}]') if debug else None
         return answer
-    answer = get_title_urlopen_stream(url_address)
-    if answer:
-        return answer
+
     answer = get_title_bs4_requests_encoded_status(url_address)
     if answer:
+        print(f'get_title_bs4_requests_encoded_status[{answer}]') if debug else None
         return answer
-    answer = get_title_bs4_urlopen_read_encoded(url_address)
-    if answer:
-        return answer
-    answer = get_title_bs4_requests_encode(url_address)
-    if answer:
-        return answer
-    answer = get_title_lxml(url_address)
-    if answer:
-        return answer
-    answer = get_title_mechanized(url_address)
-    if answer:
-        return answer
+
     answer = get_title_bs4_lxml(url_address)
     if answer:
+        print(f'get_title_bs4_lxml[{answer}]') if debug else None
         return answer
+
+    answer = get_title_bs4_requests_headers_encode_status(url_address)
+    if answer:
+        print(f'get_title_bs4_requests_headers_encode_status[{answer}]') if debug else None
+        return answer
+
+    answer = get_title_mechanized(url_address)
+    if answer:
+        print(f'get_title_mechanized[{answer}]') if debug else None
+        return answer
+
+    answer = get_title_bs4_urlopen_read_encoded(url_address)
+    if answer:
+        print(f'get_title_bs4_urlopen_read_encoded[{answer}]') if debug else None
+        return answer
+
+    answer = get_title_bs4_urlopen_get_encode(url_address)
+    if answer:
+        print(f'get_title_bs4_urlopen_get_encode[{answer}]') if debug else None
+        return answer
+
+    answer = get_title_urlopen_stream(url_address)
+    if answer:
+        print(f'get_title_urlopen_stream[{answer}]') if debug else None
+        return answer
+
+    answer = get_title_bs4_urlopen_encoded(url_address)
+    if answer:
+        print(f'get_title_bs4_urlopen_encoded[{answer}]') if debug else None
+        return answer
+
+    answer = get_title_bs4_requests_encode(url_address)
+    if answer:
+        print(f'get_title_bs4_requests_encode[{answer}]') if debug else None
+        return answer
+
+    answer = get_title_lxml(url_address)
+    if answer:
+        print(f'get_title_lxml[{answer}]') if debug else None
+        return answer
+
+    print(f'get_title_master[{preset.NO_TITLE}]') if debug else None
     return preset.NO_TITLE

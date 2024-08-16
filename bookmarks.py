@@ -4,7 +4,6 @@ import utils
 import public
 import preset
 import html_support
-import title_master
 
 from configparser import ConfigParser, DuplicateSectionError
 
@@ -216,6 +215,7 @@ def read_content(folder_items):
         if len(url_name.strip()) > 5 and not url_name.startswith('https://www.youtube.com/watch'):
             parsed_url['url_info_name'] = url_name
         else:
+            print(f'Loading [{url_name}] - [{clean_url}]')
             parsed_url['url_info_name'] = html_support.get_stored_link(clean_url)
 
         parsed_url['url_info_icon'] = url_icon

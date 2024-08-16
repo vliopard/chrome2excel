@@ -147,37 +147,51 @@ def get_charset_lambda(url_address):
 
 
 def get_encoding_master(url_address):
+    debug = False
+    print(f'get_encoding_master[{url_address}]') if debug else None
     answer = get_charset_hard(url_address)
     if answer:
+        print(f'get_charset_hard[{answer}]') if debug else None
         return answer
     answer = get_charset_hard(url_address, False)
     if answer:
+        print(f'get_charset_hard[{answer}]') if debug else None
         return answer
     answer = get_html_codepage(url_address)
     if answer:
+        print(f'get_html_codepage[{answer}]') if debug else None
         return answer
     answer = get_url_encoding_meta(url_address)
     if answer:
+        print(f'get_url_encoding_meta[{answer}]') if debug else None
         return answer
     answer = get_url_encoding(url_address)
     if answer:
+        print(f'get_url_encoding[{answer}]') if debug else None
         return answer
     answer = get_url_encoding_dammit(url_address)
     if answer:
+        print(f'get_url_encoding_dammit[{answer}]') if debug else None
         return answer
     answer = get_url_unicode_dammit(url_address)
     if answer:
+        print(f'get_url_unicode_dammit[{answer}]') if debug else None
         return answer
     answer = get_charset_urllib_basic(url_address)
     if answer:
+        print(f'get_charset_urllib_basic[{answer}]') if debug else None
         return answer
     answer = get_charset_lambda(url_address)
     if answer:
+        print(f'get_charset_lambda[{answer}]') if debug else None
         return answer
     answer = get_charset_complex_hardcode(url_address)
     if answer:
+        print(f'get_charset_complex_hardcode[{answer}]') if debug else None
         return answer
     answer = get_charset_complex(url_address)
     if answer:
+        print(f'get_charset_complex[{answer}]') if debug else None
         return answer
+    print(f'get_encoding_master[{preset.NO_TITLE}]') if debug else None
     return preset.NO_TITLE
