@@ -4,6 +4,7 @@ import utils
 import public
 import preset
 import html_support
+from utils import timed
 
 from configparser import ConfigParser, DuplicateSectionError
 
@@ -209,13 +210,13 @@ def read_content(folder_items):
         parsed_url['url_info_date_modified'] = utils.to_date(url_date_modified)
         parsed_url['url_info_last_visited'] = utils.to_date(url_last_visited)
         clean_url = html_support.parse_url_clean(url_address)
-        parsed_url['url_info_parse_address'] = clean_url
-        parsed_url['url_info_prime_address'] = preset.EMPTY if url_address.strip() == clean_url.strip() else url_address
+        parsed_url['url_info_parse_address'] = clean_url.strip()
+        parsed_url['url_info_prime_address'] = preset.EMPTY if url_address.strip() == clean_url.strip() else url_address.strip()
+        parsed_url['url_info_undup_address'] = parsed_url['url_info_parse_address'] + ' ' + parsed_url['url_info_prime_address']
 
         if len(url_name.strip()) > 5 and not url_name.startswith('https://www.youtube.com/watch'):
             parsed_url['url_info_name'] = url_name
         else:
-            print(f'Loading [{url_name}] - [{clean_url}]')
             parsed_url['url_info_name'] = html_support.get_stored_link(clean_url)
 
         parsed_url['url_info_icon'] = url_icon
@@ -233,6 +234,7 @@ def generate_bookmarks(profile):
     return None
 
 
+@timed
 def generate_data(instance):
     data_header = []
     for folder in instance.folders:

@@ -59,19 +59,19 @@ def parse_url(url_value):
     elif url_value.lower().endswith('.gif'):
         dictionary['url_data_fld'] = 'IMG'
         dictionary['folder_info_name_proposal'] = 'Archive (IMG)'
-    elif url_value.lower().endswith('apk'):
+    elif url_value.lower().endswith('.apk'):
         dictionary['url_data_fld'] = 'PRG'
         dictionary['folder_info_name_proposal'] = 'Archive (PRG)'
-    elif url_value.lower().endswith('exe'):
+    elif url_value.lower().endswith('.exe'):
         dictionary['url_data_fld'] = 'PRG'
         dictionary['folder_info_name_proposal'] = 'Archive (PRG)'
-    elif url_value.lower().endswith('msi'):
+    elif url_value.lower().endswith('.msi'):
         dictionary['url_data_fld'] = 'PRG'
         dictionary['folder_info_name_proposal'] = 'Archive (PRG)'
-    elif url_value.lower().endswith('zip'):
+    elif url_value.lower().endswith('.zip'):
         dictionary['url_data_fld'] = 'ZIP'
         dictionary['folder_info_name_proposal'] = 'Archive (ZIP)'
-    elif url_value.lower().endswith('java'):
+    elif url_value.lower().endswith('.java'):
         dictionary['url_data_fld'] = 'SRC'
         dictionary['folder_info_name_proposal'] = 'Archive (SRC)'
     elif parsed_url.scheme.startswith('file'):

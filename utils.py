@@ -1,5 +1,24 @@
+import time
 import preset
+from functools import wraps
 from datetime import datetime, timezone, timedelta
+
+
+def timed(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        time_start = time.time()
+        result = func(*args, **kwargs)
+        time_end = time.time()
+        end_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        time_report = [f'Start time: {start_time}', f'End time:   {end_time}', f"Function {func.__name__} ran in {timedelta(seconds=(time_end - time_start))}"]
+        print('=' * 100)
+        for time_detail in time_report:
+            print(time_detail)
+        print('=' * 100)
+        return result
+    return wrapper
 
 
 def to_number(value):
