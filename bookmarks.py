@@ -23,7 +23,7 @@ class Options:
         self.exit_dialog_confirmation = True
         self.configuration_category = preset.MAIN_SECTION
         self.configuration_parser = ConfigParser()
-        self.configuration_parser.read(preset.configuration_filename)
+        self.configuration_parser.read(preset.CONFIGURATION_FILENAME)
 
     def save_settings(self):
         try:
@@ -43,7 +43,7 @@ class Options:
         self.configuration_parser.set(self.configuration_category, preset.display_exit_dialog, str(self.display_exit_dialog))
         self.configuration_parser.set(self.configuration_category, preset.refresh_folder_name_with_hostname_title, str(self.refresh_folder_name_with_hostname_title))
         self.configuration_parser.set(self.configuration_category, preset.exit_dialog_confirmation, str(self.exit_dialog_confirmation))
-        with open(preset.configuration_filename, 'w') as configuration_file:
+        with open(preset.CONFIGURATION_FILENAME, 'w') as configuration_file:
             self.configuration_parser.write(configuration_file)
         if preset.DEBUG_MODE:
             preset.RUN_GUI = False
@@ -63,7 +63,7 @@ class Options:
 
         except Exception as exc:
             print(f'Using default values [{exc}]')
-            preset.TIMEOUT = 120
+            preset.TIMEOUT = 10
             preset.DEBUG_MODE = False
             self.system_language = preset.ENGLISH
             self.export_file_type = False
@@ -84,50 +84,50 @@ class Item(dict):
 
     @property
     def id(self):
-        return self["id"]
+        return self[preset.ITEM_ID]
 
     @property
     def name(self):
-        return self["name"]
+        return self[preset.ITEM_NAME]
 
     @property
     def type(self):
-        return self["type"]
+        return self[preset.BOOKMARKS_TYPE]
 
     @property
     def url(self):
-        if "url" in self:
-            return self["url"]
-        return ""
+        if preset.BOOKMARKS_URL in self:
+            return self[preset.BOOKMARKS_URL]
+        return ''
 
     @property
     def icon(self):
-        if "icon" in self:
-            return self["icon"]
-        return ""
+        if preset.ITEM_ICON in self:
+            return self[preset.ITEM_ICON]
+        return preset.SYMBOL_EMPTY
 
     @property
     def added(self):
-        return utils.epoch_to_date(self["date_added"])
+        return utils.epoch_to_date(self[preset.ITEM_DATE_ADDED])
 
     @property
     def modified(self):
-        if "date_modified" in self:
-            return utils.epoch_to_date(self["date_modified"])
+        if preset.ITEM_DATE_MODIFIED in self:
+            return utils.epoch_to_date(self[preset.ITEM_DATE_MODIFIED])
 
     @property
     def folders(self):
         items = []
-        for children in self["children"]:
-            if children["type"] == "folder":
+        for children in self[preset.BOOKMARKS_CHILDREN]:
+            if children[preset.BOOKMARKS_TYPE] == preset.BOOKMARKS_FOLDER:
                 items.append(Item(children))
         return items
 
     @property
     def urls(self):
         items = []
-        for children in self["children"]:
-            if children["type"] == "url":
+        for children in self[preset.BOOKMARKS_CHILDREN]:
+            if children[preset.BOOKMARKS_TYPE] == preset.BOOKMARKS_URL:
                 items.append(Item(children))
         return items
 
@@ -138,56 +138,56 @@ class Bookmarks:
 
     def __init__(self, path):
         self.path = path
-        self.data = json.loads(open(path, encoding=preset.UTF8).read())
+        self.data = json.loads(open(path, encoding=preset.CHARSET_UTF8).read())
         self.attrList = self.process_roots()
-        self.urls = self.attrList["urls"]
-        self.folders = self.attrList["folders"]
-        self.length = utils.count_urls(self.data["roots"].items())
+        self.urls = self.attrList[preset.BOOKMARKS_URLS]
+        self.folders = self.attrList[preset.BOOKMARKS_FOLDERS]
+        self.length = utils.count_urls(self.data[preset.BOOKMARKS_ROOTS].items())
 
     def process_roots(self):
-        attribute_list = {"urls": [], "folders": []}
-        for key, value in self.data["roots"].items():
-            if "children" in value:
-                self.process_tree(attribute_list, value["children"])
+        attribute_list = {preset.BOOKMARKS_URLS: [], preset.BOOKMARKS_FOLDERS: []}
+        for key, value in self.data[preset.BOOKMARKS_ROOTS].items():
+            if preset.BOOKMARKS_CHILDREN in value:
+                self.process_tree(attribute_list, value[preset.BOOKMARKS_CHILDREN])
         return attribute_list
 
     def process_tree(self, attribute_list, children_list):
         for item in children_list:
-            if "type" in item and item["type"] == "url":
-                attribute_list["urls"].append(Item(item))
-            if "type" in item and item["type"] == "folder":
-                attribute_list["folders"].append(Item(item))
-                if "children" in item:
-                    self.process_tree(attribute_list, item["children"])
+            if preset.BOOKMARKS_TYPE in item and item[preset.BOOKMARKS_TYPE] == preset.BOOKMARKS_URL:
+                attribute_list[preset.BOOKMARKS_URLS].append(Item(item))
+            if preset.BOOKMARKS_TYPE in item and item[preset.BOOKMARKS_TYPE] == preset.BOOKMARKS_FOLDER:
+                attribute_list[preset.BOOKMARKS_FOLDERS].append(Item(item))
+                if preset.BOOKMARKS_CHILDREN in item:
+                    self.process_tree(attribute_list, item[preset.BOOKMARKS_CHILDREN])
 
 
 def read_content(folder_items):
     url_list = []
     for folder_item in folder_items:
-        url_date_added = preset.EMPTY
-        url_date_modified = preset.EMPTY
-        url_guid = preset.EMPTY
-        url_item_id = preset.EMPTY
-        url_last_visited = preset.EMPTY
-        url_name = preset.EMPTY
-        url_sync_transaction_version = preset.EMPTY
-        url_item_type = preset.EMPTY
-        url_address = preset.EMPTY
-        url_icon = preset.EMPTY
+        url_date_added = preset.SYMBOL_EMPTY
+        url_date_modified = preset.SYMBOL_EMPTY
+        url_guid = preset.SYMBOL_EMPTY
+        url_item_id = preset.SYMBOL_EMPTY
+        url_last_visited = preset.SYMBOL_EMPTY
+        url_name = preset.SYMBOL_EMPTY
+        url_sync_transaction_version = preset.SYMBOL_EMPTY
+        url_item_type = preset.SYMBOL_EMPTY
+        url_address = preset.SYMBOL_EMPTY
+        url_icon = preset.SYMBOL_EMPTY
         for item in folder_item:
-            if item == preset.CHILDREN:
+            if item == preset.BOOKMARKS_CHILDREN:
                 read_content(folder_item[item])
             elif item == preset.META_INFO:
                 for element in folder_item[item]:
                     if element == preset.LAST_VISITED:
                         url_last_visited = folder_item[item][element]
-            elif item == preset.DATE_ADDED:
+            elif item == preset.ITEM_DATE_ADDED:
                 url_date_added = folder_item[item]
-            elif item == preset.DATE_MODIFIED:
+            elif item == preset.ITEM_DATE_MODIFIED:
                 url_date_modified = folder_item[item]
             elif item == preset.GUID:
                 url_guid = folder_item[item]
-            elif item == preset.ICON:
+            elif item == preset.ITEM_ICON:
                 url_icon = folder_item[item]
             elif item == preset.ITEM_ID:
                 url_item_id = folder_item[item]
@@ -197,37 +197,43 @@ def read_content(folder_items):
                 url_sync_transaction_version = folder_item[item]
             elif item == preset.ITEM_TYPE:
                 url_item_type = folder_item[item]
-            elif item == preset.URL:
-                url_address = folder_item[item]
+            elif item == preset.BOOKMARKS_URL:
+                url_address = folder_item[item].strip()
             else:
-                tools.print_debug(preset.message['warning'] + str(item))
+                tools.print_debug(preset.MESSAGE[preset.WARNING] + str(item))
         parsed_url = dict()
-        parsed_url['url_info_guid'] = url_guid
-        parsed_url['url_info_item_id'] = url_item_id
-        parsed_url['url_info_sync_transaction_version'] = url_sync_transaction_version
-        parsed_url['url_info_item_type'] = url_item_type
-        parsed_url['url_info_date_added'] = utils.to_date(url_date_added)
-        parsed_url['url_info_date_modified'] = utils.to_date(url_date_modified)
-        parsed_url['url_info_last_visited'] = utils.to_date(url_last_visited)
-        clean_url = html_support.parse_url_clean(url_address)
-        parsed_url['url_info_parse_address'] = clean_url.strip()
-        parsed_url['url_info_prime_address'] = preset.EMPTY if url_address.strip() == clean_url.strip() else url_address.strip()
-        parsed_url['url_info_undup_address'] = parsed_url['url_info_parse_address'] + ' ' + parsed_url['url_info_prime_address']
+        parsed_url[preset.URL_INFO_GUID] = url_guid
+        parsed_url[preset.URL_INFO_ITEM_ID] = url_item_id
+        parsed_url[preset.URL_INFO_SYNC_TRANSACTION_VERSION] = url_sync_transaction_version
+        parsed_url[preset.URL_INFO_ITEM_TYPE] = url_item_type
+        parsed_url[preset.URL_INFO_DATE_ADDED] = utils.to_date(url_date_added)
+        parsed_url[preset.URL_INFO_DATE_MODIFIED] = utils.to_date(url_date_modified)
+        parsed_url[preset.URL_INFO_LAST_VISITED] = utils.to_date(url_last_visited)
 
-        if len(url_name.strip()) > 5 and not url_name.startswith('https://www.youtube.com/watch'):
-            parsed_url['url_info_name'] = url_name
+        if preset.CLEAN_URL_BOOL:
+            clean_url = html_support.parse_url_clean(url_address)
         else:
-            parsed_url['url_info_name'] = html_support.get_stored_link(clean_url)
+            clean_url = url_address
+        parsed_url[preset.URL_INFO_PARSE_ADDRESS] = clean_url
+        parsed_url[preset.URL_INFO_PRIME_ADDRESS] = preset.SYMBOL_EMPTY if url_address == clean_url and preset.CLEAN_URL_BOOL else url_address
+        parsed_url[preset.URL_INFO_UNDUP_ADDRESS] = f'{parsed_url[preset.URL_INFO_PARSE_ADDRESS]} {parsed_url[preset.URL_INFO_PRIME_ADDRESS]}'.strip()
 
-        parsed_url['url_info_icon'] = url_icon
-        parsed_url1 = html_support.parse_url(url_address)
-        parsed_url = parsed_url | parsed_url1
+        if preset.REFRESH_TITLE:
+            parsed_url[preset.URL_INFO_NAME_PREVIOUS] = url_name
+            parsed_url[preset.URL_INFO_NAME] = html_support.get_stored_link(clean_url)
+        else:
+            parsed_url[preset.URL_INFO_NAME_PREVIOUS] = preset.NO_PREVIOUS_TITLE
+            parsed_url[preset.URL_INFO_NAME] = url_name
+
+        parsed_url[preset.URL_INFO_ICON] = url_icon
+
+        parsed_url = parsed_url | html_support.parse_url(url_address)
         url_list.append(parsed_url)
     return url_list
 
 
 def generate_bookmarks(profile):
-    tools.print_display(preset.message['generating_bookmarks'])
+    tools.print_display(preset.MESSAGE[preset.GENERATING_BOOKMARKS])
     bookmarks_file = tools.get_chrome_element(profile, preset.BOOKMARKS)
     if bookmarks_file:
         return Bookmarks(bookmarks_file)
@@ -241,23 +247,23 @@ def generate_data(instance):
         folder_item = None
         folder_date_added = preset.NO_DATE
         folder_date_modified = preset.NO_DATE
-        folder_guid = preset.EMPTY
-        folder_id = preset.EMPTY
+        folder_guid = preset.SYMBOL_EMPTY
+        folder_id = preset.SYMBOL_EMPTY
         folder_last_visited = preset.NO_DATE
-        folder_name = preset.EMPTY
-        folder_sync_transaction_version = preset.EMPTY
-        folder_type = preset.EMPTY
-        folder_url = preset.EMPTY
+        folder_name = preset.SYMBOL_EMPTY
+        folder_sync_transaction_version = preset.SYMBOL_EMPTY
+        folder_type = preset.SYMBOL_EMPTY
+        folder_url = preset.SYMBOL_EMPTY
         for item in folder:
-            if item == preset.CHILDREN:
+            if item == preset.BOOKMARKS_CHILDREN:
                 folder_item = read_content(folder[item])
             elif item == preset.META_INFO:
                 for element in folder[item]:
                     if element == preset.LAST_VISITED:
                         folder_last_visited = folder[item][element]
-            elif item == preset.DATE_ADDED:
+            elif item == preset.ITEM_DATE_ADDED:
                 folder_date_added = folder[item]
-            elif item == preset.DATE_MODIFIED:
+            elif item == preset.ITEM_DATE_MODIFIED:
                 folder_date_modified = folder[item]
             elif item == preset.GUID:
                 folder_guid = folder[item]
@@ -269,20 +275,20 @@ def generate_data(instance):
                 folder_sync_transaction_version = folder[item]
             elif item == preset.ITEM_TYPE:
                 folder_type = folder[item]
-            elif item == preset.URL:
+            elif item == preset.BOOKMARKS_URL:
                 folder_url = folder[item]
             else:
-                tools.print_debug(preset.message['warning'] + str(item))
+                tools.print_debug(preset.MESSAGE[preset.WARNING] + str(item))
         folder_data = {
-                'folder_info_guid': folder_guid,
-                'folder_info_id': folder_id,
-                'folder_info_sync_transaction_version': folder_sync_transaction_version,
-                'folder_info_type': folder_type,
-                'folder_info_date_added': utils.to_date(folder_date_added),
-                'folder_info_date_modified': utils.to_date(folder_date_modified),
-                'folder_info_last_visited': utils.to_date(folder_last_visited),
-                'folder_info_name': folder_name,
-                'folder_info_url': folder_url
+                preset.FOLDER_INFO_GUID: folder_guid,
+                preset.FOLDER_INFO_ID: folder_id,
+                preset.FOLDER_INFO_SYNC_TRANSACTION_VERSION: folder_sync_transaction_version,
+                preset.FOLDER_INFO_TYPE: folder_type,
+                preset.FOLDER_INFO_DATE_ADDED: utils.to_date(folder_date_added),
+                preset.FOLDER_INFO_DATE_MODIFIED: utils.to_date(folder_date_modified),
+                preset.FOLDER_INFO_LAST_VISITED: utils.to_date(folder_last_visited),
+                preset.FOLDER_INFO_NAME: folder_name,
+                preset.FOLDER_INFO_URL: folder_url
         }
         for item in folder_item:
             folder_data_complete = folder_data | item

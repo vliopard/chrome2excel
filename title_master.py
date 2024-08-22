@@ -11,20 +11,10 @@ from html.parser import HTMLParser
 from urllib.request import urlopen, Request
 
 
-headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
-
-headers_complete = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
-}
-
-
 class Parser(HTMLParser):
     def __init__(self):
         super().__init__()
-        self.title = preset.EMPTY
+        self.title = preset.SYMBOL_EMPTY
         self._in_title_tag = False
 
     def handle_starttag(self, tag, attrs):
@@ -70,9 +60,9 @@ def soup_wrapper(response, method, encode=None):
 
 def clean_title(title):
     if title:
-        if title == '- YouTube':
+        if title == preset.YOUTUBE_T:
             return None
-        new_title = ' '.join(title.replace(preset.NEW_LINE, ' ').replace(preset.TAB, ' ').replace(preset.RECURSE, ' ').strip().split())
+        new_title = preset.SYMBOL_SPACE.join(title.replace(preset.NEW_LINE, preset.SYMBOL_SPACE).replace(preset.TAB, preset.SYMBOL_SPACE).replace(preset.RECURSE, preset.SYMBOL_SPACE).strip().split())
         if new_title.endswith('.'):
             new_title = new_title[:-1]
         return new_title
@@ -80,9 +70,9 @@ def clean_title(title):
 
 
 def url_check(url_address):
-    if url_address.startswith('http') or url_address.startswith('ftp') or url_address.startswith('about') or url_address.startswith('chrome') or url_address.startswith('file') or url_address.startswith('view-source') or url_address.startswith('javascript'):
+    if url_address.startswith(preset.HTTP) or url_address.startswith(preset.FTP_L) or url_address.startswith(preset.ABOUT) or url_address.startswith(preset.CHROME) or url_address.startswith(preset.FILE) or url_address.startswith(preset.VIEW_SOURCE) or url_address.startswith(preset.JAVASCRIPT):
         return url_address
-    return f'http://{url_address}'
+    return f'{preset.PROTOCOL}{url_address}'
 
 
 def get_short_addr(url_address):
@@ -93,7 +83,7 @@ def get_short_address(url_address):
     response = tldextract.extract(url_check(url_address))
     if response.domain and response.suffix:
         return f'{preset.PROTOCOL}{response.domain}.{response.suffix}'
-    return '[NO_DOMAIN]'
+    return preset.NO_DOMAIN
 
 
 def parse_fld(url_val):
@@ -134,7 +124,7 @@ def get_title_urlopen_stream(url_address):
     url_data = open_with_urlopen_stream(url_address)
     try:
         url_parser = Parser()
-        url_parser.feed(url_data.decode(encode_master.get_encoding_master(url_address), errors='ignore'))
+        url_parser.feed(url_data.decode(encode_master.get_encoding_master(url_address), errors=preset.IGNORE))
         return clean_title(url_parser.title)
     except Exception:
         return None
@@ -143,9 +133,9 @@ def get_title_urlopen_stream(url_address):
 def get_title_bs4_requests_encode(url_address):
     try:
         response = request_wrapper(url_address, encode=True)
-        soup = soup_wrapper(response.text, 'html.parser')
+        soup = soup_wrapper(response.text, preset.HTML_PARSER)
         value = clean_title(soup.title.string)
-        if value == 'Error':
+        if value == preset.ERROR:
             return None
         return value
     except Exception:
@@ -155,7 +145,7 @@ def get_title_bs4_requests_encode(url_address):
 def get_title_lxml(url_address):
     try:
         title = lxml.html.parse(url_check(url_address))
-        return clean_title(title.find('.//title').text)
+        return clean_title(title.find(preset.TITLE_SCAPE).text)
     except Exception:
         return None
 
@@ -163,7 +153,7 @@ def get_title_lxml(url_address):
 def get_title_bs4_requests_encoded_status(url_address):
     try:
         response = request_wrapper(url_address, encode=True, rfs=True)
-        soup = soup_wrapper(response.text, 'html.parser')
+        soup = soup_wrapper(response.text, preset.HTML_PARSER)
         return clean_title(soup.title.text)
     except Exception:
         return None
@@ -171,7 +161,7 @@ def get_title_bs4_requests_encoded_status(url_address):
 
 def get_title_bs4_urlopen_encoded(url_address):
     try:
-        soup = soup_wrapper(open_with_urlopen(url_address, encode=True), 'html.parser')
+        soup = soup_wrapper(open_with_urlopen(url_address, encode=True), preset.HTML_PARSER)
         return clean_title(soup.title.string)
     except Exception:
         return None
@@ -179,7 +169,7 @@ def get_title_bs4_urlopen_encoded(url_address):
 
 def get_title_bs4_urlopen_get_encode(url_address):
     try:
-        soup = soup_wrapper(open_with_urlopen(url_address), 'html.parser', encode_master.get_encoding_master(url_address))
+        soup = soup_wrapper(open_with_urlopen(url_address), preset.HTML_PARSER, encode_master.get_encoding_master(url_address))
         return clean_title(soup.title.string)
     except Exception:
         return None
@@ -188,7 +178,7 @@ def get_title_bs4_urlopen_get_encode(url_address):
 def get_title_bs4_urlopen_read_encoded(url_address):
     try:
         response = open_with_urlopen(url_address, encode=True)
-        soup = soup_wrapper(response.read(), 'html.parser', encode_master.get_encoding_master(url_address))
+        soup = soup_wrapper(response.read(), preset.HTML_PARSER, encode_master.get_encoding_master(url_address))
         return clean_title(soup.title.text)
     except Exception:
         return None
@@ -207,7 +197,7 @@ def get_title_mechanized(url_address):
 
 def get_title_bs4_lxml(url_address):
     try:
-        soup = soup_wrapper(open_with_urlopen(url_address, encode=True), 'lxml', encode_master.get_encoding_master(url_address))
+        soup = soup_wrapper(open_with_urlopen(url_address, encode=True), preset.LXML, encode_master.get_encoding_master(url_address))
         return clean_title(soup.title.string)
     except Exception:
         return None
@@ -215,9 +205,9 @@ def get_title_bs4_lxml(url_address):
 
 def get_title_bs4_apparent(url_address):
     try:
-        response = request_wrapper(url_address, header=headers, rfs=True)
+        response = request_wrapper(url_address, header=preset.HEADERS, rfs=True)
         response.encoding = response.apparent_encoding
-        soup = soup_wrapper(response.content.decode(encode_master.get_encoding_master(url_address), 'replace'), 'html.parser')
+        soup = soup_wrapper(response.content.decode(encode_master.get_encoding_master(url_address), preset.REPLACE), preset.HTML_PARSER)
         return clean_title(soup.title.text)
     except Exception:
         return None
@@ -225,8 +215,8 @@ def get_title_bs4_apparent(url_address):
 
 def get_title_bs4_requests_headers_encode_status(url_address):
     try:
-        response = request_wrapper(url_address, header=headers, rfs=True, encode=True)
-        soup = soup_wrapper(response.text, 'html.parser')
+        response = request_wrapper(url_address, header=preset.HEADERS, rfs=True, encode=True)
+        soup = soup_wrapper(response.text, preset.HTML_PARSER)
         return clean_title(soup.title.text)
     except Exception:
         return None

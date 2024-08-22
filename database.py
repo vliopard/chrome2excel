@@ -13,26 +13,26 @@ def insert_url(item):
     try:
         mongo_collection.insert_one(item)
     except DuplicateKeyError:
-        mongo_collection.update_one({'_id': item['_id']}, {'$set': {'folder_info_name_proposal': item['folder_info_name_proposal']}}, upsert=True)
+        mongo_collection.update_one({preset.DATABASE_ID: item[preset.DATABASE_ID]}, {preset.SET: {preset.FOLDER_INFO_NAME_PROPOSAL: item[preset.FOLDER_INFO_NAME_PROPOSAL]}}, upsert=True)
 
 
 def insert_name(item):
     try:
         mongo_collection_names.insert_one(item)
     except DuplicateKeyError:
-        mongo_collection_names.update_one({'_id': item['_id']}, {'$set': {'url_name': item['url_name']}}, upsert=True)
+        mongo_collection_names.update_one({preset.DATABASE_ID: item[preset.DATABASE_ID]}, {preset.SET: {preset.URL_NAME: item[preset.URL_NAME]}}, upsert=True)
 
 
 def get_name(item):
-    return mongo_collection_names.find_one({'_id': item})
+    return mongo_collection_names.find_one({preset.DATABASE_ID: item})
 
 
 def insert_item(item):
     try:
         mongo_collection_folders.insert_one(item)
     except DuplicateKeyError:
-        mongo_collection_folders.update_one({'_id': item['_id']}, {'$set': {'folder_info_name_proposal': item['folder_info_name_proposal']}}, upsert=True)
+        mongo_collection_folders.update_one({preset.DATABASE_ID: item[preset.DATABASE_ID]}, {preset.SET: {preset.FOLDER_INFO_NAME_PROPOSAL: item[preset.FOLDER_INFO_NAME_PROPOSAL]}}, upsert=True)
 
 
 def get_item(item):
-    return mongo_collection_folders.find_one({'_id': item})
+    return mongo_collection_folders.find_one({preset.DATABASE_ID: item})

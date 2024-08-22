@@ -13,16 +13,16 @@ def timed(func):
         time_end = time.time()
         end_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         time_report = [f'Start time: {start_time}', f'End time:   {end_time}', f"Function {func.__name__} ran in {timedelta(seconds=(time_end - time_start))}"]
-        print('=' * 100)
+        print(preset.SYMBOL_EQ * 100)
         for time_detail in time_report:
             print(time_detail)
-        print('=' * 100)
+        print(preset.SYMBOL_EQ * 100)
         return result
     return wrapper
 
 
 def to_number(value):
-    if value != preset.EMPTY_STRING and value != preset.EMPTY and value != preset.BLANK and value != preset.NO_DATE:
+    if value != preset.EMPTY_STRING and value != preset.SYMBOL_EMPTY and value != preset.SYMBOL_BLANK and value != preset.NO_DATE:
         return int(value)
     return None
 
@@ -34,7 +34,7 @@ def to_date(value):
         seconds, microseconds = divmod(microseconds, 1000000)
         days, seconds = divmod(seconds, 86400)
         return datetime(1601, 1, 1) + timedelta(days, seconds, microseconds)
-    return preset.EMPTY
+    return preset.SYMBOL_EMPTY
 
 
 def date_to_string(date_value):
@@ -55,22 +55,16 @@ def date_to_epoch(date_value):
         seconds_in_day = 60 * 60 * 24
         value = '{:<010d}'.format(difference.days * seconds_in_day + difference.seconds + difference.microseconds)
         return str(value)
-    return preset.EMPTY
-
-
-def update_tuple(tuple_object, value, position):
-    list_object = list(tuple_object)
-    list_object[position] = value
-    return tuple(list_object)
+    return preset.SYMBOL_EMPTY
 
 
 def update_progress(message, index, total_items):
-    if preset.gui_progress_dialog:
+    if preset.GUI_PROGRESS_DIALOG:
         if index < 0:
-            preset.gui_progress_dialog.SetLabel(message)
-            preset.gui_progress_dialog.SetRange(total_items)
+            preset.GUI_PROGRESS_DIALOG.SetLabel(message)
+            preset.GUI_PROGRESS_DIALOG.SetRange(total_items)
         else:
-            progress_dialog_not_cancelled, _ = preset.gui_progress_dialog.Update(index, str(int(index / total_items * 100)) + "%  [ " + str(index) + " / " + str(total_items) + " ]")
+            progress_dialog_not_cancelled, _ = preset.GUI_PROGRESS_DIALOG.Update(index, str(int(index / total_items * 100)) + "%  [ " + str(index) + " / " + str(total_items) + " ]")
             if not progress_dialog_not_cancelled:
                 return True
     return False
@@ -78,19 +72,19 @@ def update_progress(message, index, total_items):
 
 def process_tree(children_list, count):
     for item in children_list:
-        if "type" in item and item["type"] == "url":
+        if preset.BOOKMARKS_TYPE in item and item[preset.BOOKMARKS_TYPE] == preset.BOOKMARKS_URL:
             count += 1
-        if "type" in item and item["type"] == "folder":
-            if "children" in item:
-                count = process_tree(item["children"], count)
+        if preset.BOOKMARKS_TYPE in item and item[preset.BOOKMARKS_TYPE] == preset.BOOKMARKS_FOLDER:
+            if preset.BOOKMARKS_CHILDREN in item:
+                count = process_tree(item[preset.BOOKMARKS_CHILDREN], count)
     return count
 
 
 def count_urls(items):
     count = 0
     for key, value in items:
-        if "children" in value:
-            count = process_tree(value["children"], count)
+        if preset.BOOKMARKS_CHILDREN in value:
+            count = process_tree(value[preset.BOOKMARKS_CHILDREN], count)
     return count
 
 
@@ -107,12 +101,19 @@ def contains(single_element, list_of_elements):
 
 def check_fragment(in_string, url):
     return_list = []
-    string_list = in_string.split('&')
+    string_list = in_string.split(preset.SYMBOL_AMP)
     for string_item in string_list:
-        token = string_item.split('=')[0]
-        if token.startswith('D['):
-            token = 'D['
+        token = string_item.split(preset.SYMBOL_EQ)[0]
+        if token.startswith(preset.DTOKEN):
+            token = preset.DTOKEN
         key_res = key_on_substring(preset.dict_params, url)
-        if not contains(token, preset.dict_params[key_res] + preset.dict_params['tracking_module'] if key_res else preset.dict_params['general'] + preset.dict_params['tracking_module']):
+        if not contains(token, preset.dict_params[key_res] + preset.dict_params[preset.TRACKING_MODULE] if key_res else preset.dict_params[preset.GENERAL] + preset.dict_params[preset.TRACKING_MODULE]):
             return_list.append(string_item)
-    return "&".join(return_list)
+    return preset.SYMBOL_AMP.join(return_list)
+
+
+def to_tuple(dictionary):
+    item_list = []
+    for item in dictionary:
+        item_list.append(dictionary[item])
+    return tuple(item_list)

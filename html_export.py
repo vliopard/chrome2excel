@@ -38,7 +38,7 @@ def new_tab():
 
 
 def write_html(webpage_filename, folder):
-    with open(webpage_filename, 'w', encoding=preset.UTF8) as html_file:
+    with open(webpage_filename, preset.W, encoding=preset.CHARSET_UTF8) as html_file:
         html_file.write(header)
 
         for item in folder:
@@ -48,7 +48,7 @@ def write_html(webpage_filename, folder):
                     if isinstance(url, tools.Urls):
                         html_file.write(add_url(url.url, url.add_date, url.title))
                     elif isinstance(url, tools.Folder):
-                        tools.print_display(preset.message['new_folder'])
+                        tools.print_display(preset.MESSAGE[preset.NEW_FOLDER])
                 html_file.write(close_folder())
 
         html_file.write(tail)

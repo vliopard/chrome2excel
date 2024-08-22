@@ -2,6 +2,7 @@ import os
 import tools
 import shlex
 import struct
+import preset
 import platform
 import subprocess
 
@@ -13,14 +14,14 @@ def get_terminal_width():
 def get_terminal_size():
     current_os = platform.system()
     tuple_xy = None
-    if current_os == 'Windows':
+    if current_os == preset.SYSTEM_WINDOWS:
         tuple_xy = _get_terminal_size_windows()
         if tuple_xy is None:
             tuple_xy = _get_terminal_size_tput()
-    if current_os in ['Linux', 'Darwin'] or current_os.startswith('CYGWIN'):
+    if current_os in [preset.SYSTEM_LINUX, preset.SYSTEM_DARWIN] or current_os.startswith(preset.SYSTEM_CYGWIN):
         tuple_xy = _get_terminal_size_linux()
     if tuple_xy is None:
-        tools.print_display("default")
+        tools.print_display(preset.DEFAULT_L)
         tuple_xy = (80, 25)
     return tuple_xy
 
@@ -66,7 +67,7 @@ def _get_terminal_size_linux():
             pass
     if not coordinates:
         try:
-            coordinates = (os.environ['LINES'], os.environ['COLUMNS'])
+            coordinates = (os.environ[preset.LINES], os.environ[preset.COLUMNS])
         except Exception:
             return None
     return int(coordinates[1]), int(coordinates[0])

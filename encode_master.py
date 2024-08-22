@@ -5,39 +5,39 @@ import urllib.request
 from bs4 import UnicodeDammit
 
 encodings = [
-    'ASCII',
-    'ISO-8859-1',
-    'Johab'
-    'Latin-1',
-    'MacRoman',
-    'UTF-8',
-    'Windows-1251',
-    'windows-1254',
-    'windows-1256',
-             ]
+    preset.CHARSET_ASCII,
+    preset.CHARSET_ISO88591,
+    preset.CHARSET_JOHAB,
+    preset.CHARSET_LATIN1,
+    preset.CHARSET_MACROMAN,
+    preset.CHARSET_UTF8,
+    preset.CHARSET_WINDOWS1251,
+    preset.CHARSET_WINDOWS1254,
+    preset.CHARSET_WINDOWS1256,
+]
 
 
 def get_url_encoding(url_address):
     try:
-        response = title_master.request_wrapper(url_address, header=title_master.headers)
-        return chardet.detect(response.content)['encoding']
+        response = title_master.request_wrapper(url_address, header=preset.HEADERS)
+        return chardet.detect(response.content)[preset.ENCODING]
     except Exception:
         return None
 
 
 def get_charset_hard(url_address, response_type=True):
     try:
-        response = title_master.request_wrapper(url_address, header=title_master.headers)
+        response = title_master.request_wrapper(url_address, header=preset.HEADERS)
         if response_type:
             res_type = response.content
         else:
             res_type = response.text
-        soup = title_master.soup_wrapper(res_type, 'html.parser')
-        meta_tag = soup.find('meta', attrs={'http-equiv': 'Content-Type'})
+        soup = title_master.soup_wrapper(res_type, preset.HTML_PARSER)
+        meta_tag = soup.find(preset.META, attrs={preset.HTTP_EQUIV: preset.CONTENT_TYPE})
         charset = None
-        if meta_tag and 'content' in meta_tag.attrs:
-            content_value = meta_tag['content']
-            charset = content_value.split('charset=')[-1] if 'charset=' in content_value else None
+        if meta_tag and preset.CONTENT in meta_tag.attrs:
+            content_value = meta_tag[preset.CONTENT]
+            charset = content_value.split(preset.CHARSET_EQ)[-1] if preset.CHARSET_EQ in content_value else None
         return charset
     except Exception:
         return None
@@ -45,12 +45,12 @@ def get_charset_hard(url_address, response_type=True):
 
 def get_html_codepage(url_address):
     try:
-        response = title_master.request_wrapper(url_address, rfs=True, header=title_master.headers)
+        response = title_master.request_wrapper(url_address, rfs=True, header=preset.HEADERS)
         inferred_codepage = response.encoding
-        soup = title_master.soup_wrapper(response.content, 'html.parser')
-        meta_charset = soup.find('meta', attrs={'charset': True})
+        soup = title_master.soup_wrapper(response.content, preset.HTML_PARSER)
+        meta_charset = soup.find(preset.META, attrs={preset.CHARSET: True})
         if meta_charset:
-            inferred_codepage = meta_charset['charset']
+            inferred_codepage = meta_charset[preset.CHARSET]
         return inferred_codepage
     except Exception:
         return None
@@ -58,7 +58,7 @@ def get_html_codepage(url_address):
 
 def get_url_encoding_dammit(url_address):
     try:
-        response = title_master.request_wrapper(url_address, header=title_master.headers)
+        response = title_master.request_wrapper(url_address, header=preset.HEADERS)
         content = UnicodeDammit(response.content)
         return content.original_encoding
     except Exception:
@@ -67,8 +67,8 @@ def get_url_encoding_dammit(url_address):
 
 def get_url_unicode_dammit(url_address):
     try:
-        response = title_master.request_wrapper(url_address, header=title_master.headers)
-        dammit = title_master.soup_wrapper(UnicodeDammit(response.content, encodings).unicode_markup, "html.parser")
+        response = title_master.request_wrapper(url_address, header=preset.HEADERS)
+        dammit = title_master.soup_wrapper(UnicodeDammit(response.content, encodings).unicode_markup, preset.HTML_PARSER)
         return dammit.original_encoding
     except Exception:
         return None
@@ -76,17 +76,17 @@ def get_url_unicode_dammit(url_address):
 
 def get_charset_complex(url_address):
     try:
-        response = title_master.request_wrapper(url_address, rfs=True, header=title_master.headers)
-        content_type = response.headers.get('Content-Type')
+        response = title_master.request_wrapper(url_address, rfs=True, header=preset.HEADERS)
+        content_type = response.headers.get(preset.CONTENT_TYPE)
         if content_type:
-            charset = content_type.split('charset=')[-1]
+            charset = content_type.split(preset.CHARSET_EQ)[-1]
             if charset:
                 return charset
-        soup = title_master.soup_wrapper(response.content, 'html.parser')
-        meta_charset = soup.find('meta', attrs={'charset': True})
+        soup = title_master.soup_wrapper(response.content, preset.HTML_PARSER)
+        meta_charset = soup.find(preset.META, attrs={preset.CHARSET: True})
         if meta_charset:
-            return meta_charset['charset']
-        charset = chardet.detect(response.content)['encoding']
+            return meta_charset[preset.CHARSET]
+        charset = chardet.detect(response.content)[preset.ENCODING]
         return charset
     except Exception:
         return None
@@ -94,10 +94,10 @@ def get_charset_complex(url_address):
 
 def get_charset_complex_hardcode(url_address):
     try:
-        response = title_master.request_wrapper(url_address, rfs=True, header=title_master.headers)
-        content_type = response.headers.get('Content-Type')
+        response = title_master.request_wrapper(url_address, rfs=True, header=preset.HEADERS)
+        content_type = response.headers.get(preset.CONTENT_TYPE)
         if content_type:
-            charset = content_type.split('charset=')[-1]
+            charset = content_type.split(preset.CHARSET_EQ)[-1]
             if charset:
                 return charset
         content = response.content
@@ -105,9 +105,9 @@ def get_charset_complex_hardcode(url_address):
         if start_index != -1:
             end_index = content.find(b'"', start_index + 14)
             if end_index != -1:
-                charset = content[start_index + 14:end_index].decode('ascii')
+                charset = content[start_index + 14:end_index].decode(preset.CHARSET_ASCII)
                 return charset
-        charset = chardet.detect(content)['encoding']
+        charset = chardet.detect(content)[preset.ENCODING]
         return charset
     except Exception:
         return None
@@ -115,13 +115,13 @@ def get_charset_complex_hardcode(url_address):
 
 def get_url_encoding_meta(url_address):
     try:
-        response = title_master.request_wrapper(url_address, header=title_master.headers)
-        soup = title_master.soup_wrapper(response.content, 'html.parser')
-        charset = soup.meta.get('charset')
+        response = title_master.request_wrapper(url_address, header=preset.HEADERS)
+        soup = title_master.soup_wrapper(response.content, preset.HTML_PARSER)
+        charset = soup.meta.get(preset.CHARSET)
         if not charset:
-            content_type = soup.meta.get('content-type')
-            if content_type and 'charset' in content_type:
-                charset = content_type.split('charset=')[-1]
+            content_type = soup.meta.get(preset.CONTENT_TYPE)
+            if content_type and preset.CHARSET in content_type:
+                charset = content_type.split(preset.CHARSET_EQ)[-1]
         return charset
     except Exception:
         return None
@@ -137,10 +137,10 @@ def get_charset_urllib_basic(url_address):
 
 def get_charset_lambda(url_address):
     try:
-        response = title_master.request_wrapper(url_address, header=title_master.headers)
-        soup = title_master.soup_wrapper(response.content, 'html.parser')
-        meta = soup.find_all('meta', {'http-equiv': lambda v: v and v.lower() == 'content-type'})
-        charset = meta[0].get('charset') if meta else None
+        response = title_master.request_wrapper(url_address, header=preset.HEADERS)
+        soup = title_master.soup_wrapper(response.content, preset.HTML_PARSER)
+        meta = soup.find_all(preset.META, {preset.HTTP_EQUIV: lambda v: v and v.lower() == preset.CONTENT_TYPE})
+        charset = meta[0].get(preset.CHARSET) if meta else None
         return charset
     except Exception:
         return None

@@ -2,23 +2,461 @@ import utils
 from json import load
 from pathlib import Path
 
-main_icon = 'resources/blue.ico'
-configuration_filename = 'resources/config.ini'
-translation_filename = 'resources/translation.json'
+ABOUT = 'about'
+ABOUT_DESCRIPTION = 'about_description'
+ABOUT_MENU = 'about_menu'
+ACCEPT = 'Accept'
+ACCEPT_ENCODING = 'Accept-Encoding'
+ACCEPT_LANGUAGE = 'Accept-Language'
+ACCOUNT_INFO = 'account_info'
+ALL_PROFILES = 'all_profiles'
+APPENDING_DATA_TABLE = 'appending_data_table'
+APPLICATION_DESCRIPTION = 'application_description'
+APPLICATION_LICENCE = 'application_licence'
+APPLICATION_TITLE = 'application_title'
+APPLICATION_WEBSITE = 'application_website'
+ARCHIVE_FTP = 'Archive (FTP)'
+ARCHIVE_IMG = 'Archive (IMG)'
+ARCHIVE_JAVASCRIPT = 'Archive (JavaScript)'
+ARCHIVE_MP4 = 'Archive (MP4)'
+ARCHIVE_PDF = 'Archive (PDF)'
+ARCHIVE_PRG = 'Archive (PRG)'
+ARCHIVE_SRC = 'Archive (SRC)'
+ARCHIVE_ZIP = 'Archive (ZIP)'
+BOOKMARKS = 'Bookmarks'
+BOOKMARKS_CHILDREN = 'children'
+BOOKMARKS_EDITOR = 'bookmarks_editor'
+BOOKMARKS_FOLDER = 'folder'
+BOOKMARKS_FOLDERS = 'folders'
+BOOKMARKS_ROOTS = 'roots'
+BOOKMARKS_TYPE = 'type'
+BOOKMARKS_URL = 'url'
+BOOKMARKS_URLS = 'urls'
+CANCEL_BUTTON = 'cancel_button'
+CHARSET = 'charset'
+CHARSET_ASCII = 'ASCII'
+CHARSET_EQ = 'charset='
+CHARSET_ISO88591 = 'ISO-8859-1'
+CHARSET_JOHAB = 'Johab'
+CHARSET_LATIN = 'latin1'
+CHARSET_LATIN1 = 'Latin-1'
+CHARSET_MACROMAN = 'MacRoman'
+CHARSET_UTF8 = 'UTF-8'
+CHARSET_WINDOWS1251 = 'Windows-1251'
+CHARSET_WINDOWS1254 = 'windows-1254'
+CHARSET_WINDOWS1256 = 'windows-1256'
+CHECK_HOSTNAME = 'check_hostname'
+CHOOSE_FILE = 'choose_file'
+CHROME = 'chrome'
+CHROMESETTINGS = 'ChromeSettings'
+CHROME_EXPORTER = 'Chrome Exporter'
+CHROME_SETTINGS = 'Chrome Settings'
+CHROME_URLS = 'chrome_urls'
+COMMAND_CLEAN_URL_FROM_TRACKING = 'clean'
+CLEAN_URL_BOOL = False
+CLEAN_URL_STRING = 'clean_url'
+CLI_PROGRESS_DIALOG = None
+PROGRESS_BAR_DISABLED = True
+COLUMNS = 'COLUMNS'
+CONFIGURATION_FILENAME = 'resources/config.ini'
+CONTENT = 'content'
+CONTENT_TYPE = 'content-type'
+DATABASE_COLLECTION = 'BookMarksLinks'
+DATABASE_COLLECTION_FOLDERS = 'BookMarksFolders'
+DATABASE_COLLECTION_NAMES = 'BookMarksNames'
+DATABASE_ID = '_id'
+DATABASE_NAME = 'ChromeBookMarks'
+DATABASE_URL = 'mongodb://localhost:27017/'
+DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
+DEBUG_MODE = False
+DEBUG_SYSTEM = 'debug_system'
+DEFAULT_L = 'default'
+DIRECTORY_SUGGESTION = False
+DISABLED = 'disabled'
+DISPLAY_EXIT_DIALOG = 'display_exit_dialog'
+DONE = 'done'
+DTOKEN = 'D['
+DUPE = 'DUPE'
+EDIT = 'edit'
+EDIT_SAVE = 'edit_save'
+EDIT_TITLE = 'edit_title'
+EMAIL = 'email'
+EMPTY_STRING = 'empty'
+ENABLED = 'enabled'
+ENCODING = 'encoding'
+ENGLISH = 'en-us'
+ERROR = 'Error'
+EXIT_CONFIRMATION = 'exit_confirmation'
+EXIT_DESCRIPTION = 'exit_description'
+EXIT_MENU = 'exit_menu'
+EXIT_QUESTION = 'exit_question'
+EXIT_TITLE = 'exit_title'
+EXPORT_HTML = 'export_html'
+EXPORT_XLSX = 'export_xlsx'
+EXT_APK = '.apk'
+EXT_EXE = '.exe'
+EXT_GIF = '.gif'
+EXT_JAVA = '.java'
+EXT_JPEG = '.jpeg'
+EXT_JPG = '.jpg'
+EXT_MP4 = '.mp4'
+EXT_MSI = '.msi'
+EXT_PDF = '.pdf'
+EXT_PNG = '.png'
+EXT_ZIP = '.zip'
+FALSE = False
+FILE = 'file'
+FIND_DUPLICATED_LINES = 'find_duplicated_lines'
+FOLDER_CREATED = 'folder_info_date_added'
+FOLDER_INFO_DATE_ADDED = 'folder_info_date_added'
+FOLDER_INFO_DATE_MODIFIED = 'folder_info_date_modified'
+FOLDER_INFO_GUID = 'folder_info_guid'
+FOLDER_INFO_ID = 'folder_info_id'
+FOLDER_INFO_LAST_VISITED = 'folder_info_last_visited'
+FOLDER_INFO_NAME = 'folder_info_name'
+FOLDER_INFO_NAME_PROPOSAL = 'folder_info_name_proposal'
+FOLDER_INFO_SYNC_TRANSACTION_VERSION = 'folder_info_sync_transaction_version'
+FOLDER_INFO_TYPE = 'folder_info_type'
+FOLDER_INFO_URL = 'folder_info_url'
+FOLDER_MODIFIED = 'folder_info_date_modified'
+FOLDER_NAME = 'folder_info_name_proposal'
+FONT_COURIER_NEW = 'Courier New'
+FORMAT_COLUMNS = 'format_columns'
+FORMAT_DATES = 'format_dates'
+FORMAT_HEADER = 'format_header'
+FTP_L = 'ftp'
+FTP_U = 'FTP'
+FULL_NAME = 'full_name'
+GENERAL = 'general'
+GENERATING_BOOKMARKS = 'generating_bookmarks'
+GENERATING_FROM_TEXT = 'generating_from_text'
+GENERATING_HTML = 'generating_html'
+GENERATING_WORKBOOK = 'generating_workbook'
+COMMAND_REFRESH_FOLDER_NAME = 'get_hostname'
+GET_URL_STATUS = 'get_url_status'
+GITHUB = 'https://github.com/vliopard/chrome2excel'
+GIVEN_NAME = 'given_name'
+GUID = 'guid'
+GUI_PROGRESS_DIALOG = None
+HIDE_COLUMNS = 'hide_columns'
+HTML = 'html'
+HTML_FILENAME = 'chrome.html'
+HTML_FILE_FILTER = 'html_file_filter'
+HTML_PARSER = 'html.parser'
+HTTP = 'http'
+HTTP_EQUIV = 'http-equiv'
+IGNORE = 'ignore'
+IMG = 'IMG'
+IMPORT_ACCOUNT_DESCRIPTION = 'import_account_description'
+IMPORT_ACCOUNT_MENU = 'import_account_menu'
+IMPORT_TEXT_FILE = 'import_text_file'
+IMPORT_TXT = 'import_txt'
+INSTAGRAM = 'instagram'
+INVALID_PROFILE = 'invalid_profile'
+ITEM_DATE_ADDED = 'date_added'
+ITEM_DATE_MODIFIED = 'date_modified'
+ITEM_ICON = 'icon'
+ITEM_ID = 'id'
+ITEM_NAME = 'name'
+ITEM_TYPE = 'type'
+JAVA = 'java'
+JAVASCRIPT = 'javascript'
+JSCRIPT = 'JScript'
+LAST_VISITED = 'last_visited'
+LEFT = 'left'
+LINES = 'LINES'
+LIST = 'list'
+LIST_PROFILE = 'list_profile'
+LOADING_BOOKMARKS = 'loading_bookmarks'
+LOAD_TIME_OUT = 'load_time_out'
+LXML = 'lxml'
+MAIN = 'MAIN'
+MAIN_CLEAN_HELP = 'main_clean_help'
+MAIN_DESCRIPTION = 'main_description'
+MAIN_FILENAME_HELP = 'main_filename_help'
+MAIN_HOSTNAME_HELP = 'main_hostname_help'
+MAIN_ICON = 'resources/blue.ico'
+MAIN_IMPORT_HELP = 'main_import_help'
+MAIN_OUTPUT_HELP = 'main_output_help'
+MAIN_PROFILE_HELP = 'main_profile_help'
+MAIN_REFRESH_HELP = 'main_refresh_help'
+MAIN_SECTION = 'main'
+MAIN_UNDUPE_HELP = 'main_undupe_help'
+META = 'meta'
+META_INFO = 'meta_info'
+MISSING_PARAMETER = 'missing_parameter'
+MP4 = 'MP4'
+NEW_FOLDER = 'new_folder'
+NEW_LINE = '\n'
+NONAME = 'NONAME'
+NONE = None
+NO_ACCOUNT = 'no_account'
+NO_CLEAN_URL = '[no clean url]'
+NO_DATE = 'no_date'
+NO_DOMAIN = '[NO_DOMAIN]'
+NO_HOST_NAME = '[no hostname]'
+NO_SITE_NAME = '[no site name]'
+NO_TITLE = '[NO_TITLE]'
+NO_PREVIOUS_TITLE = '[NO_PREVIOUS_TITLE]'
+NO_URL_ADDRESS = '[no url address]'
+NUMBER_FORMAT = 'YYYY/MM/DD hh:mm:ss'
+OFF = 'off'
+OFF_LABEL = 'off_label'
+OK_BUTTON = 'ok_button'
+ON = 'on'
+ON_LABEL = 'on_label'
+OPEN_FILE_DESCRIPTION = 'open_file_description'
+OPEN_FILE_MENU = 'open_file_menu'
+OPEN_GUI = 'open_gui'
+OPTIONS_MENU = 'options_menu'
+OUTPUT = 'output'
+OUTPUT_HTML = 'output.html'
+OUTPUT_NAME = 'output_name'
+OUTPUT_OFF = 'output_off'
+OUTPUT_ON = 'output_on'
+OUTPUT_TYPE = 'output_type'
+OUTPUT_XLSX = 'output.xlsx'
+OVERLINE = '‾'
+PDF = 'PDF'
+PLAYLIST = '/playlist'
+PREFERENCES = 'Preferences'
+PRG = 'PRG'
+PROCESS_USER = 'process_user'
+PROFILE = 'profile'
+PROFILES = 'all'
+PROFILE_CHOOSER = 'profile_chooser'
+PROFILE_HELP = 'profile_help'
+PROTOCOL = 'http://'
+RECURSE = '\r'
+COMMAND_REFRESH_URL_TITLE = 'refresh'
+REFRESH_TITLE = False
+REFRESH_URL_TITLE = 'refresh_url_title'
+REMOVING_DUPLICATES_VALUE = 'removing_duplicates'
+REPLACE = 'replace'
+RESET_BUTTON = 'reset_button'
+RESOLVING_HOSTNAMES = 'resolving_hostnames'
+RETRIEVE_USER = 'retrieve_user'
+RIGHT = 'right'
+RUN_GUI = False
+SAVE_FILE = 'save_file'
+SAVING_HTML = 'saving_html'
+SAVING_WORKBOOK = 'saving_workbook'
+SET = '$set'
+SETTINGS_DESCRIPTION = 'settings_description'
+SETTINGS_MENU = 'settings_menu'
+SETTINGS_TITLE = 'settings_title'
+SIZING_COLUMNS = 'sizing_columns'
+SRC = 'SRC'
+STARTING_EXPORT = 'starting_export'
+STORE_TRUE = 'store_true'
+SYMBOL_AMP = '&'
+SYMBOL_BLANK = ' '
+SYMBOL_COLON = ':'
+SYMBOL_DOT = '.'
+SYMBOL_EMPTY = ''
+SYMBOL_EQ = '='
+SYMBOL_FORWARD_SLASHES = '//'
+SYMBOL_GRADE = ' °'
+SYMBOL_QM = '?'
+SYMBOL_SHARP = '#'
+SYMBOL_SINGLE_QUOTE = "'"
+SYMBOL_SPACE = ' '
+SYMBOL_UNDERLINE = '_'
+SYMBOL_ZERO = '0'
+SYNC_TRANSACTION_VERSION = 'sync_transaction_version'
+SYSTEM_CYGWIN = 'CYGWIN'
+SYSTEM_DARWIN = 'Darwin'
+SYSTEM_LINUX = 'Linux'
+SYSTEM_WINDOWS = 'Windows'
+TAB = '\t'
+TERM = 'TERM'
+TEXT_CONVERT_TO_DATAFRAME = 'Convert to DataFrame...'
+TEXT_CONVERT_TO_HTML = 'Convert to HTML...'
+TEXT_CONVERT_TO_XLSX = 'Convert to XLSX...'
+TEXT_DEBUG_MESSAGE_END = 'DEBUG MESSAGE END'
+TEXT_DEBUG_MESSAGE_START = 'DEBUG MESSAGE START'
+TEXT_DEFAULT = 'Default'
+TEXT_DONE = 'Done.'
+TEXT_FILENAME = 'chrome.txt'
+TEXT_FILE_FILTER = 'text_file_filter'
+TEXT_OTDS_H_CO = 'OTDS H Co.'
+TEXT_REMOVING_DUPLICATES = 'Removing duplicates...'
+TEXT_SORTING_DATA = 'Sorting data...'
+TEXT_VERSION = '1.1'
+TEXT_VINCENT_LIOPARD = 'Vincent Liopard.'
+TIMEOUT = 5
+TIMEOUT_LABEL = 'timeout_label'
+TITLE = 'title'
+TITLE_SCAPE = './/title'
+TOTAL_ITEMS = 'total_items'
+TRACKING_MODULE = 'tracking_module'
+TRANSLATION_FILENAME = 'resources/translation.json'
+TRUE = True
+TXT = 'txt'
+UNDUPE = 'undupe'
+UNDUPE_URLS = 'undupe_urls'
+UNKNOWN = 'unknown_exception'
+URL_CLEAN = 'url_info_parse_address'
+URL_CREATED = 'url_info_date_added'
+URL_DATA_FLD = 'url_data_fld'
+URL_DATA_FRAGMENT = 'url_data_fragment'
+URL_DATA_HOSTNAME = 'url_data_hostname'
+URL_DATA_NETLOC = 'url_data_netloc'
+URL_DATA_PARAMS = 'url_data_params'
+URL_DATA_PASSWORD = 'url_data_password'
+URL_DATA_PATH = 'url_data_path'
+URL_DATA_PORT = 'url_data_port'
+URL_DATA_SCHEME = 'url_data_scheme'
+URL_DATA_USERNAME = 'url_data_username'
+URL_DEDUP_STATUS = 'url_dedup_status'
+URL_INFO_DATE_ADDED = 'url_info_date_added'
+URL_INFO_DATE_MODIFIED = 'url_info_date_modified'
+URL_INFO_GUID = 'url_info_guid'
+URL_INFO_ICON = 'url_info_icon'
+URL_INFO_ITEM_ID = 'url_info_item_id'
+URL_INFO_ITEM_TYPE = 'url_info_item_type'
+URL_INFO_LAST_VISITED = 'url_info_last_visited'
+URL_INFO_NAME = 'url_info_name'
+URL_INFO_NAME_PREVIOUS = 'url_info_name_previous'
+URL_INFO_PARSE_ADDRESS = 'url_info_parse_address'
+URL_INFO_PRIME_ADDRESS = 'url_info_prime_address'
+URL_INFO_SYNC_TRANSACTION_VERSION = 'url_info_sync_transaction_version'
+URL_INFO_UNDUP_ADDRESS = 'url_info_undup_address'
+URL_NAME = 'url_name'
+URL_ORIGINAL = 'url_info_prime_address'
+URL_TITLE = 'url_info_name'
+USER = 'user'
+USER_AGENT = 'User-Agent'
+USER_HAS_NO_BOOKMARKS = 'user_has_no_bookmarks'
+VIEW_SOURCE = 'view-source'
+W = 'w'
+WARNING = 'warning'
+WEBSITE_ESTADAO = 'estadao'
+WEBSITE_FACEBOOK = 'facebook'
+WEBSITE_FACEBOOK_COM = 'facebook.com'
+WEBSITE_FOLHA = 'folha'
+WEBSITE_GLOBO = 'globo'
+WEBSITE_MERCADOLIVRE = 'mercadolivre'
+WEBSITE_TWITTER = 'twitter'
+WEBSITE_UOL = 'uol'
+WEBSITE_YOUTUBE = 'youtube'
+WEBSITE_YOUTUBE_COM = 'youtube.com'
+WEBSITE_YOUTUBE_M = 'm.youtube.com'
+WEBSITE_YOUTUBE_WWW = 'www.youtube.com'
+WEBSITE_YOUTU_BE = 'youtu.be'
+WORKS_ONLY_ON_CLI = 'works_only_on_cli'
+WRITING_HTML = 'writing_html'
+WRITING_SPREADSHEET = 'writing_spreadsheet'
+XLSX = 'xlsx'
+XLSX_FILENAME = 'chrome.xlsx'
+XLSX_FILE_FILTER = 'xlsx_file_filter'
+X_ORG_GUI = 'x_org_gui'
+YOUTUBE_T = '- YouTube'
+ZIP = 'ZIP'
+__MAIN__ = '__main__'
 
+display_exit_dialog = 'display_exit_dialog'
+exit_dialog_confirmation = 'exit_confirmation'
+export_file_type = 'export_file_type'
+refresh_folder_name_with_hostname_title = 'refresh_folder_name_with_hostname_title'
+refresh_url_title = 'refresh_url_title'
+remove_duplicated_urls = 'remove_duplicated_urls'
+remove_tracking_tokens_from_url = 'remove_tracking_tokens_from_url'
+system_language = 'system_language'
 
-def add_value(value):
-    value[0] = value[0] + 1
-    return value[0]
+SYMBOLS = ['?', '#', '&']
+
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+
+HEADERS_COMPLETE = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+}
+
+label_dictionary = [
+    'Folder GUID',
+    'Folder ID',
+    'Folder Sync',
+    'Type',
+
+    'Folder Added',
+    'Folder Modified',
+    'Folder visited',
+
+    'Folder Name',
+    'Folder url',
+
+    'url GUID',
+    'url ID',
+    'url Sync',
+    'Type',
+
+    'url Added',
+    'url Modified',
+    'url Visited',
+
+    'url Name',
+    'url Clean',
+    'url',
+    'icon',
+
+    'scheme',
+    'netloc',
+    'hostname',
+    'path',
+    'port',
+    'param',
+    'fragment',
+    'username',
+    'password',
+]
+
+DICTIONARY_STRUCTURE = {
+    'url_dedup_status': 'url_dedup_status',
+    'folder_info_guid': 'folder_info_guid',
+    'folder_info_id': 'folder_info_id',
+    'folder_info_sync_transaction_version': 'folder_info_sync_transaction_version',
+    'folder_info_type': 'folder_info_type',
+    'folder_info_date_added': 'folder_info_date_added',
+    'folder_info_date_modified': 'folder_info_date_modified',
+    'folder_info_last_visited': 'folder_info_last_visited',
+    'folder_info_name': 'folder_info_name',
+    'folder_info_url': 'folder_info_url',
+    'folder_info_name_proposal': 'folder_info_name_proposal',
+    'url_info_guid': 'url_info_guid',
+    'url_info_item_id': 'url_info_item_id',
+    'url_info_sync_transaction_version': 'url_info_sync_transaction_version',
+    'url_info_item_type': 'url_info_item_type',
+    'url_info_date_added': 'url_info_date_added',
+    'url_info_date_modified': 'url_info_date_modified',
+    'url_info_last_visited': 'url_info_last_visited',
+    'url_info_parse_address': 'url_info_parse_address',
+    'url_info_prime_address': 'url_info_prime_address',
+    'url_info_undup_address': 'url_info_undup_address',
+    'url_info_name': 'url_info_name',
+    'url_info_icon': 'url_info_icon',
+    'url_data_fld': 'url_data_fld',
+    'url_data_scheme': 'url_data_scheme',
+    'url_data_netloc': 'url_data_netloc',
+    'url_data_hostname': 'url_data_hostname',
+    'url_data_path': 'url_data_path',
+    'url_data_port': 'url_data_port',
+    'url_data_params': 'url_data_params',
+    'url_data_fragment': 'url_data_fragment',
+    'url_data_username': 'url_data_username',
+    'url_data_password': 'url_data_password'
+}
 
 
 def load_translation_file():
-    return load(Path(translation_filename).open(encoding=UTF8))
+    return load(Path(TRANSLATION_FILENAME).open(encoding=CHARSET_UTF8))
 
 
 def read_tokens(category):
     cat_list = []
-    with open('tokens.txt', 'r', encoding=UTF8) as tks:
+    with open('tokens.txt', 'r', encoding=CHARSET_UTF8) as tks:
         lines = tks.readlines()
         for line in lines:
             if line.startswith(category):
@@ -26,129 +464,9 @@ def read_tokens(category):
     return cat_list
 
 
-RUN_GUI = False
-
-MAIN_SECTION = 'main'
-
-DATABASE_URL = 'mongodb://localhost:27017/'
-DATABASE_NAME = 'ChromeBookMarks'
-DATABASE_COLLECTION = 'BookMarksLinks'
-DATABASE_COLLECTION_NAMES = 'BookMarksNames'
-DATABASE_COLLECTION_FOLDERS = 'BookMarksFolders'
-
-DEBUG_MODE = False
-TEXT_FILENAME = 'chrome.txt'
-HTML_FILENAME = 'chrome.html'
-XLSX_FILENAME = 'chrome.xlsx'
-
-TXT = 'txt'
-HTML = 'html'
-XLSX = 'xlsx'
-UTF8 = 'UTF8'
-LATIN = 'latin1'
-TITLE = 'title'
-ENABLED = 'enabled'
-DISABLED = 'disabled'
-
-YOUTUBE_WWW = 'www.youtube.com'
-YOUTUBE_M = 'm.youtube.com'
-YOUTUBE_COM = 'youtube.com'
-YOUTUBE = 'youtu.be'
-FACEBOOK_COM = 'facebook.com'
-
-ENGLISH = 'en-us'
-message = load_translation_file()[ENGLISH]
-
-TIMEOUT = 5
-
-ON = 'on'
-OFF = 'off'
-NONE = None
-TRUE = True
-FALSE = False
-EMPTY = ''
-BLANK = ' '
-PROFILES = 'all'
-
-PROTOCOL = 'http://'
-
-PREFERENCES = 'Preferences'
-BOOKMARKS = 'Bookmarks'
-UNKNOWN = 'unknown_exception'
-
-TAB = '\t'
-NEW_LINE = '\n'
-RECURSE = '\r'
-FORWARD_SLASHES = '//'
-
-NO_TITLE = '[NO_TITLE]'
-
-QUOTE = "'"
-UNDERLINE = '_'
-OVERLINE = '‾'
-
-NO_HOST_NAME = '[no hostname]'
-NO_SITE_NAME = '[no site name]'
-NO_CLEAN_url = '[no clean url]'
-NO_url_ADDRESS = '[no url address]'
-
-CHILDREN = 'children'
-META_INFO = 'meta_info'
-LAST_VISITED = 'last_visited'
-DATE_ADDED = 'date_added'
-DATE_MODIFIED = 'date_modified'
-GUID = 'guid'
-ICON = 'icon'
-ITEM_ID = 'id'
-ITEM_NAME = 'name'
-SYNC_TRANSACTION_VERSION = 'sync_transaction_version'
-ITEM_TYPE = 'type'
-URL = 'url'
-
-NONAME = 'NONAME'
-
-NO_DATE = 'no_date'
-EMPTY_STRING = 'empty'
-DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
-NUMBER_FORMAT = 'YYYY/MM/DD hh:mm:ss'
-
-DEBUG_SYSTEM = 'debug_system'
-LOAD_TIME_OUT = 'load_time_out'
-system_language = 'system_language'
-export_file_type = 'export_file_type'
-refresh_url_title = 'refresh_url_title'
-exit_dialog_confirmation = 'exit_confirmation'
-remove_duplicated_urls = 'remove_duplicated_urls'
-remove_tracking_tokens_from_url = 'remove_tracking_tokens_from_url'
-display_exit_dialog = 'display_exit_dialog'
-refresh_folder_name_with_hostname_title = 'refresh_folder_name_with_hostname_title'
-
-SYMBOLS = ['?', '#', '&']
-
-dict_params = {
-            'facebook.com': read_tokens('facebook'),
-            'folha.uol': read_tokens('folha'),
-            'general': read_tokens('general'),
-            'globo.com': read_tokens('globo'),
-            'instagram': read_tokens('instagram'),
-            'magazineluiza.com.br': read_tokens('magazine'),
-            'mercadolivre.com': read_tokens('mercadolivre'),
-            'mercadoshops.com': read_tokens('mercadoshops'),
-            'minds.com': read_tokens('minds'),
-            'savefrom.net': read_tokens('savefrom'),
-            'submarino.com': read_tokens('submarino'),
-            'tracking_module': read_tokens('tracking_module'),
-            'uol': read_tokens('uol'),
-            'youtube.com': read_tokens('youtube')
-          }
-
-cli_progress_dialog = None
-gui_progress_dialog = None
-
-
 def set_language(selected_language):
-    global message
-    message = load_translation_file()[selected_language]
+    global MESSAGE
+    MESSAGE = load_translation_file()[selected_language]
 
 
 def get_languages():
@@ -158,209 +476,36 @@ def get_languages():
     return language_list
 
 
-folder_guid_attr = 'folder_guid'
-folder_id_attr = 'folder_id'
-folder_sync_attr = 'folder_sync'
-folder_type_attr = 'folder_type'
-
-folder_added_attr = 'folder_added'
-folder_modified_attr = 'folder_modified'
-folder_visited_attr = 'folder_visited'
-
-folder_name_attr = 'folder_name'
-folder_url_attr = 'folder_url'
-
-url_guid_attr = 'url_guid'
-url_id_attr = 'url_id'
-url_sync_attr = 'url_sync'
-url_type_attr = 'url_type'
-
-url_added_attr = 'url_added'
-url_modified_attr = 'url_modified'
-url_visited_attr = 'url_visited'
-
-url_name_attr = 'url_name'
-url_clean_attr = 'url_clean'
-url_attr = 'url'
-scheme_attr = 'scheme'
-netloc_attr = 'netloc'
-hostname_attr = 'hostname'
-path_attr = 'path'
-port_attr = 'port'
-param_attr = 'param'
-fragment_attr = 'fragment'
-username_attr = 'username'
-password_attr = 'password'
-
-param_a_attr = 'param_a'
-param_b_attr = 'param_b'
-param_c_attr = 'param_c'
-param_d_attr = 'param_d'
-param_e_attr = 'param_e'
-param_f_attr = 'param_f'
-param_g_attr = 'param_g'
-param_h_attr = 'param_h'
-param_i_attr = 'param_i'
-param_j_attr = 'param_j'
-param_k_attr = 'param_k'
-param_l_attr = 'param_l'
-param_m_attr = 'param_m'
-param_n_attr = 'param_n'
-param_o_attr = 'param_o'
-param_p_attr = 'param_p'
-
-
 class Header:
-    def __init__(self):
-        index = [-1]
+    def __init__(self,):
         stub_date = utils.to_date(13231709218000000)
 
-        self._folder_guid = (EMPTY, add_value(index))
-        self._folder_id = (EMPTY, add_value(index))
-        self._folder_sync = (EMPTY, add_value(index))
-        self._folder_type = (EMPTY, add_value(index))
-
-        self._folder_added = (stub_date, add_value(index))
-        self._folder_modified = (stub_date, add_value(index))
-        self._folder_visited = (stub_date, add_value(index))
-
-        self._folder_name = (EMPTY, add_value(index))
-        self._folder_url = (EMPTY, add_value(index))
-
-        self._url_guid = (EMPTY, add_value(index))
-        self._url_id = (EMPTY, add_value(index))
-        self._url_sync = (EMPTY, add_value(index))
-        self._url_type = (EMPTY, add_value(index))
-
-        self._url_added = (stub_date, add_value(index))
-        self._url_modified = (stub_date, add_value(index))
-        self._url_visited = (stub_date, add_value(index))
-
-        self._url_name = (NO_SITE_NAME, add_value(index))
-        self._url_clean = (NO_CLEAN_url, add_value(index))
-        self._url = (NO_url_ADDRESS, add_value(index))
-        self._icon = (EMPTY, add_value(index))
-        self._scheme = (EMPTY, add_value(index))
-        self._netloc = (EMPTY, add_value(index))
-        self._hostname = (NO_HOST_NAME, add_value(index))
-        self._path = (EMPTY, add_value(index))
-        self._port = (EMPTY, add_value(index))
-        self._param = (EMPTY, add_value(index))
-        self._fragment = (EMPTY, add_value(index))
-        self._username = (EMPTY, add_value(index))
-        self._password = (EMPTY, add_value(index))
-
-        self._param_a = (EMPTY, add_value(index))
-        self._param_b = (EMPTY, add_value(index))
-        self._param_c = (EMPTY, add_value(index))
-        self._param_d = (EMPTY, add_value(index))
-        self._param_e = (EMPTY, add_value(index))
-        self._param_f = (EMPTY, add_value(index))
-        self._param_g = (EMPTY, add_value(index))
-        self._param_h = (EMPTY, add_value(index))
-        self._param_i = (EMPTY, add_value(index))
-        self._param_j = (EMPTY, add_value(index))
-        self._param_k = (EMPTY, add_value(index))
-        self._param_l = (EMPTY, add_value(index))
-        self._param_m = (EMPTY, add_value(index))
-        self._param_n = (EMPTY, add_value(index))
-        self._param_o = (EMPTY, add_value(index))
-        self._param_p = (EMPTY, add_value(index))
-
     def set_data(self, url_element):
-        index = [-1]
+        for key, value in url_element.items():
+            setattr(self, key, value)
 
-        self._folder_guid = (url_element[add_value(index)], index[0])
-        self._folder_id = (url_element[add_value(index)], index[0])
-        self._folder_sync = (url_element[add_value(index)], index[0])
-        self._folder_type = (url_element[add_value(index)], index[0])
-
-        self._folder_added = (url_element[add_value(index)], index[0])
-        self._folder_modified = (url_element[add_value(index)], index[0])
-        self._folder_visited = (url_element[add_value(index)], index[0])
-
-        self._folder_name = (url_element[add_value(index)], index[0])
-        self._folder_url = (url_element[add_value(index)], index[0])
-
-        self._url_guid = (url_element[add_value(index)], index[0])
-        self._url_id = (url_element[add_value(index)], index[0])
-        self._url_sync = (url_element[add_value(index)], index[0])
-        self._url_type = (url_element[add_value(index)], index[0])
-
-        self._url_added = (url_element[add_value(index)], index[0])
-        self._url_modified = (url_element[add_value(index)], index[0])
-        self._url_visited = (url_element[add_value(index)], index[0])
-
-        self._url_name = (url_element[add_value(index)], index[0])
-        self._url_clean = (url_element[add_value(index)], index[0])
-        self._url = (url_element[add_value(index)], index[0])
-        self._icon = (url_element[add_value(index)], index[0])
-        self._scheme = (url_element[add_value(index)], index[0])
-        self._netloc = (url_element[add_value(index)], index[0])
-        self._hostname = (url_element[add_value(index)], index[0])
-        self._path = (url_element[add_value(index)], index[0])
-        self._port = (url_element[add_value(index)], index[0])
-        self._param = (url_element[add_value(index)], index[0])
-        self._fragment = (url_element[add_value(index)], index[0])
-        self._username = (url_element[add_value(index)], index[0])
-        self._password = (url_element[add_value(index)], index[0])
-
-        self._param_a = (url_element[add_value(index)], index[0])
-        self._param_b = (url_element[add_value(index)], index[0])
-        self._param_c = (url_element[add_value(index)], index[0])
-        self._param_d = (url_element[add_value(index)], index[0])
-        self._param_e = (url_element[add_value(index)], index[0])
-        self._param_f = (url_element[add_value(index)], index[0])
-        self._param_g = (url_element[add_value(index)], index[0])
-        self._param_h = (url_element[add_value(index)], index[0])
-        self._param_i = (url_element[add_value(index)], index[0])
-        self._param_j = (url_element[add_value(index)], index[0])
-        self._param_k = (url_element[add_value(index)], index[0])
-        self._param_l = (url_element[add_value(index)], index[0])
-        self._param_m = (url_element[add_value(index)], index[0])
-        self._param_n = (url_element[add_value(index)], index[0])
-        self._param_o = (url_element[add_value(index)], index[0])
-        self._param_p = (url_element[add_value(index)], index[0])
-
-    def get_position(self, index):
-        item = self.to_tuple()
-        return item[index]
-
-    def get_name(self, name):
-        item = self.to_dict()
-        return item['_' + name]
+    def get_item(self, item_name):
+        return self.__dict__[item_name]
 
     def to_list(self):
         dictionary = self.__dict__
-        item_list = []
-        for item in dictionary:
-            item_list.append(dictionary[item])
-        item_list.sort(key=lambda element: element[1])
-        element_list = []
-        for item in item_list:
-            element_list.append(item[0])
-        return element_list
+        dictionary_values = []
+        for dictionary_key in dictionary:
+            dictionary_values.append(dictionary_key)
+        return dictionary_values
 
     def to_dict(self):
-        indexed_dictionary = self.__dict__
-        dictionary = {}
-        for element in indexed_dictionary:
-            dictionary.update({element: indexed_dictionary[element][0]})
-        return dictionary
+        return self.__dict__
 
     def to_tuple(self):
         dictionary = self.__dict__
-        item_list = []
-        for item in dictionary:
-            item_list.append(dictionary[item])
-        item_list.sort(key=lambda element: element[1])
-        tuple_list = []
-        for item in item_list:
-            tuple_list.append(item[0])
-        return tuple(tuple_list)
+        dictionary_values = []
+        for dictionary_key in dictionary:
+            dictionary_values.append(dictionary[dictionary_key])
+        return tuple(dictionary_values)
 
     @staticmethod
-    def get_label(self, index):
+    def get_label(index):
         return label_dictionary[index]
 
     def to_dict_index(self):
@@ -369,618 +514,22 @@ class Header:
     def __repr__(self):
         return str(self.__dict__)
 
-    @property
-    def folder_guid(self):
-        return self._folder_guid
 
-    @folder_guid.setter
-    def folder_guid(self, folder_guid):
-        self._folder_guid = (folder_guid, self._folder_guid[1])
-
-    @folder_guid.getter
-    def folder_guid(self):
-        return self._folder_guid[0]
-
-    @property
-    def folder_id(self):
-        return self._folder_id
-
-    @folder_id.setter
-    def folder_id(self, folder_id):
-        self._folder_id = (folder_id, self._folder_id[1])
-
-    @folder_id.getter
-    def folder_id(self):
-        return self._folder_id[0]
-
-    @property
-    def folder_sync(self):
-        return self._folder_sync
-
-    @folder_sync.setter
-    def folder_sync(self, folder_sync):
-        self._folder_sync = (folder_sync, self._folder_sync[1])
-
-    @folder_sync.getter
-    def folder_sync(self):
-        return self._folder_sync[0]
-
-    @property
-    def folder_type(self):
-        return self._folder_type
-
-    @folder_type.setter
-    def folder_type(self, folder_type):
-        self._folder_type = (folder_type, self._folder_type[1])
-
-    @folder_type.getter
-    def folder_type(self):
-        return self._folder_type[0]
-
-    @property
-    def folder_added(self):
-        return self._folder_added
-
-    @folder_added.setter
-    def folder_added(self, folder_added):
-        self._folder_added = (folder_added, self._folder_added[1])
-
-    @folder_added.getter
-    def folder_added(self):
-        return self._folder_added[0]
-
-    @property
-    def folder_modified(self):
-        return self._folder_modified
-
-    @folder_modified.setter
-    def folder_modified(self, folder_modified):
-        self._folder_modified = (folder_modified, self._folder_modified[1])
-
-    @folder_modified.getter
-    def folder_modified(self):
-        return self._folder_modified[0]
-
-    @property
-    def folder_visited(self):
-        return self._folder_visited
-
-    @folder_visited.setter
-    def folder_visited(self, folder_visited):
-        self._folder_visited = (folder_visited, self._folder_visited[1])
-
-    @folder_visited.getter
-    def folder_visited(self):
-        return self._folder_visited[0]
-
-    @property
-    def folder_name(self):
-        return self._folder_name
-
-    @folder_name.setter
-    def folder_name(self, folder_name):
-        self._folder_name = (folder_name, self._folder_name[1])
-
-    @folder_name.getter
-    def folder_name(self):
-        return self._folder_name[0]
-
-    @property
-    def folder_url(self):
-        return self._folder_url
-
-    @folder_url.setter
-    def folder_url(self, folder_url):
-        self._folder_url = (folder_url, self._folder_url[1])
-
-    @folder_url.getter
-    def folder_url(self):
-        return self._folder_url[0]
-
-    @property
-    def url_guid(self):
-        return self._url_guid
-
-    @url_guid.setter
-    def url_guid(self, url_guid):
-        self._url_guid = (url_guid, self._url_guid[1])
-
-    @url_guid.getter
-    def url_guid(self):
-        return self._url_guid[0]
-
-    @property
-    def url_id(self):
-        return self._url_id
-
-    @url_id.setter
-    def url_id(self, url_id):
-        self._url_id = (url_id, self._url_id[1])
-
-    @url_id.getter
-    def url_id(self):
-        return self._url_id[0]
-
-    @property
-    def url_sync(self):
-        return self._url_sync
-
-    @url_sync.setter
-    def url_sync(self, url_sync):
-        self._url_sync = (url_sync, self._url_sync[1])
-
-    @url_sync.getter
-    def url_sync(self):
-        return self._url_sync[0]
-
-    @property
-    def url_type(self):
-        return self._url_type
-
-    @url_type.setter
-    def url_type(self, url_type):
-        self._url_type = (url_type, self._url_type[1])
-
-    @url_type.getter
-    def url_type(self):
-        return self._url_type[0]
-
-    @property
-    def url_added(self):
-        return self._url_added
-
-    @url_added.setter
-    def url_added(self, url_added):
-        self._url_added = (url_added, self._url_added[1])
-
-    @url_added.getter
-    def url_added(self):
-        return self._url_added[0]
-
-    @property
-    def url_modified(self):
-        return self._url_modified
-
-    @url_modified.setter
-    def url_modified(self, url_modified):
-        self._url_modified = (url_modified, self._url_modified[1])
-
-    @url_modified.getter
-    def url_modified(self):
-        return self._url_modified[0]
-
-    @property
-    def url_visited(self):
-        return self._url_visited
-
-    @url_visited.setter
-    def url_visited(self, url_visited):
-        self._url_visited = (url_visited, self._url_visited[1])
-
-    @url_visited.getter
-    def url_visited(self):
-        return self._url_visited[0]
-
-    @property
-    def url_name(self):
-        return self._url_name
-
-    @url_name.setter
-    def url_name(self, url_name):
-        self._url_name = (url_name, self._url_name[1])
-
-    @url_name.getter
-    def url_name(self):
-        return self._url_name[0]
-
-    @property
-    def url_clean(self):
-        return self._url_clean
-
-    @url_clean.setter
-    def url_clean(self, url_clean):
-        self._url_clean = (url_clean, self._url_clean[1])
-
-    @url_clean.getter
-    def url_clean(self):
-        return self._url_clean[0]
-
-    @property
-    def url(self):
-        return self._url
-
-    @url.setter
-    def url(self, yurl):
-        self._url = (yurl, self._url[1])
-
-    @url.getter
-    def url(self):
-        return self._url[0]
-
-    @property
-    def icon(self):
-        return self._icon
-
-    @icon.setter
-    def icon(self, y_icon):
-        self._icon = (y_icon, self._icon[1])
-
-    @icon.getter
-    def icon(self):
-        return self._icon[0]
-
-    @property
-    def scheme(self):
-        return self._scheme
-
-    @scheme.setter
-    def scheme(self, scheme):
-        self._scheme = (scheme, self._scheme[1])
-
-    @scheme.getter
-    def scheme(self):
-        return self._scheme[0]
-
-    @property
-    def netloc(self):
-        return self._netloc
-
-    @netloc.setter
-    def netloc(self, netloc):
-        self._netloc = (netloc, self._netloc[1])
-
-    @netloc.getter
-    def netloc(self):
-        return self._netloc[0]
-
-    @property
-    def hostname(self):
-        return self._hostname
-
-    @hostname.setter
-    def hostname(self, hostname):
-        self._hostname = (hostname, self._hostname[1])
-
-    @hostname.getter
-    def hostname(self):
-        return self._hostname[0]
-
-    @property
-    def path(self):
-        return self._path
-
-    @path.setter
-    def path(self, path):
-        self._path = (path, self._path[1])
-
-    @path.getter
-    def path(self):
-        return self._path[0]
-
-    @property
-    def port(self):
-        return self._port
-
-    @port.setter
-    def port(self, port):
-        self._port = (port, self._port[1])
-
-    @port.getter
-    def port(self):
-        return self._port[0]
-
-    @property
-    def param(self):
-        return self._param
-
-    @param.setter
-    def param(self, param):
-        self._param = (param, self._param[1])
-
-    @param.getter
-    def param(self):
-        return self._param[0]
-
-    @property
-    def fragment(self):
-        return self._fragment
-
-    @fragment.setter
-    def fragment(self, fragment):
-        self._fragment = (fragment, self._fragment[1])
-
-    @fragment.getter
-    def fragment(self):
-        return self._fragment[0]
-
-    @property
-    def username(self):
-        return self._username
-
-    @username.setter
-    def username(self, user_name):
-        self._username = (user_name, self._username[1])
-
-    @username.getter
-    def username(self):
-        return self._username[0]
-
-    @property
-    def password(self):
-        return self._password
-
-    @password.setter
-    def password(self, user_password):
-        self._password = (user_password, self._password[1])
-
-    @password.getter
-    def password(self):
-        return self._password[0]
-
-    @property
-    def param_a(self):
-        return self._param_a
-
-    @param_a.setter
-    def param_a(self, a_param):
-        self._param_a = (a_param, self._param_a[1])
-
-    @param_a.getter
-    def param_a(self):
-        return self._param_a[0]
-
-    @property
-    def param_b(self):
-        return self._param_b
-
-    @param_b.setter
-    def param_b(self, b_param):
-        self._param_b = (b_param, self._param_b[1])
-
-    @param_b.getter
-    def param_b(self):
-        return self._param_b[0]
-
-    @property
-    def param_c(self):
-        return self._param_c
-
-    @param_c.setter
-    def param_c(self, c_param):
-        self._param_c = (c_param, self._param_c[1])
-
-    @param_c.getter
-    def param_c(self):
-        return self._param_c[0]
-
-    @property
-    def param_d(self):
-        return self._param_d
-
-    @param_d.setter
-    def param_d(self, d_param):
-        self._param_d = (d_param, self._param_d[1])
-
-    @param_d.getter
-    def param_d(self):
-        return self._param_d[0]
-
-    @property
-    def param_e(self):
-        return self._param_e
-
-    @param_e.setter
-    def param_e(self, e_param):
-        self._param_e = (e_param, self._param_e[1])
-
-    @param_e.getter
-    def param_e(self):
-        return self._param_e[0]
-
-    @property
-    def param_f(self):
-        return self._param_f
-
-    @param_f.setter
-    def param_f(self, f_param):
-        self._param_f = (f_param, self._param_f[1])
-
-    @param_f.getter
-    def param_f(self):
-        return self._param_f[0]
-
-    @property
-    def param_g(self):
-        return self._param_g
-
-    @param_g.setter
-    def param_g(self, g_param):
-        self._param_g = (g_param, self._param_g[1])
-
-    @param_g.getter
-    def param_g(self):
-        return self._param_g[0]
-
-    @property
-    def param_h(self):
-        return self._param_h
-
-    @param_h.setter
-    def param_h(self, h_param):
-        self._param_h = (h_param, self._param_h[1])
-
-    @param_h.getter
-    def param_h(self):
-        return self._param_h[0]
-
-    @property
-    def param_i(self):
-        return self._param_i
-
-    @param_i.setter
-    def param_i(self, i_param):
-        self._param_i = (i_param, self._param_i[1])
-
-    @param_i.getter
-    def param_i(self):
-        return self._param_i[0]
-
-    @property
-    def param_j(self):
-        return self._param_j
-
-    @param_j.setter
-    def param_j(self, j_param):
-        self._param_j = (j_param, self._param_j[1])
-
-    @param_j.getter
-    def param_j(self):
-        return self._param_j[0]
-
-    @property
-    def param_k(self):
-        return self._param_k
-
-    @param_k.setter
-    def param_k(self, k_param):
-        self._param_k = (k_param, self._param_k[1])
-
-    @param_k.getter
-    def param_k(self):
-        return self._param_k[0]
-
-    @property
-    def param_l(self):
-        return self._param_l
-
-    @param_l.setter
-    def param_l(self, l_param):
-        self._param_l = (l_param, self._param_l[1])
-
-    @param_l.getter
-    def param_l(self):
-        return self._param_l[0]
-
-    @property
-    def param_m(self):
-        return self._param_m
-
-    @param_m.setter
-    def param_m(self, m_param):
-        self._param_m = (m_param, self._param_m[1])
-
-    @param_m.getter
-    def param_m(self):
-        return self._param_m[0]
-
-    @property
-    def param_n(self):
-        return self._param_n
-
-    @param_n.setter
-    def param_n(self, n_param):
-        self._param_n = (n_param, self._param_n[1])
-
-    @param_n.getter
-    def param_n(self):
-        return self._param_n[0]
-
-    @property
-    def param_o(self):
-        return self._param_o
-
-    @param_o.setter
-    def param_o(self, o_param):
-        self._param_o = (o_param, self._param_o[1])
-
-    @param_o.getter
-    def param_o(self):
-        return self._param_o[0]
-
-    @property
-    def param_p(self):
-        return self._param_p
-
-    @param_p.setter
-    def param_p(self, p_param):
-        self._param_p = (p_param, self._param_p[1])
-
-    @param_p.getter
-    def param_p(self):
-        return self._param_p[0]
-
-
-position = [-1]
-label_dictionary = {
-                    str(add_value(position)): 'Folder GUID',
-                    str(add_value(position)): 'Folder ID',
-                    str(add_value(position)): 'Folder Sync',
-                    str(add_value(position)): 'Type',
-
-                    str(add_value(position)): 'Folder Added',
-                    str(add_value(position)): 'Folder Modified',
-                    str(add_value(position)): 'Folder visited',
-
-                    str(add_value(position)): 'Folder Name',
-                    str(add_value(position)): 'Folder url',
-
-                    str(add_value(position)): 'url GUID',
-                    str(add_value(position)): 'url ID',
-                    str(add_value(position)): 'url Sync',
-                    str(add_value(position)): 'Type',
-
-                    str(add_value(position)): 'url Added',
-                    str(add_value(position)): 'url Modified',
-                    str(add_value(position)): 'url Visited',
-
-                    str(add_value(position)): 'url Name',
-                    str(add_value(position)): 'url Clean',
-                    str(add_value(position)): 'url',
-                    str(add_value(position)): 'icon',
-
-                    str(add_value(position)): 'scheme',
-                    str(add_value(position)): 'netloc',
-                    str(add_value(position)): 'hostname',
-                    str(add_value(position)): 'path',
-                    str(add_value(position)): 'port',
-                    str(add_value(position)): 'param',
-                    str(add_value(position)): 'fragment',
-                    str(add_value(position)): 'username',
-                    str(add_value(position)): 'password',
-
-                    str(add_value(position)): 'param_a',
-                    str(add_value(position)): 'param_b',
-                    str(add_value(position)): 'param_c',
-                    str(add_value(position)): 'param_d',
-                    str(add_value(position)): 'param_e',
-                    str(add_value(position)): 'param_f',
-                    str(add_value(position)): 'param_g',
-                    str(add_value(position)): 'param_h',
-                    str(add_value(position)): 'param_i',
-                    str(add_value(position)): 'param_j',
-                    str(add_value(position)): 'param_k',
-                    str(add_value(position)): 'param_l',
-                    str(add_value(position)): 'param_m',
-                    str(add_value(position)): 'param_n',
-                    str(add_value(position)): 'param_o',
-                    str(add_value(position)): 'param_p'
-    }
-
-TRAIL = (
-    BLANK,  # 29
-    BLANK,  # 30
-    BLANK,  # 31
-    BLANK,  # 32
-    BLANK,  # 33
-    BLANK,  # 34
-    BLANK,  # 35
-    BLANK,  # 36
-    BLANK,  # 37
-    BLANK,  # 38
-    BLANK,  # 39
-    BLANK,  # 40
-    BLANK,  # 41
-    BLANK,  # 42
-    BLANK,  # 43
-    BLANK   # 44
-        )
+MESSAGE = load_translation_file()[ENGLISH]
+
+dict_params = {
+    'facebook.com': read_tokens('facebook'),
+    'folha.uol': read_tokens('folha'),
+    'general': read_tokens('general'),
+    'globo.com': read_tokens('globo'),
+    'instagram': read_tokens('instagram'),
+    'magazineluiza.com.br': read_tokens('magazine'),
+    'mercadolivre.com': read_tokens('mercadolivre'),
+    'mercadoshops.com': read_tokens('mercadoshops'),
+    'minds.com': read_tokens('minds'),
+    'savefrom.net': read_tokens('savefrom'),
+    'submarino.com': read_tokens('submarino'),
+    'tracking_module': read_tokens('tracking_module'),
+    'uol': read_tokens('uol'),
+    'youtube.com': read_tokens('youtube')
+}
