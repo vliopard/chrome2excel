@@ -11,3 +11,4 @@ pandas~=2.1.4
 lxml~=5.0.0
 mechanize~=0.4.10
 chardet~=5.2.0
+requests==2.32.0
