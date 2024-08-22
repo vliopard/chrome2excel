@@ -2,10 +2,10 @@ import tqdm
 import tools
 import utils
 import preset
-import bookMarks
-
-import htmlExport
-import htmlSupport
+import bookmarks
+import html_export
+import title_master
+import html_support
 
 from openpyxl import Workbook
 from openpyxl.styles import Font
@@ -13,443 +13,408 @@ from openpyxl.styles import Font
 from argparse import ArgumentParser
 
 
-def get_title_conditional(progress_bar, get_title_disabled, url_name, url_address):
-    if not get_title_disabled:
-        progress_bar.update(1)
-        status_number, url_title = htmlSupport.get_title(url_address)
-        if status_number != 0:
-            url_title = "[ " + url_title + " " + str(status_number) + " - " + url_name + " ]"
-        return url_title
+def get_title_conditional(progress_bar, paramz, url_name, url_address):
+    progress_bar.update(1)
+    if paramz[preset.COMMAND_REFRESH_URL_TITLE]:
+        return title_master.get_title_master(url_address)
     return url_name
 
 
-def import_text_file(text_file=preset.text_filename):
-    tools.underline()
-    tools.display(preset.message["import_text_file"] + " [" + text_file + "]")
-    tools.overline()
+def import_text_file(text_file=preset.TEXT_FILENAME):
+    tools.print_box(f'{preset.MESSAGE[preset.IMPORT_TEXT_FILE]} [{text_file}]')
     url_list = []
-    with open(text_file, encoding='utf-8') as text_file:
+    with open(text_file, encoding=preset.CHARSET_UTF8) as text_file:
         for url_item in text_file:
             url_list.append(url_item.strip())
     return url_list
 
 
 def append_data_table(data_table, url_list):
-    tools.display(preset.message["appending_data_table"])
+    tools.print_display(preset.MESSAGE[preset.APPENDING_DATA_TABLE])
     for url_item in url_list:
         head = preset.Header()
-        head.Hostname = htmlSupport.parse_url(url_item)[2]
-        head.URL_Clean = htmlSupport.clean_url(url_item)
-        head.URL = url_item
-        data_table.append(head.to_tuple())
+        head.set_data(url_item)
+        head.Hostname = html_support.parse_url(url_item.hostname)
+        head.URL_Clean = html_support.parse_url_clean(url_item.parse)
+        head.URL = url_item.url
+        data_table.append(head.to_dict())
     return data_table
 
 
 def generate_from_txt(url_list):
-    tools.display(preset.message["generating_from_text"])
-    txt_header = []
-    return append_data_table(txt_header, url_list)
+    tools.print_display(preset.MESSAGE[preset.GENERATING_FROM_TEXT])
+    return append_data_table([], url_list)
 
 
-def generate_web_page(web_page_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
-    tools.debug("filename    [", str(web_page_filename),
-                "]\nreload_title[", str(reload_url_title),
-                "]\nremove_dupes[", str(remove_duplicated_urls),
-                "]\nremove_track[", str(remove_tracking_from_url),
-                "]\nget_hostname[", str(get_hostname_title), "]")
-    tools.display(preset.message["generating_html"] + " [" + web_page_filename + "]")
+def generate_web_page(data_table, paramz):
+    xlsx, web_page_filename = paramz[preset.OUTPUT_NAME]
+    if not xlsx and data_table:
+        tools.print_display(f'{preset.MESSAGE[preset.GENERATING_HTML]} [{web_page_filename}]')
+        visited_url_address = set()
+        visited_hostname_title = set()
+        folder_list = []
+        data_table_without_duplicates = []
+        if paramz[preset.UNDUPE]:
+            tools.print_box(preset.MESSAGE[preset.REMOVING_DUPLICATES_VALUE])
+            total_items = len(data_table)
+            preset.PROGRESS_BAR_DISABLED = False
+            if preset.GUI_PROGRESS_DIALOG:
+                preset.PROGRESS_BAR_DISABLED = True
+            with tqdm.tqdm(total=total_items, disable=preset.PROGRESS_BAR_DISABLED) as progress_bar:
+                utils.update_progress(preset.MESSAGE[preset.REMOVING_DUPLICATES_VALUE], -1, total_items)
+                for index, data_row in enumerate(data_table):
+                    progress_bar.update(1)
+                    if utils.update_progress(preset.MESSAGE[preset.REMOVING_DUPLICATES_VALUE], index, total_items):
+                        break
 
-    visited_hostname_title = set()
-    visited_url_address = set()
-    folder_list = []
-    data_table_without_duplicates = []
-    if remove_duplicated_urls:
-        tools.underline()
-        tools.display(preset.message["removing_duplicates"])
-        tools.overline()
-        total_items = len(data_table)
-        disabled = False
-        if preset.gui_progress_dialog:
-            disabled = True
-        with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
-            utils.update_progress(preset.message["removing_duplicates"], -1, total_items)
-            for index, data_row in enumerate(data_table):
+                    if paramz[preset.COMMAND_CLEAN_URL_FROM_TRACKING]:
+                        url_address = html_support.parse_url_clean(data_row[preset.URL_INFO_PRIME_ADDRESS])
+                    else:
+                        url_address = data_row[preset.URL_INFO_PRIME_ADDRESS]
 
-                header = preset.Header()
-                header.set_data(data_row)
+                    if url_address not in visited_url_address:
+                        visited_url_address.add(url_address)
+                        data_table_without_duplicates.append(data_row)
+        else:
+            data_table_without_duplicates = data_table
 
+        tools.print_box(preset.MESSAGE[preset.WRITING_HTML])
+        total_items = len(data_table_without_duplicates)
+        preset.PROGRESS_BAR_DISABLED = False
+        if preset.GUI_PROGRESS_DIALOG:
+            preset.PROGRESS_BAR_DISABLED = True
+        with tqdm.tqdm(total=total_items, disable=preset.PROGRESS_BAR_DISABLED) as progress_bar:
+            utils.update_progress(preset.MESSAGE[preset.WRITING_HTML], -1, total_items)
+            for index, data_row in enumerate(data_table_without_duplicates):
                 progress_bar.update(1)
-                if utils.update_progress(preset.message["removing_duplicates"], index, total_items):
+                if utils.update_progress(preset.MESSAGE[preset.WRITING_HTML], index, total_items):
                     break
 
-                if remove_tracking_from_url:
-                    url_address = header.get_name(preset.url_clean_attr)
+                url_title = data_row[preset.URL_INFO_NAME]
+
+                if paramz[preset.COMMAND_CLEAN_URL_FROM_TRACKING]:
+                    url_address = html_support.parse_url_clean(data_row[preset.URL_INFO_PRIME_ADDRESS])
                 else:
-                    url_address = header.get_name(preset.url_attr)
+                    url_address = data_row[preset.URL_INFO_PRIME_ADDRESS]
+
+                hostname_title = data_row[preset.FOLDER_INFO_NAME]
+
+                if paramz[preset.COMMAND_REFRESH_URL_TITLE]:
+                    url_title = title_master.get_title_master(url_address)
+
+                if paramz[preset.COMMAND_REFRESH_FOLDER_NAME]:
+                    preset.DIRECTORY_SUGGESTION = True
+                    hostname_title = html_support.parse_url(data_row[preset.URL_INFO_PRIME_ADDRESS])[preset.FOLDER_INFO_NAME_PROPOSAL]
+
+                if hostname_title not in visited_hostname_title:
+                    url_data = tools.Urls(url_address, data_row[preset.URL_INFO_DATE_ADDED], url_title)
+                    visited_hostname_title.add(hostname_title)
+                    folder_list.append(tools.Folder(data_row[preset.FOLDER_INFO_DATE_ADDED], data_row[preset.FOLDER_INFO_DATE_MODIFIED], hostname_title, [url_data]))
+                else:
+                    url_data = tools.Urls(url_address, data_row[preset.URL_INFO_DATE_ADDED], url_title)
+                    for folder in folder_list:
+                        if folder.folder_name == hostname_title:
+                            folder.add_url(url_data)
+
+        tools.print_box(preset.MESSAGE[preset.SAVING_HTML])
+        html_export.write_html(web_page_filename, folder_list)
+        tools.print_display(preset.MESSAGE[preset.DONE])
+        tools.print_overline()
+
+
+def generate_work_book(data_table, paramz):
+    xlsx, spreadsheet_filename = paramz[preset.OUTPUT_NAME]
+    if xlsx and data_table:
+        tools.print_display(f'{preset.MESSAGE[preset.GENERATING_WORKBOOK]} [{spreadsheet_filename}]')
+
+        excel_workbook = Workbook()
+        excel_worksheet = excel_workbook.active
+        excel_worksheet.title = preset.MESSAGE[preset.CHROME_URLS]
+
+        if paramz[preset.COMMAND_REFRESH_URL_TITLE]:
+            tools.print_box(preset.MESSAGE[preset.GET_URL_STATUS])
+
+        if paramz[preset.COMMAND_REFRESH_FOLDER_NAME]:
+            tools.print_box(preset.MESSAGE[preset.RESOLVING_HOSTNAMES])
+            total_items = len(data_table)
+            preset.PROGRESS_BAR_DISABLED = False
+            if preset.GUI_PROGRESS_DIALOG:
+                preset.PROGRESS_BAR_DISABLED = True
+            with tqdm.tqdm(total=total_items, disable=preset.PROGRESS_BAR_DISABLED) as progress_bar:
+                temporary_table = []
+                utils.update_progress(preset.MESSAGE[preset.RESOLVING_HOSTNAMES], -1, total_items)
+                for index, data_row in enumerate(data_table):
+                    preset.DIRECTORY_SUGGESTION = True
+                    data_row[preset.FOLDER_INFO_NAME] = html_support.parse_url(data_row[preset.URL_INFO_PRIME_ADDRESS])[preset.FOLDER_INFO_NAME_PROPOSAL]
+                    temporary_table.append(data_row)
+                    progress_bar.update(1)
+                    if utils.update_progress(preset.MESSAGE[preset.RESOLVING_HOSTNAMES], index, total_items):
+                        break
+                data_table = temporary_table
+
+        visited_url_address = set()
+        data_table_without_duplicates = []
+        tools.print_display(preset.MESSAGE[preset.FIND_DUPLICATED_LINES])
+        total_items = len(data_table)
+        preset.PROGRESS_BAR_DISABLED = False
+        if paramz[preset.COMMAND_REFRESH_URL_TITLE]:
+            preset.PROGRESS_BAR_DISABLED = True
+        elif preset.GUI_PROGRESS_DIALOG:
+            preset.PROGRESS_BAR_DISABLED = True
+
+        with tqdm.tqdm(total=total_items, disable=preset.PROGRESS_BAR_DISABLED) as progress_bar:
+            utils.update_progress(preset.MESSAGE[preset.FIND_DUPLICATED_LINES], -1, total_items)
+            for index, data_row in enumerate(data_table):
+                if utils.update_progress(preset.MESSAGE[preset.FIND_DUPLICATED_LINES], index, total_items):
+                    break
+
+                if paramz[preset.COMMAND_CLEAN_URL_FROM_TRACKING]:
+                    data_row[preset.URL_INFO_PARSE_ADDRESS] = html_support.parse_url_clean(data_row[preset.URL_INFO_PRIME_ADDRESS])
+                    url_address = data_row[preset.URL_INFO_PARSE_ADDRESS]
+                else:
+                    url_address = data_row[preset.URL_INFO_PRIME_ADDRESS]
+
+                dedupe_type = preset.SYMBOL_EMPTY
                 if url_address not in visited_url_address:
                     visited_url_address.add(url_address)
-                    data_table_without_duplicates.append(data_row)
-    else:
-        data_table_without_duplicates = data_table
+                    dedupe_type = preset.MAIN
+                elif not paramz[preset.UNDUPE]:
+                    dedupe_type = preset.DUPE
+                data_row[preset.URL_DEDUP_STATUS] = dedupe_type
+                data_row[preset.URL_INFO_NAME] = get_title_conditional(progress_bar, paramz, data_row[preset.URL_INFO_NAME], url_address)
+                data_table_without_duplicates.append(data_row)
 
-    tools.underline()
-    tools.display(preset.message["writing_html"])
-    tools.overline()
-    total_items = len(data_table_without_duplicates)
-    disabled = False
-    if preset.gui_progress_dialog:
-        disabled = True
-    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
-        utils.update_progress(preset.message["writing_html"], -1, total_items)
-        for index, data_row in enumerate(data_table_without_duplicates):
+        tools.print_display(preset.MESSAGE[preset.WRITING_SPREADSHEET])
+        tools.print_overline()
+        total_items = len(data_table_without_duplicates)
+        preset.PROGRESS_BAR_DISABLED = False
+        if preset.GUI_PROGRESS_DIALOG:
+            preset.PROGRESS_BAR_DISABLED = True
+        with tqdm.tqdm(total=total_items, disable=preset.PROGRESS_BAR_DISABLED) as progress_bar:
+            utils.update_progress(preset.MESSAGE[preset.WRITING_SPREADSHEET], -1, total_items)
 
-            header = preset.Header()
-            header.set_data(data_row)
+            values = []
+            preset.DICTIONARY_STRUCTURE.pop(preset.FOLDER_INFO_NAME_PROPOSAL, None)
+            preset.DICTIONARY_STRUCTURE.pop(preset.URL_DATA_FLD, None)
+            for key in preset.DICTIONARY_STRUCTURE:
+                values.append(key)
+            values.append(preset.TERM)
+            excel_worksheet.append(values)
 
-            progress_bar.update(1)
-            if utils.update_progress(preset.message["writing_html"], index, total_items):
-                break
+            for index, data_row in enumerate(data_table_without_duplicates):
+                progress_bar.update(1)
+                if utils.update_progress(preset.MESSAGE[preset.WRITING_SPREADSHEET], index, total_items):
+                    break
 
-            url_title = header.get_name(preset.url_name_attr)
+                spreadsheet_row = []
+                for key in values:
+                    if key in data_row:
+                        spreadsheet_row.append(data_row[key])
+                spreadsheet_row.append(preset.TERM)
+                excel_worksheet.append(spreadsheet_row)
 
-            if remove_tracking_from_url:
-                url_address = header.get_name(preset.url_clean_attr)
-            else:
-                url_address = header.get_name(preset.url_attr)
+        excel_worksheet.freeze_panes = 'A2'
+        excel_worksheet.auto_filter.ref = 'A1:BA90000'
 
-            hostname_title = header.get_name(preset.hostname_attr)
-            original_hostname = header.get_name(preset.hostname_attr)
+        tools.print_box(preset.MESSAGE[preset.FORMAT_COLUMNS])
 
-            if reload_url_title:
-                status_number, url_title = htmlSupport.get_title(url_address)
-                if status_number != 0:
-                    url_title = "[ " + url_title + " " + str(status_number) + " - " + header.get_name(preset.url_name_attr) + " ]"
+        date_columns = ['F', 'G', 'H', 'O', 'P', 'Q']
+        font_columns = ['B', 'K', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF']
+        hidden_columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'O', 'P', 'Q', 'V', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF']
 
-            if get_hostname_title:
-                status_number, hostname_title = htmlSupport.get_title(preset.protocol + original_hostname)
-                if status_number != 0:
-                    hostname_title = "[ " + hostname_title + " " + str(status_number) + " - " + original_hostname + " ]"
+        date_items_count = 'A'
+        font_items_count = 'T'
 
-            if hostname_title not in visited_hostname_title:
-                url_data = tools.Urls(url_address, header.get_name(preset.url_added_attr), url_title)
-                visited_hostname_title.add(hostname_title)
-                folder_list.append(tools.Folder(header.get_name(preset.folder_added_attr), header.get_name(preset.folder_modified_attr), hostname_title, [url_data]))
-            else:
-                url_data = tools.Urls(url_address, header.get_name(preset.url_added_attr), url_title)
-                for folder in folder_list:
-                    if folder.folder_name == hostname_title:
-                        folder.add_url(url_data)
+        parse_column_size = 'R'
+        prime_column_size = 'S'
+        title_column_size = 'U'
 
-    tools.underline()
-    tools.display(preset.message["saving_html"])
-    tools.overline()
-    htmlExport.write_html(web_page_filename, folder_list)
-    tools.display(preset.message["done"])
-    tools.overline()
+        total_items = (len(font_columns)*len(excel_worksheet[font_items_count]))
+        preset.PROGRESS_BAR_DISABLED = False
+        if preset.GUI_PROGRESS_DIALOG:
+            preset.PROGRESS_BAR_DISABLED = True
+        with tqdm.tqdm(total=total_items, disable=preset.PROGRESS_BAR_DISABLED) as progress_bar:
+            utils.update_progress(preset.MESSAGE[preset.FORMAT_COLUMNS], -1, total_items)
+            for font_column in font_columns:
+                for index, worksheet_column in enumerate(excel_worksheet[font_column]):
+                    progress_bar.update(1)
+                    if utils.update_progress(preset.MESSAGE[preset.FORMAT_COLUMNS], index, total_items):
+                        break
+                    worksheet_column.font = Font(size=10, name=preset.FONT_COURIER_NEW)
 
-
-def generate_work_book(spreadsheet_filename, data_table, reload_url_title, remove_duplicated_urls, remove_tracking_from_url, get_hostname_title):
-    tools.debug("filename    [", str(spreadsheet_filename),
-                "]\nreload_title[", str(reload_url_title),
-                "]\nremove_dupes[", str(remove_duplicated_urls),
-                "]\nremove_track[", str(remove_tracking_from_url),
-                "]\nget_hostname[", str(get_hostname_title), "]")
-    tools.display(preset.message["generating_workbook"] + " [" + spreadsheet_filename + "]")
-    excel_workbook = Workbook()
-    excel_worksheet = excel_workbook.active
-    excel_worksheet.title = preset.message["chrome_urls"]
-
-    reload_url_title_disabled = True
-    if reload_url_title:
-        tools.underline()
-        tools.display(preset.message["get_url_status"])
-        tools.overline()
-        reload_url_title_disabled = False
-
-    if get_hostname_title:
-        tools.underline()
-        tools.display(preset.message["resolving_hostnames"])
-        tools.overline()
-        total_items = len(data_table)
+        tools.print_box(preset.MESSAGE[preset.FORMAT_DATES])
+        total_items = (len(date_columns)*len(excel_worksheet[date_items_count]))
         disabled = False
-        if preset.gui_progress_dialog:
+        if preset.GUI_PROGRESS_DIALOG:
             disabled = True
         with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
-            temporary_table = []
-            utils.update_progress(preset.message["resolving_hostnames"], -1, total_items)
-            for index, data_row in enumerate(data_table):
-                temporary_table.append(utils.update_tuple(data_row, htmlSupport.get_title(preset.protocol + data_row[22])[1], 2))
-                progress_bar.update(1)
-                if utils.update_progress(preset.message["resolving_hostnames"], index, total_items):
-                    break
-            data_table = temporary_table
+            utils.update_progress(preset.MESSAGE[preset.FORMAT_DATES], -1, total_items)
+            for date_column in date_columns:
+                excel_worksheet.column_dimensions[date_column].width = 18
+                for index, worksheet_column in enumerate(excel_worksheet[date_column]):
+                    progress_bar.update(1)
+                    if utils.update_progress(preset.MESSAGE[preset.FORMAT_DATES], index, total_items):
+                        break
+                    worksheet_column.number_format = preset.NUMBER_FORMAT
 
-    visited_url_address = set()
-    data_table_without_duplicates = []
-    tools.display(preset.message["find_duplicated_lines"])
-    total_items = len(data_table)
-    disabled = False
-    if reload_url_title_disabled:
-        disabled = True
-    elif preset.gui_progress_dialog:
-        disabled = True
-    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
-        utils.update_progress(preset.message["find_duplicated_lines"], -1, total_items)
-        for index, data_row in enumerate(data_table):
-            if utils.update_progress(preset.message["find_duplicated_lines"], index, total_items):
-                break
+        tools.print_underline()
+        tools.print_display(preset.MESSAGE[preset.HIDE_COLUMNS])
+        for h in hidden_columns:
+            excel_worksheet.column_dimensions[h].width = 9
+            excel_worksheet.column_dimensions[h].hidden = True
 
-            header = preset.Header()
-            header.set_data(data_row)
-            if remove_tracking_from_url:
-                url_address = header.get_name(preset.url_clean_attr)
-            else:
-                url_address = header.get_name(preset.url_attr)
+        tools.print_display(preset.MESSAGE[preset.FORMAT_HEADER])
+        for cell in excel_worksheet['1:1']:
+            cell.font = Font(bold=True)
 
-            url_name = header.get_name(preset.url_name_attr)
+        tools.print_display(preset.MESSAGE[preset.SIZING_COLUMNS])
+        excel_worksheet.column_dimensions[title_column_size].width = 30
+        excel_worksheet.column_dimensions[parse_column_size].width = 85
+        excel_worksheet.column_dimensions[prime_column_size].width = 85
+        excel_worksheet.column_dimensions[font_items_count].width = 85
 
-            if url_address not in visited_url_address:
-                visited_url_address.add(url_address)
-                data_table_without_duplicates.append(("MAIN", get_title_conditional(progress_bar, reload_url_title_disabled, url_name, url_address)) + data_row)
-            elif not remove_duplicated_urls:
-                data_table_without_duplicates.append(("DUPE", get_title_conditional(progress_bar, reload_url_title_disabled, url_name, url_address)) + data_row)
-
-    tools.display(preset.message["writing_spreadsheet"])
-    tools.overline()
-    total_items = len(data_table_without_duplicates)
-    disabled = False
-    if preset.gui_progress_dialog:
-        disabled = True
-    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
-        utils.update_progress(preset.message["writing_spreadsheet"], -1, total_items)
-        data_row_header = ["DUPE", "Site Name"]
-        for item in preset.label_dictionary:
-            data_row_header.append(preset.label_dictionary[item])
-        excel_worksheet.append(tuple(data_row_header))
-        for index, data_row in enumerate(data_table_without_duplicates):
-            progress_bar.update(1)
-            if utils.update_progress(preset.message["writing_spreadsheet"], index, total_items):
-                break
-            excel_worksheet.append(data_row)
-
-    excel_worksheet.freeze_panes = "A2"
-    excel_worksheet.auto_filter.ref = "A1:AU30000"
-
-    tools.underline()
-    tools.display(preset.message["format_columns"])
-    tools.overline()
-    font_columns = ['T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD',
-                    'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN',
-                    'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU']
-    total_items = (len(font_columns)*len(excel_worksheet['T']))
-    disabled = False
-    if preset.gui_progress_dialog:
-        disabled = True
-    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
-        utils.update_progress(preset.message["format_columns"], -1, total_items)
-        for font_column in font_columns:
-            for index, worksheet_column in enumerate(excel_worksheet[font_column]):
-                progress_bar.update(1)
-                if utils.update_progress(preset.message["format_columns"], index, total_items):
-                    break
-                worksheet_column.font = Font(size=10, name='Courier New')
-
-    tools.underline()
-    tools.display(preset.message["format_dates"])
-    tools.overline()
-    date_columns = ['G', 'H', 'I', 'P', 'Q', 'R']
-    total_items = (len(date_columns)*len(excel_worksheet['G']))
-    disabled = False
-    if preset.gui_progress_dialog:
-        disabled = True
-    with tqdm.tqdm(total=total_items, disable=disabled) as progress_bar:
-        utils.update_progress(preset.message["format_dates"], -1, total_items)
-        for date_column in date_columns:
-            excel_worksheet.column_dimensions[date_column].width = 18
-            for index, worksheet_column in enumerate(excel_worksheet[date_column]):
-                progress_bar.update(1)
-                if utils.update_progress(preset.message["format_dates"], index, total_items):
-                    break
-                worksheet_column.number_format = preset.number_format
-
-    tools.underline()
-    tools.display(preset.message["hide_columns"])
-    hidden_columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'AA', 'AB', 'AC', 'AD']
-    for h in hidden_columns:
-        excel_worksheet.column_dimensions[h].width = 9
-        excel_worksheet.column_dimensions[h].hidden = True
-
-    tools.display(preset.message["format_header"])
-    for cell in excel_worksheet["1:1"]:
-        cell.font = Font(bold=True)
-
-    tools.display(preset.message["sizing_columns"])
-    excel_worksheet.column_dimensions['S'].width = 30
-    excel_worksheet.column_dimensions['T'].width = 85
-
-    tools.display(preset.message["saving_workbook"])
-    excel_workbook.save(spreadsheet_filename)
-    tools.display(preset.message["done"])
-    tools.overline()
+        tools.print_display(preset.MESSAGE[preset.SAVING_WORKBOOK])
+        excel_workbook.save(spreadsheet_filename)
+        tools.print_display(preset.MESSAGE[preset.DONE])
+        tools.print_overline()
 
 
 def get_profile(profile):
-    tools.display(preset.message["retrieve_user"])
-    user_data = tools.get_chrome_element(profile, preset.preferences)
+    tools.print_display(preset.MESSAGE[preset.RETRIEVE_USER])
+    user_data = tools.get_chrome_element(profile, preset.PREFERENCES)
     if not user_data:
-        tools.display(preset.message["invalid_profile"])
+        tools.print_display(preset.MESSAGE[preset.INVALID_PROFILE])
         exit(1)
     return tools.get_user(user_data)
 
 
-def run_chrome(profile, output, refresh, undupe, clean, import_txt, get_hostname, output_name, list_profile, x_org_gui):
-    tools.debug("profile       [", str(profile),
-                "]\noutput        [", str(output),
-                "]\nrefresh       [", str(refresh),
-                "]\nundupe        [", str(undupe),
-                "]\nclean         [", str(clean),
-                "]\nimport_txt    [", str(import_txt),
-                "]\nget_hostname  [", str(get_hostname),
-                "]\noutput_name   [", str(output_name),
-                "]\nlist_profiles [" + str(list_profile) + "]")
-    if x_org_gui:
-        import chromeExport
-        chromeExport.main()
-    elif list_profile:
-        if not list_profile.isdigit():
-            list_profile = preset.all_profiles
-        tools.list_profiles(list_profile)
-    else:
-        if import_txt == preset.none and profile == preset.none:
-            tools.underline()
-            tools.display(preset.message["missing_parameter"])
-            tools.overline()
+def show_debug_params(dic_parameters):
+    display_dic = ''
+    for key in dic_parameters:
+        display_dic += f'{key.ljust(15)}[{str(dic_parameters[key]).ljust(6)}]{preset.NEW_LINE}'
+    tools.print_debug(display_dic)
+
+
+def start_gui(dic_parameters):
+    if dic_parameters[preset.X_ORG_GUI]:
+        import chrome_export
+        chrome_export.main()
+        exit(0)
+
+
+def list_profiles(dic_parameters):
+    if dic_parameters[preset.LIST_PROFILE]:
+        if dic_parameters[preset.LIST_PROFILE].isdigit():
+            list_profile = dic_parameters[preset.LIST_PROFILE]
         else:
-            tools.display(preset.new_line+preset.new_line)
-            tools.underline()
-            tools.display(preset.message["starting_export"])
+            list_profile = preset.PROFILES
+        tools.list_profiles(list_profile)
+        return False
+    else:
+        return True
 
-            if profile:
-                email, full, name = get_profile(profile)
-                bookmarks = bookMarks.generate_bookmarks(profile)
-                tools.underline()
-                tools.display(preset.message["process_user"] + ": {", full, "} [" + email + "]")
-                tools.overline()
-                bookmarks_data = bookMarks.generate_data(bookmarks)
-            else:
-                bookmarks_data = []
 
-            if import_txt:
-                bookmarks_data = append_data_table(bookmarks_data, import_text_file(import_txt))
+def run_chrome(dic_parameters):
+    show_debug_params(dic_parameters)
+    start_gui(dic_parameters)
 
-            if not output_name:
-                if output == "xlsx":
-                    output_name = preset.xlsx_filename
-                else:
-                    output_name = preset.html_filename
+    if list_profiles(dic_parameters):
+        if dic_parameters[preset.IMPORT_TXT] == preset.NONE and dic_parameters[preset.PROFILE] == preset.NONE:
+            tools.print_box(preset.MESSAGE[preset.MISSING_PARAMETER])
+            return
 
-            refresh = normalize(refresh)
-            undupe = normalize(undupe)
-            clean = normalize(clean)
-            get_hostname = normalize(get_hostname)
+        tools.print_display(f'{preset.NEW_LINE}{preset.NEW_LINE}')
+        tools.print_underline()
+        tools.print_display(preset.MESSAGE[preset.STARTING_EXPORT])
 
-            if output == "xlsx":
-                generate_work_book(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
-            else:
-                generate_web_page(output_name, bookmarks_data, refresh, undupe, clean, get_hostname)
+        bookmarks_data = []
+        if dic_parameters[preset.PROFILE]:
+            email, full, name = get_profile(dic_parameters[preset.PROFILE])
+            tools.print_box(f'{preset.MESSAGE[preset.PROCESS_USER]}: ({full}) [{email}]')
+            bookmarks_data = bookmarks.generate_data(bookmarks.generate_bookmarks(dic_parameters[preset.PROFILE]))
+
+        if dic_parameters[preset.IMPORT_TXT]:
+            bookmarks_data = append_data_table(bookmarks_data, import_text_file(dic_parameters[preset.IMPORT_TXT]))
+
+        generate_work_book(bookmarks_data, dic_params(dic_parameters))
+        generate_web_page(bookmarks_data, dic_params(dic_parameters))
+
+
+def dic_params(dic_parameters):
+    return {
+        preset.OUTPUT_NAME: out_name(dic_parameters),
+        preset.COMMAND_REFRESH_URL_TITLE: normalize(dic_parameters[preset.COMMAND_REFRESH_URL_TITLE]),
+        preset.UNDUPE: normalize(dic_parameters[preset.UNDUPE]),
+        preset.COMMAND_CLEAN_URL_FROM_TRACKING: normalize(dic_parameters[preset.COMMAND_CLEAN_URL_FROM_TRACKING]),
+        preset.COMMAND_REFRESH_FOLDER_NAME: normalize(dic_parameters[preset.COMMAND_REFRESH_FOLDER_NAME])
+    }
+
+
+def out_name(dic_parameters):
+    xlsx = False
+    if dic_parameters[preset.OUTPUT_NAME]:
+        output_name = dic_parameters[preset.OUTPUT_NAME]
+    else:
+        if dic_parameters[preset.OUTPUT] == preset.XLSX:
+            xlsx = True
+            output_name = preset.XLSX_FILENAME
+        else:
+            output_name = preset.HTML_FILENAME
+    return xlsx, output_name
 
 
 def normalize(parameter):
-    if parameter == preset.on or parameter == preset.true:
-        return True
-    return False
+    return parameter == preset.ON or parameter == preset.TRUE
 
 
 def default(default_value):
-    if default_value:
-        return preset.message["enabled"]
-    return preset.message["disabled"]
+    return preset.MESSAGE[preset.ENABLED if default_value else preset.DISABLED]
 
 
-if __name__ == "__main__":
-    settings = bookMarks.Options()
+if __name__ == preset.__MAIN__:
+    settings = bookmarks.Options()
     settings.load_settings()
+    default_output = preset.XLSX if settings.export_file_type else preset.HTML
 
-    default_output = "xlsx"
-    if settings.export_file_type:
-        default_output = "html"
+    argument_parser = ArgumentParser(description=preset.MESSAGE[preset.MAIN_DESCRIPTION])
 
-    argument_parser = ArgumentParser(
-        description=preset.message["main_description"]
-    )
-    argument_parser.add_argument(
-        "-p",
-        dest='profile',
-        help=preset.message["main_profile_help"],
-        default=preset.none
-    )
-    argument_parser.add_argument(
-        "-o",
-        dest='output',
-        help=preset.message["main_output_help"] + preset.message["default"] + default_output + ".",
-        default=default_output
-    )
-    argument_parser.add_argument(
-        "-r",
-        dest='refresh',
-        help=preset.message["main_refresh_help"] + preset.message["default"] + default(settings.refresh_url_title),
-        nargs="?",
-        const=preset.true,
-        default=settings.refresh_url_title
-    )
-    argument_parser.add_argument(
-        "-u",
-        dest='undupe',
-        help=preset.message["main_undupe_help"] + preset.message["default"] + default(settings.remove_duplicated_urls),
-        nargs="?",
-        const=preset.true,
-        default=settings.remove_duplicated_urls
-    )
-    argument_parser.add_argument(
-        "-c",
-        dest='clean',
-        help=preset.message["main_clean_help"] + preset.message["default"] + default(settings.remove_tracking_tokens_from_url),
-        nargs="?",
-        const=preset.true,
-        default=settings.remove_tracking_tokens_from_url
-    )
-    argument_parser.add_argument(
-        "-i",
-        dest='import_txt',
-        help=preset.message["main_import_help"],
-        default=preset.none
-    )
-    argument_parser.add_argument(
-        "-g",
-        dest='get_hostname',
-        help=preset.message["main_hostname_help"] + preset.message["default"] + default(settings.refresh_folder_name_with_hostname_title),
-        nargs="?",
-        const=preset.true,
-        default=settings.refresh_folder_name_with_hostname_title
-    )
-    argument_parser.add_argument(
-        "-n",
-        dest="output_name",
-        help=preset.message["main_filename_help"],
-        default=preset.none
-    )
-    argument_parser.add_argument(
-        "-l",
-        dest="list_profile",
-        help=preset.message["profile_help"] + preset.message["default"] + preset.message["all_profiles"],
-        nargs="?",
-        const=preset.all_profiles
-    )
-    argument_parser.add_argument(
-        "-x",
-        dest='x_org_gui',
-        help=preset.message["open_gui"],
-        action='store_true'
-    )
-    arguments = vars(argument_parser.parse_args())
-    run_chrome(**arguments)
+    argument_parser.add_argument('-p', dest=preset.PROFILE,
+                                 help=preset.MESSAGE[preset.MAIN_PROFILE_HELP],
+                                 default=preset.NONE)
+    argument_parser.add_argument('-o', dest=preset.OUTPUT,
+                                 help=f'{preset.MESSAGE[preset.MAIN_OUTPUT_HELP]}{preset.MESSAGE[preset.DEFAULT_L]}{default_output}.',
+                                 default=default_output)
+    argument_parser.add_argument('-r', dest=preset.COMMAND_REFRESH_URL_TITLE,
+                                 help=f'{preset.MESSAGE[preset.MAIN_REFRESH_HELP]}{preset.MESSAGE[preset.DEFAULT_L]}{default(settings.refresh_url_title)}',
+                                 nargs=preset.SYMBOL_QM,
+                                 const=preset.TRUE,
+                                 default=settings.refresh_url_title)
+    argument_parser.add_argument('-u', dest=preset.UNDUPE,
+                                 help=f'{preset.MESSAGE[preset.MAIN_UNDUPE_HELP]}{preset.MESSAGE[preset.DEFAULT_L]}{default(settings.remove_duplicated_urls)}',
+                                 nargs=preset.SYMBOL_QM,
+                                 const=preset.TRUE,
+                                 default=settings.remove_duplicated_urls)
+    argument_parser.add_argument('-c', dest=preset.COMMAND_CLEAN_URL_FROM_TRACKING,
+                                 help=f'{preset.MESSAGE[preset.MAIN_CLEAN_HELP]}{preset.MESSAGE[preset.DEFAULT_L]}{default(settings.remove_tracking_tokens_from_url)}',
+                                 nargs=preset.SYMBOL_QM,
+                                 const=preset.TRUE,
+                                 default=settings.remove_tracking_tokens_from_url)
+    argument_parser.add_argument('-i', dest=preset.IMPORT_TXT,
+                                 help=preset.MESSAGE[preset.MAIN_IMPORT_HELP],
+                                 default=preset.NONE)
+    argument_parser.add_argument('-g', dest=preset.COMMAND_REFRESH_FOLDER_NAME,
+                                 help=f'{preset.MESSAGE[preset.MAIN_HOSTNAME_HELP]}{preset.MESSAGE[preset.DEFAULT_L]}{default(settings.refresh_folder_name_with_hostname_title)}',
+                                 nargs=preset.SYMBOL_QM,
+                                 const=preset.TRUE,
+                                 default=settings.refresh_folder_name_with_hostname_title)
+    argument_parser.add_argument('-n', dest=preset.OUTPUT_NAME,
+                                 help=preset.MESSAGE[preset.MAIN_FILENAME_HELP],
+                                 default=preset.NONE)
+    argument_parser.add_argument('-l', dest=preset.LIST_PROFILE,
+                                 help=f'{preset.MESSAGE[preset.PROFILE_HELP]}{preset.MESSAGE[preset.DEFAULT_L]}{preset.MESSAGE[preset.ALL_PROFILES]}',
+                                 nargs=preset.SYMBOL_QM,
+                                 const=preset.PROFILES)
+    argument_parser.add_argument('-x', dest=preset.X_ORG_GUI,
+                                 help=preset.MESSAGE[preset.OPEN_GUI],
+                                 action=preset.STORE_TRUE)
+    run_chrome(vars(argument_parser.parse_args()))
