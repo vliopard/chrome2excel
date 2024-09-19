@@ -1,4 +1,5 @@
 import utils
+import configparser
 from json import load
 from pathlib import Path
 
@@ -58,7 +59,11 @@ CLEAN_URL_STRING = 'clean_url'
 CLI_PROGRESS_DIALOG = None
 PROGRESS_BAR_DISABLED = True
 COLUMNS = 'COLUMNS'
+
 CONFIGURATION_FILENAME = 'resources/config.ini'
+config = configparser.ConfigParser()
+config.read(CONFIGURATION_FILENAME)
+
 CONTENT = 'content'
 CONTENT_TYPE = 'content-type'
 DATABASE_COLLECTION = 'BookMarksLinks'
@@ -66,7 +71,15 @@ DATABASE_COLLECTION_FOLDERS = 'BookMarksFolders'
 DATABASE_COLLECTION_NAMES = 'BookMarksNames'
 DATABASE_ID = '_id'
 DATABASE_NAME = 'ChromeBookMarks'
-DATABASE_URL = 'mongodb://localhost:27017/'
+
+MONGO_USERNAME = config.get('security', 'USERNAME')
+MONGO_PASSWORD = config.get('security', 'PASSWORD')
+if not MONGO_PASSWORD:
+    MONGO_PASSWORD = input('Enter database password: ')
+MONGO_HOST = config.get('security', 'HOST')
+MONGO_PORT = config.get('security', 'PORT')
+DATABASE_URL = f'mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/'
+
 DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
 DEBUG_MODE = False
 DEBUG_SYSTEM = 'debug_system'

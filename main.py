@@ -11,7 +11,7 @@ if __name__ == preset.__MAIN__:
     preset.CLEAN_URL_BOOL = True
     preset.REFRESH_TITLE = False
     preset.DIRECTORY_SUGGESTION = True
-    bookmarks_data = bookmarks.generate_data(bookmarks.generate_bookmarks(3))
+    bookmarks_data = bookmarks.generate_data(bookmarks.generate_bookmarks(1))
 
     print(preset.TEXT_SORTING_DATA)
     if preset.DIRECTORY_SUGGESTION:
