@@ -1,3 +1,4 @@
+import os
 import sys
 import preset
 from tqdm import tqdm
@@ -10,7 +11,11 @@ mongo_collection = mongo_database[preset.DATABASE_COLLECTION]
 mongo_collection_names = mongo_database[preset.DATABASE_COLLECTION_NAMES]
 mongo_collection_folders = mongo_database[preset.DATABASE_COLLECTION_FOLDERS]
 
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 if __name__ == "__main__":
+    clear_screen()
     # directories = mongo_collection_folders.count_documents({})
     links = mongo_collection.count_documents({})
     url_names = mongo_collection_names.count_documents({})
