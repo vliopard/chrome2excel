@@ -2,8 +2,8 @@ import os
 import sys
 import preset
 from tqdm import tqdm
-from time import sleep
 from pymongo import MongoClient
+from time import sleep, time, strftime, localtime
 
 mongo_client = MongoClient(preset.DATABASE_URL)
 mongo_database = mongo_client[preset.DATABASE_NAME]
@@ -33,5 +33,17 @@ if __name__ == "__main__":
             if new_url > 0:
                 tqdm_progress_bar.update(new_url)
                 url_names = url_name
+
+
+            elapsed = tqdm_progress_bar.format_dict["elapsed"]
+            rate = tqdm_progress_bar.format_dict["rate"]
+            etf = (tqdm_progress_bar.total - tqdm_progress_bar.n) / rate if rate and tqdm_progress_bar.total else 0
+
+            #etf = tqdm_progress_bar.format_dict['remaining']
+            now = time()
+            now_plus_etf = now + etf
+            cdir = strftime('%Y/%m/%d %H:%M:%S', localtime(now_plus_etf))
+
+            tqdm_progress_bar.set_postfix({'ETF': cdir})
             tqdm_progress_bar.refresh()
             sleep(60)
