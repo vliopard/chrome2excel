@@ -352,6 +352,7 @@ def dic_params(dic_parameters):
 
 def out_name(dic_parameters):
     xlsx = False
+    # TODO: IF PASSING NAME, SHOULD DEDUCE EXTENSION HTML OR XLSX (SUPRESS -o PARAMETER)
     if dic_parameters[preset.OUTPUT_NAME]:
         output_name = dic_parameters[preset.OUTPUT_NAME]
     else:

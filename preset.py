@@ -1,4 +1,5 @@
 import utils
+import screen
 import configparser
 from json import load
 from pathlib import Path
@@ -69,16 +70,24 @@ CONTENT_TYPE = 'content-type'
 DATABASE_COLLECTION = 'BookMarksLinks'
 DATABASE_COLLECTION_FOLDERS = 'BookMarksFolders'
 DATABASE_COLLECTION_NAMES = 'BookMarksNames'
+DATABASE_STATUS = 'BookMarksStatus'
 DATABASE_ID = '_id'
 DATABASE_NAME = 'ChromeBookMarks'
 
-MONGO_USERNAME = config.get('security', 'USERNAME')
-MONGO_PASSWORD = config.get('security', 'PASSWORD')
-if not MONGO_PASSWORD:
-    MONGO_PASSWORD = input('Enter database password: ')
 MONGO_HOST = config.get('security', 'HOST')
 MONGO_PORT = config.get('security', 'PORT')
-DATABASE_URL = f'mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/'
+try:
+    MONGO_USERNAME = config.get('security', 'USERNAME')
+except Exception as exception:
+    MONGO_USERNAME = ''
+
+if not MONGO_USERNAME:
+    DATABASE_URL = f'mongodb://{MONGO_HOST}:{MONGO_PORT}/'
+else:
+    MONGO_PASSWORD = config.get('security', 'PASSWORD')
+    if not MONGO_PASSWORD:
+        MONGO_PASSWORD = input('Enter database password: ')
+    DATABASE_URL = f'mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/'
 
 DATE_FORMAT = '%Y/%m/%d %H:%M:%S'
 DEBUG_MODE = False
@@ -177,6 +186,7 @@ JAVASCRIPT = 'javascript'
 JSCRIPT = 'JScript'
 LAST_VISITED = 'last_visited'
 LEFT = 'left'
+LINE_LEN = screen.get_terminal_width() - 35
 LINES = 'LINES'
 LIST = 'list'
 LIST_PROFILE = 'list_profile'
@@ -229,7 +239,7 @@ OUTPUT_OFF = 'output_off'
 OUTPUT_ON = 'output_on'
 OUTPUT_TYPE = 'output_type'
 OUTPUT_XLSX = 'output.xlsx'
-OVERLINE = '‾'
+SYMBOL_OVERLINE = '‾'
 PDF = 'PDF'
 PLAYLIST = '/playlist'
 PREFERENCES = 'Preferences'
@@ -261,6 +271,7 @@ SETTINGS_TITLE = 'settings_title'
 SIZING_COLUMNS = 'sizing_columns'
 SRC = 'SRC'
 STARTING_EXPORT = 'starting_export'
+STATUS_BAR_FORMAT = '{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]'
 STORE_TRUE = 'store_true'
 SYMBOL_AMP = '&'
 SYMBOL_BLANK = ' '
@@ -342,7 +353,8 @@ USER = 'user'
 USER_AGENT = 'User-Agent'
 USER_HAS_NO_BOOKMARKS = 'user_has_no_bookmarks'
 VIEW_SOURCE = 'view-source'
-W = 'w'
+WRITE = 'w'
+READ = 'r'
 WARNING = 'warning'
 WEBSITE_ESTADAO = 'estadao'
 WEBSITE_FACEBOOK = 'facebook'

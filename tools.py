@@ -1,9 +1,12 @@
 import os
 import json
+import time
 import preset
 import screen_support
 
 from platform import system
+from functools import wraps
+from datetime import datetime, timedelta
 
 
 class Folder:
@@ -74,12 +77,33 @@ def print_display(*arguments):
             return 0
 
 
+def timed(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        time_start = time.time()
+        result = func(*args, **kwargs)
+        time_end = time.time()
+        end_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        time_report = [f'Start time: {start_time}', f'End time:   {end_time}', f"Function {func.__name__} ran in {timedelta(seconds=(time_end - time_start))}"]
+        print(f'{section_line(preset.SYMBOL_EQ, preset.LINE_LEN)}')
+        for time_detail in time_report:
+            print(time_detail)
+        print(f'{section_line(preset.SYMBOL_EQ, preset.LINE_LEN)}')
+        return result
+    return wrapper
+
+
+def section_line(style, size):
+    return style * size
+
+
 def print_underline():
     print_display(preset.SYMBOL_UNDERLINE * (screen_support.get_terminal_width()))
 
 
 def print_overline():
-    print_display(preset.OVERLINE * (screen_support.get_terminal_width()))
+    print_display(preset.SYMBOL_OVERLINE * (screen_support.get_terminal_width()))
 
 
 def double_line(message=None):
@@ -147,9 +171,9 @@ def get_display(number):
         left_justified_name = f'({full_name})'
         show_var = f' [{str(number)}]' if dig else ''
         print_display(f'{preset.MESSAGE[preset.USER]}{show_var}: {left_justified_name.ljust(35)} [{email}]')
-    except Exception as error:
+    except Exception as exception:
         if not dig:
-            print_display(error)
+            print_display(exception)
         else:
             pass
 

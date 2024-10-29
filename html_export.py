@@ -38,7 +38,7 @@ def new_tab():
 
 
 def write_html(webpage_filename, folder):
-    with open(webpage_filename, preset.W, encoding=preset.CHARSET_UTF8) as html_file:
+    with open(webpage_filename, preset.WRITE, encoding=preset.CHARSET_UTF8) as html_file:
         html_file.write(header)
 
         for item in folder:
